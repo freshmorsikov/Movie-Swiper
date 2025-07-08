@@ -1,0 +1,30 @@
+CREATE TABLE movieEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    originalTitle TEXT NOT NULL,
+    posterPath TEXT NOT NULL,
+    releaseDate TEXT NOT NULL,
+    voteAverage REAL NOT NULL,
+    status TEXT NOT NULL
+);
+
+insert:
+INSERT OR REPLACE
+INTO movieEntity
+VALUES ?;
+
+getMoviesByStatus:
+SELECT *
+FROM movieEntity
+WHERE status = :status
+ORDER BY releaseDate;
+
+getMovieCountByStatus:
+SELECT COUNT(*)
+FROM movieEntity
+WHERE status = :status;
+
+updateMovieStatus:
+UPDATE movieEntity
+SET status = :status
+WHERE id = :id;

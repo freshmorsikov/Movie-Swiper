@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.buildConfig)
+    alias(libs.plugins.sqldelight)
 }
 
 buildConfig {
@@ -72,9 +73,11 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.okhttp)
+            implementation(libs.sqldelight.android.driver)
         }
         iosMain.dependencies {
             implementation(libs.ktor.darwin)
+            implementation(libs.sqldelight.native.driver)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -85,12 +88,11 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-
             implementation(libs.bundles.ktor)
-
             implementation(libs.kotlinx.serialization.json)
-
+            implementation(libs.bundles.sqldelight)
             implementation(libs.bundles.coil)
+            implementation(libs.bundles.koin)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -126,6 +128,14 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+}
+
+sqldelight {
+    databases {
+        create("Database") {
+            packageName.set("com.github.freshmorsikov.moviematcher")
+        }
     }
 }
 
