@@ -22,7 +22,7 @@ class SwipeViewModel(
     init {
         getMovieListUseCase().onEach { movieList ->
             setState {
-                copy(movieList = movieList)
+                copy(movieList = movieList.reversed())
             }
         }.launchIn(viewModelScope)
     }

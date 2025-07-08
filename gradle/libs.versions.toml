@@ -15,6 +15,7 @@ coil = "3.2.0"
 buildConfig = "5.6.7"
 sqldelight = "2.1.0"
 koin = "4.0.3"
+datastore = "1.1.7"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -40,8 +41,11 @@ sqldelight-native-driver = { group = "app.cash.sqldelight", name = "native-drive
 sqldelight-runtime = { group = "app.cash.sqldelight", name = "runtime", version.ref = "sqldelight" }
 sqldelight-coroutines-extensions = { group = "app.cash.sqldelight", name = "coroutines-extensions", version.ref = "sqldelight" }
 
-koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
-koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmodel", version.ref = "koin" }
+
+datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
+datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
 [bundles]
 ktor = [
@@ -61,6 +65,10 @@ koin = [
 sqldelight = [
     "sqldelight-runtime",
     "sqldelight-coroutines-extensions"
+]
+datastore = [
+    "datastore",
+    "datastore-preferences"
 ]
 
 [plugins]

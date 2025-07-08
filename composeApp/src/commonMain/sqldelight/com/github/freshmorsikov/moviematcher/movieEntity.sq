@@ -5,6 +5,7 @@ CREATE TABLE movieEntity (
     posterPath TEXT NOT NULL,
     releaseDate TEXT NOT NULL,
     voteAverage REAL NOT NULL,
+    popularity REAL NOT NULL,
     status TEXT NOT NULL
 );
 
@@ -17,7 +18,7 @@ getMoviesByStatus:
 SELECT *
 FROM movieEntity
 WHERE status = :status
-ORDER BY releaseDate;
+ORDER BY popularity DESC;
 
 getMovieCountByStatus:
 SELECT COUNT(*)

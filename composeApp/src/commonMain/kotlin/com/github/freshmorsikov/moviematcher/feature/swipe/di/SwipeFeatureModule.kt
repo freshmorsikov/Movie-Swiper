@@ -23,6 +23,7 @@ val swipeFeatureModule = module {
     single {
         MovieRepository(
             movieEntityQueries = get(),
+            keyValueStore = get(),
             apiService = get(),
         )
     }
