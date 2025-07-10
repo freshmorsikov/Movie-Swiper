@@ -11,6 +11,8 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.MovieSta
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 private const val PAGE_KEY = "PAGE_KEY"
 
@@ -44,6 +46,7 @@ class MovieRepository(
         return movieEntityQueries.getMovieCountByStatus(status = status.name).executeAsOne()
     }
 
+    @OptIn(ExperimentalTime::class)
     suspend fun loadMoreMoviesByStatus() {
         val page = keyValueStore.getInt(PAGE_KEY)?.let { cachedPage ->
             cachedPage + 1
@@ -61,6 +64,7 @@ class MovieRepository(
                         voteAverage = movie.voteAverage,
                         popularity = movie.popularity,
                         status = MovieStatus.Undefined.name,
+                        uploadTimestamp = Clock.System.now().epochSeconds
                     )
                     movieEntityQueries.insert(movieEntity = movieEntity)
                 }

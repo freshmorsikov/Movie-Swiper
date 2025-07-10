@@ -6,11 +6,12 @@ CREATE TABLE movieEntity (
     releaseDate TEXT NOT NULL,
     voteAverage REAL NOT NULL,
     popularity REAL NOT NULL,
-    status TEXT NOT NULL
+    status TEXT NOT NULL,
+    uploadTimestamp INTEGER NOT NULL
 );
 
 insert:
-INSERT OR REPLACE
+INSERT OR IGNORE
 INTO movieEntity
 VALUES ?;
 
@@ -18,7 +19,7 @@ getMoviesByStatus:
 SELECT *
 FROM movieEntity
 WHERE status = :status
-ORDER BY popularity DESC;
+ORDER BY uploadTimestamp, popularity DESC;
 
 getMovieCountByStatus:
 SELECT COUNT(*)
