@@ -1,5 +1,6 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Column
@@ -60,7 +61,7 @@ fun SwipeScreenContent(
                 modifier = Modifier
                     .padding(16.dp)
                     .align(Alignment.Center),
-                movie = movie
+                movie = movie,
             )
         }
 
@@ -100,7 +101,8 @@ private fun MovieCard(
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(0.5.dp, Color.Black.copy(alpha = 0.1f))
     ) {
         Column {
             AsyncImage(
