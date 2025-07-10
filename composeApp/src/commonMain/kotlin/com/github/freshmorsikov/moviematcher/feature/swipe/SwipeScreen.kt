@@ -1,14 +1,18 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
@@ -26,6 +32,9 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeViewModel
 import com.github.freshmorsikov.moviematcher.util.toRatingFormat
+import moviematcher.composeapp.generated.resources.Res
+import moviematcher.composeapp.generated.resources.ic_star
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -89,30 +98,76 @@ private fun MovieCard(
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
-            containerColor = Color.LightGray
+            containerColor = Color.White
         ),
         shape = RoundedCornerShape(8.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = 12.dp,
-                    vertical = 8.dp
-                )
-        ) {
+        Column {
             AsyncImage(
-                modifier = Modifier.height(500.dp),
+                modifier = Modifier
+                    .height(500.dp)
+                    .width(380.dp),
                 model = "$IMAGE_BASE_URL${movie.posterPath}",
-                contentScale = ContentScale.FillHeight,
+                contentScale = ContentScale.FillBounds,
                 contentDescription = null,
             )
-            Text(text = movie.title)
-            if (movie.originalTitle != movie.title) {
-                Text(text = movie.originalTitle)
+            Column(
+                modifier = Modifier
+                    .width(380.dp)
+                    .padding(16.dp),
+                verticalArrangement = spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = movie.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                )
+
+                Row(horizontalArrangement = spacedBy(8.dp)) {
+                    Text(
+                        text = movie.releaseDate.take(4),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray,
+                    )
+                    Text(
+                        text = "|",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray,
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = spacedBy(2.dp)
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(14.dp),
+                            painter = painterResource(Res.drawable.ic_star),
+                            tint = Color(0xFFEAAF00),
+                            contentDescription = null
+                        )
+                        Text(
+                            text = movie.voteAverage.toRatingFormat(),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color(0xFFEAAF00),
+                        )
+                    }
+                }
+
+                Row(horizontalArrangement = spacedBy(8.dp)) {
+                    listOf("Crime", "Drama", "Documentary").forEach { genre ->
+                        Text(
+                            modifier = Modifier
+                                .background(Color.LightGray, RoundedCornerShape(4.dp))
+                                .padding(horizontal = 6.dp, vertical = 2.dp),
+                            text = genre,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.DarkGray,
+                        )
+                    }
+                }
             }
-            Text(text = movie.releaseDate)
-            Text(text = "${movie.voteAverage.toRatingFormat()} / 10")
         }
     }
 }
