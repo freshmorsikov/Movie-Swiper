@@ -3,14 +3,17 @@ package com.github.freshmorsikov.moviematcher.feature.swipe.presentation
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.MovieStatus
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class SwipeViewModel(
-    private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
+    private val loadGenreListUseCase: LoadGenreListUseCase,
     private val getMovieListUseCase: GetMovieListUseCase,
+    private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
 ) : UdfViewModel<SwipeUdf.State, SwipeUdf.Action, SwipeUdf.Event>(
     initState = {
         SwipeUdf.State(movieList = emptyList())
@@ -18,6 +21,9 @@ class SwipeViewModel(
 ) {
 
     init {
+        viewModelScope.launch {
+            loadGenreListUseCase()
+        }
         subscribeOnMovieList()
     }
 

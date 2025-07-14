@@ -9,4 +9,5 @@ data class Movie(
     val voteAverage: Double,
     val popularity: Double,
     val status: String,
+    val genres: List<String>,
 )

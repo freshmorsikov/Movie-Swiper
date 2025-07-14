@@ -1,0 +1,12 @@
+CREATE TABLE movieGenreReference (
+    movieReference INTEGER NOT NULL,
+    genreReference INTEGER NOT NULL,
+    PRIMARY KEY (movieReference, genreReference),
+    FOREIGN KEY (movieReference) REFERENCES movieEntity(id) ON DELETE CASCADE,
+    FOREIGN KEY (genreReference) REFERENCES genreEntity(id) ON DELETE CASCADE
+);
+
+insert:
+INSERT OR IGNORE
+INTO movieGenreReference
+VALUES ?;

@@ -2,8 +2,12 @@ package com.github.freshmorsikov.moviematcher.feature.swipe.data
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.github.freshmorsikov.moviematcher.GenreEntity
+import com.github.freshmorsikov.moviematcher.GenreEntityQueries
 import com.github.freshmorsikov.moviematcher.MovieEntity
 import com.github.freshmorsikov.moviematcher.MovieEntityQueries
+import com.github.freshmorsikov.moviematcher.MovieGenreReference
+import com.github.freshmorsikov.moviematcher.MovieGenreReferenceQueries
 import com.github.freshmorsikov.moviematcher.core.data.api.ApiService
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
@@ -18,25 +22,44 @@ private const val PAGE_KEY = "PAGE_KEY"
 
 class MovieRepository(
     private val movieEntityQueries: MovieEntityQueries,
+    private val genreEntityQueries: GenreEntityQueries,
+    private val movieGenreReferenceQueries: MovieGenreReferenceQueries,
     private val keyValueStore: KeyValueStore,
     private val apiService: ApiService,
 ) {
 
+    suspend fun loadGenreList() {
+        apiService.getGenreList()
+            .onSuccess { genreList ->
+                genreList.genres.forEach { genre ->
+                    val genreEntity = GenreEntity(
+                        id = genre.id,
+                        genreName = genre.name,
+                    )
+                    genreEntityQueries.insert(genreEntity)
+                }
+            }
+    }
+
     fun getMovieListFlowByStatus(status: MovieStatus): Flow<List<Movie>> {
-        return movieEntityQueries.getMoviesByStatus(status = status.name)
+        return movieEntityQueries.getMoviesWithGenreByStatus(status = status.name)
             .asFlow()
             .mapToList(Dispatchers.Default)
-            .map { movieEntityList ->
-                movieEntityList.map { movieEntity ->
+            .map { movieWithGenreList ->
+                movieWithGenreList.groupBy { movie ->
+                    movie.id
+                }.map { (_, movieWithGenreList) ->
+                    val movie = movieWithGenreList.first()
                     Movie(
-                        id = movieEntity.id,
-                        title = movieEntity.title,
-                        originalTitle = movieEntity.originalTitle,
-                        posterPath = movieEntity.posterPath,
-                        releaseDate = movieEntity.releaseDate,
-                        voteAverage = movieEntity.voteAverage,
-                        popularity = movieEntity.popularity,
+                        id = movie.id,
+                        title = movie.title,
+                        originalTitle = movie.originalTitle,
+                        posterPath = movie.posterPath,
+                        releaseDate = movie.releaseDate,
+                        voteAverage = movie.voteAverage,
+                        popularity = movie.popularity,
                         status = MovieStatus.Undefined.name,
+                        genres = movieWithGenreList.map { it.genreName }
                     )
                 }
             }
@@ -67,6 +90,13 @@ class MovieRepository(
                         uploadTimestamp = Clock.System.now().epochSeconds
                     )
                     movieEntityQueries.insert(movieEntity = movieEntity)
+                    movie.genreIds.onEach { genreId ->
+                        val movieGenreReference = MovieGenreReference(
+                             movieReference = movie.id,
+                             genreReference = genreId
+                        )
+                        movieGenreReferenceQueries.insert(movieGenreReference = movieGenreReference)
+                    }
                 }
             }
     }

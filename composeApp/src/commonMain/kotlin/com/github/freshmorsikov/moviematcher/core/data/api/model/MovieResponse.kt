@@ -12,4 +12,5 @@ data class MovieResponse(
     @SerialName("release_date") val releaseDate: String,
     @SerialName("vote_average") val voteAverage: Double,
     @SerialName("popularity") val popularity: Double,
+    @SerialName("genre_ids") val genreIds: List<Long>,
 )

@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -157,8 +158,11 @@ private fun MovieCard(
                     }
                 }
 
-                Row(horizontalArrangement = spacedBy(8.dp)) {
-                    listOf("Crime", "Drama", "Documentary").forEach { genre ->
+                FlowRow(
+                    horizontalArrangement = spacedBy(8.dp),
+                    verticalArrangement = spacedBy(8.dp),
+                ) {
+                    movie.genres.forEach { genre ->
                         Text(
                             modifier = Modifier
                                 .background(Color.LightGray, RoundedCornerShape(4.dp))

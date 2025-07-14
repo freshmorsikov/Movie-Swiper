@@ -1,0 +1,9 @@
+CREATE TABLE genreEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    genreName TEXT NOT NULL
+);
+
+insert:
+INSERT OR IGNORE
+INTO genreEntity
+VALUES ?;
