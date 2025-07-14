@@ -24,14 +24,16 @@ abstract class UdfViewModel<S : Udf.State, A : Udf.Action, E : Udf.Event>(
 
     fun onAction(action: A) {
         mState.update {
-            reduce(
-                currentState = it,
-                action = action
-            )
+            reduce(action = action)
+        }
+        viewModelScope.launch {
+            handleEffects(action = action)
         }
     }
 
-    abstract fun reduce(currentState: S, action: A): S
+    protected abstract fun reduce(action: A): S
+
+    protected abstract suspend fun handleEffects(action: A)
 
     protected fun sendEvent(event: E) {
         viewModelScope.launch {

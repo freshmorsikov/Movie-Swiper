@@ -6,6 +6,7 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUs
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.MovieStatus
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -16,7 +17,10 @@ class SwipeViewModel(
     private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
 ) : UdfViewModel<SwipeUdf.State, SwipeUdf.Action, SwipeUdf.Event>(
     initState = {
-        SwipeUdf.State(movieList = emptyList())
+        SwipeUdf.State(
+            movieList = emptyList(),
+            removingMovieId = null,
+        )
     }
 ) {
 
@@ -37,23 +41,22 @@ class SwipeViewModel(
         }.launchIn(viewModelScope)
     }
 
-    override fun reduce(
-        currentState: SwipeUdf.State,
-        action: SwipeUdf.Action,
-    ): SwipeUdf.State {
+    override fun reduce(action: SwipeUdf.Action): SwipeUdf.State {
         return when (action) {
             is SwipeUdf.Action.UpdateMovieList -> {
-                 currentState.copy(movieList = action.movieList)
+                currentState.copy(movieList = action.movieList)
             }
 
             SwipeUdf.Action.Like -> {
-                updateMovieStatus(status = MovieStatus.Liked)
-                currentState
+                startMovieRemoving()
             }
 
             SwipeUdf.Action.Dislike -> {
-                updateMovieStatus(status = MovieStatus.Disliked)
-                currentState
+                startMovieRemoving()
+            }
+
+            is SwipeUdf.Action.FinishRemoving -> {
+                currentState.copy(removingMovieId = null)
             }
 
             is SwipeUdf.Action.MoreClick -> {
@@ -63,12 +66,35 @@ class SwipeViewModel(
         }
     }
 
-    private fun updateMovieStatus(status: MovieStatus) {
-        currentState.movieList.lastOrNull()?.let { movie ->
+    override suspend fun handleEffects(action: SwipeUdf.Action) {
+        when (action) {
+            SwipeUdf.Action.Dislike -> {
+                delay(500)
+                finishMovieRemoving(movieStatus = MovieStatus.Disliked)
+            }
+
+            SwipeUdf.Action.Like -> {
+                delay(500)
+                finishMovieRemoving(movieStatus = MovieStatus.Liked)
+            }
+
+            else -> {}
+        }
+    }
+
+    private fun startMovieRemoving(): SwipeUdf.State {
+        return currentState.copy(
+            removingMovieId = currentState.movieList.lastOrNull()?.id
+        )
+    }
+
+    private fun finishMovieRemoving(movieStatus: MovieStatus) {
+        currentState.removingMovieId?.let { id ->
             updateMovieStatusUseCase(
-                id = movie.id,
-                status = status
+                id = id,
+                movieStatus = movieStatus
             )
+            onAction(SwipeUdf.Action.FinishRemoving)
         }
     }
 

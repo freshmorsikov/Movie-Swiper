@@ -1,5 +1,10 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
@@ -63,6 +68,7 @@ fun SwipeScreenContent(
                     .padding(16.dp)
                     .align(Alignment.Center),
                 movie = movie,
+                visible = movie.id != state.removingMovieId
             )
         }
 
@@ -76,6 +82,7 @@ fun SwipeScreenContent(
                 modifier = Modifier.weight(1f),
                 text = "Dislike",
                 containerColor = Color(0xFFF95667),
+                enabled = state.removingMovieId == null,
                 onClick = {
                     onAction(SwipeUdf.Action.Dislike)
                 }
@@ -84,6 +91,7 @@ fun SwipeScreenContent(
                 modifier = Modifier.weight(1f),
                 text = "Like",
                 containerColor = Color(0xFF00BE64),
+                enabled = state.removingMovieId == null,
                 onClick = {
                     onAction(SwipeUdf.Action.Like)
                 }
@@ -95,82 +103,90 @@ fun SwipeScreenContent(
 @Composable
 private fun MovieCard(
     movie: Movie,
+    visible: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    AnimatedVisibility(
         modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(0.5.dp, Color.Black.copy(alpha = 0.1f))
+        visible = visible,
+        enter = EnterTransition.None,
+        exit = fadeOut(tween(durationMillis = 500)) + slideOutHorizontally { fullWidth -> -fullWidth },
     ) {
-        Column {
-            AsyncImage(
-                modifier = Modifier
-                    .height(500.dp)
-                    .width(380.dp),
-                model = "$IMAGE_BASE_URL${movie.posterPath}",
-                contentScale = ContentScale.FillBounds,
-                contentDescription = null,
-            )
-            Column(
-                modifier = Modifier
-                    .width(380.dp)
-                    .padding(16.dp),
-                verticalArrangement = spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = movie.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center,
+        Card(
+            modifier = modifier,
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            shape = RoundedCornerShape(8.dp),
+            border = BorderStroke(0.5.dp, Color.Black.copy(alpha = 0.1f))
+        ) {
+            Column {
+                AsyncImage(
+                    modifier = Modifier
+                        .height(500.dp)
+                        .width(380.dp),
+                    model = "$IMAGE_BASE_URL${movie.posterPath}",
+                    contentScale = ContentScale.FillBounds,
+                    contentDescription = null,
                 )
-
-                Row(horizontalArrangement = spacedBy(8.dp)) {
-                    Text(
-                        text = movie.releaseDate.take(4),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray,
-                    )
-                    Text(
-                        text = "|",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray,
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = spacedBy(2.dp)
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(14.dp),
-                            painter = painterResource(Res.drawable.ic_star),
-                            tint = Color(0xFFEAAF00),
-                            contentDescription = null
-                        )
-                        Text(
-                            text = movie.voteAverage.toRatingFormat(),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color(0xFFEAAF00),
-                        )
-                    }
-                }
-
-                FlowRow(
-                    horizontalArrangement = spacedBy(8.dp),
+                Column(
+                    modifier = Modifier
+                        .width(380.dp)
+                        .padding(16.dp),
                     verticalArrangement = spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    movie.genres.forEach { genre ->
+                    Text(
+                        text = movie.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                    )
+
+                    Row(horizontalArrangement = spacedBy(8.dp)) {
                         Text(
-                            modifier = Modifier
-                                .background(Color.LightGray, RoundedCornerShape(4.dp))
-                                .padding(horizontal = 6.dp, vertical = 2.dp),
-                            text = genre,
+                            text = movie.releaseDate.take(4),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.DarkGray,
+                            color = Color.Gray,
                         )
+                        Text(
+                            text = "|",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Gray,
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = spacedBy(2.dp)
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(14.dp),
+                                painter = painterResource(Res.drawable.ic_star),
+                                tint = Color(0xFFEAAF00),
+                                contentDescription = null
+                            )
+                            Text(
+                                text = movie.voteAverage.toRatingFormat(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color(0xFFEAAF00),
+                            )
+                        }
+                    }
+
+                    FlowRow(
+                        horizontalArrangement = spacedBy(8.dp),
+                        verticalArrangement = spacedBy(8.dp),
+                    ) {
+                        movie.genres.forEach { genre ->
+                            Text(
+                                modifier = Modifier
+                                    .background(Color.LightGray, RoundedCornerShape(4.dp))
+                                    .padding(horizontal = 6.dp, vertical = 2.dp),
+                                text = genre,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.DarkGray,
+                            )
+                        }
                     }
                 }
             }
@@ -183,7 +199,8 @@ private fun MovieCard(
 private fun SwipeScreenContentPreview() {
     SwipeScreenContent(
         state = SwipeUdf.State(
-            movieList = emptyList()
+            movieList = emptyList(),
+            removingMovieId = null
         ),
         onAction = {}
     )

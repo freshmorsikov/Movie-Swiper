@@ -9,11 +9,11 @@ class UpdateMovieStatusUseCase(
 
     operator fun invoke(
         id: Long,
-        status: MovieStatus
+        movieStatus: MovieStatus
     ) {
         movieRepository.updateMovieStatus(
             id = id,
-            status = status,
+            status = movieStatus,
         )
     }
 
