@@ -68,7 +68,7 @@ fun SwipeScreenContent(
                     .padding(16.dp)
                     .align(Alignment.Center),
                 movie = movie,
-                visible = movie.id != state.removingMovieId
+                swipingMovieId = state.swipingMovieId
             )
         }
 
@@ -82,7 +82,7 @@ fun SwipeScreenContent(
                 modifier = Modifier.weight(1f),
                 text = "Dislike",
                 containerColor = Color(0xFFF95667),
-                enabled = state.removingMovieId == null,
+                enabled = state.swipingMovieId == null,
                 onClick = {
                     onAction(SwipeUdf.Action.Dislike)
                 }
@@ -91,7 +91,7 @@ fun SwipeScreenContent(
                 modifier = Modifier.weight(1f),
                 text = "Like",
                 containerColor = Color(0xFF00BE64),
-                enabled = state.removingMovieId == null,
+                enabled = state.swipingMovieId == null,
                 onClick = {
                     onAction(SwipeUdf.Action.Like)
                 }
@@ -103,14 +103,20 @@ fun SwipeScreenContent(
 @Composable
 private fun MovieCard(
     movie: Movie,
-    visible: Boolean,
+    swipingMovieId: SwipeUdf.SwipingMovieId?,
     modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
         modifier = modifier,
-        visible = visible,
+        visible = movie.id != swipingMovieId?.id,
         enter = EnterTransition.None,
-        exit = fadeOut(tween(durationMillis = 500)) + slideOutHorizontally { fullWidth -> -fullWidth },
+        exit = fadeOut(tween(durationMillis = 500)) + slideOutHorizontally { fullWidth ->
+            if (swipingMovieId is SwipeUdf.SwipingMovieId.Left) {
+                -fullWidth
+            } else {
+                fullWidth
+            }
+        },
     ) {
         Card(
             modifier = modifier,
@@ -200,7 +206,7 @@ private fun SwipeScreenContentPreview() {
     SwipeScreenContent(
         state = SwipeUdf.State(
             movieList = emptyList(),
-            removingMovieId = null
+            swipingMovieId = null
         ),
         onAction = {}
     )

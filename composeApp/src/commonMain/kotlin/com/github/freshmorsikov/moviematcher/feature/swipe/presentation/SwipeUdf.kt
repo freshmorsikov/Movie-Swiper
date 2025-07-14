@@ -7,8 +7,15 @@ interface SwipeUdf {
 
     data class State(
         val movieList: List<Movie>,
-        val removingMovieId: Long?
+        val swipingMovieId: SwipingMovieId?
     ) : Udf.State
+
+    sealed interface SwipingMovieId {
+        val id: Long
+
+        data class Left(override val id: Long): SwipingMovieId
+        data class Right(override val id: Long): SwipingMovieId
+    }
 
     sealed interface Action : Udf.Action {
         data class UpdateMovieList(val movieList: List<Movie>) : Action

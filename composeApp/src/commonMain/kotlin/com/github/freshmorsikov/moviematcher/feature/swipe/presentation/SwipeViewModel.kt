@@ -19,7 +19,7 @@ class SwipeViewModel(
     initState = {
         SwipeUdf.State(
             movieList = emptyList(),
-            removingMovieId = null,
+            swipingMovieId = null,
         )
     }
 ) {
@@ -48,15 +48,23 @@ class SwipeViewModel(
             }
 
             SwipeUdf.Action.Like -> {
-                startMovieRemoving()
+                currentState.copy(
+                    swipingMovieId = currentState.movieList.lastOrNull()?.id?.let { id ->
+                        SwipeUdf.SwipingMovieId.Right(id = id)
+                    }
+                )
             }
 
             SwipeUdf.Action.Dislike -> {
-                startMovieRemoving()
+                currentState.copy(
+                    swipingMovieId = currentState.movieList.lastOrNull()?.id?.let { id ->
+                        SwipeUdf.SwipingMovieId.Left(id = id)
+                    }
+                )
             }
 
             is SwipeUdf.Action.FinishRemoving -> {
-                currentState.copy(removingMovieId = null)
+                currentState.copy(swipingMovieId = null)
             }
 
             is SwipeUdf.Action.MoreClick -> {
@@ -82,16 +90,10 @@ class SwipeViewModel(
         }
     }
 
-    private fun startMovieRemoving(): SwipeUdf.State {
-        return currentState.copy(
-            removingMovieId = currentState.movieList.lastOrNull()?.id
-        )
-    }
-
     private fun finishMovieRemoving(movieStatus: MovieStatus) {
-        currentState.removingMovieId?.let { id ->
+        currentState.swipingMovieId?.let { swipingMovieId ->
             updateMovieStatusUseCase(
-                id = id,
+                id = swipingMovieId.id,
                 movieStatus = movieStatus
             )
             onAction(SwipeUdf.Action.FinishRemoving)
