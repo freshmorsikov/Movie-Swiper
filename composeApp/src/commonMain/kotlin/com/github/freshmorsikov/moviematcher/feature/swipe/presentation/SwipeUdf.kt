@@ -10,6 +10,7 @@ interface SwipeUdf {
     ): Udf.State
 
     sealed interface Action: Udf.Action {
+        data class UpdateMovieList(val movieList: List<Movie>): Action
         data object Like: Action
         data object Dislike: Action
         data class MoreClick(val id: Long): Action

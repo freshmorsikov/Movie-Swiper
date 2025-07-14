@@ -14,7 +14,7 @@ abstract class UdfViewModel<S : Udf.State, A : Udf.Action, E : Udf.Event>(
     initState: () -> S
 ) : ViewModel() {
 
-    protected val mState = MutableStateFlow(initState())
+    protected val mState = MutableStateFlow(value = initState())
     val state = mState.asStateFlow()
     protected val currentState: S
         get() = mState.value
@@ -22,15 +22,16 @@ abstract class UdfViewModel<S : Udf.State, A : Udf.Action, E : Udf.Event>(
     protected val mEvent = Channel<E>()
     val event: Flow<E> = mEvent.receiveAsFlow()
 
-    abstract fun onAction(action: A)
-
-    protected fun setState(block: suspend S.() -> S) {
-        viewModelScope.launch {
-            mState.update { state ->
-                state.block()
-            }
+    fun onAction(action: A) {
+        mState.update {
+            reduce(
+                currentState = it,
+                action = action
+            )
         }
     }
+
+    abstract fun reduce(currentState: S, action: A): S
 
     protected fun sendEvent(event: E) {
         viewModelScope.launch {

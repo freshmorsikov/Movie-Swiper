@@ -10,35 +10,49 @@ import kotlinx.coroutines.flow.onEach
 
 class SwipeViewModel(
     private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
-    getMovieListUseCase: GetMovieListUseCase,
+    private val getMovieListUseCase: GetMovieListUseCase,
 ) : UdfViewModel<SwipeUdf.State, SwipeUdf.Action, SwipeUdf.Event>(
     initState = {
-        SwipeUdf.State(
-            movieList = emptyList()
-        )
+        SwipeUdf.State(movieList = emptyList())
     }
 ) {
 
     init {
+        subscribeOnMovieList()
+    }
+
+    private fun subscribeOnMovieList() {
         getMovieListUseCase().onEach { movieList ->
-            setState {
-                copy(movieList = movieList.reversed())
-            }
+            onAction(
+                SwipeUdf.Action.UpdateMovieList(
+                    movieList = movieList.reversed()
+                )
+            )
         }.launchIn(viewModelScope)
     }
 
-    override fun onAction(action: SwipeUdf.Action) {
-        when (action) {
+    override fun reduce(
+        currentState: SwipeUdf.State,
+        action: SwipeUdf.Action,
+    ): SwipeUdf.State {
+        return when (action) {
+            is SwipeUdf.Action.UpdateMovieList -> {
+                 currentState.copy(movieList = action.movieList)
+            }
+
             SwipeUdf.Action.Like -> {
                 updateMovieStatus(status = MovieStatus.Liked)
+                currentState
             }
 
             SwipeUdf.Action.Dislike -> {
                 updateMovieStatus(status = MovieStatus.Disliked)
+                currentState
             }
 
             is SwipeUdf.Action.MoreClick -> {
                 // TODO implement
+                currentState
             }
         }
     }
