@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.github.freshmorsikov.moviematcher.app.App
 import org.koin.dsl.module
 
 class MainActivity : ComponentActivity() {

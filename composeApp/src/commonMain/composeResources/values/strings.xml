@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="navigation_swipe">Swipe</string>
+    <string name="navigation_favorite">Favorite</string>
+    <string name="navigation_matches">Matches</string>
+
+</resources>
