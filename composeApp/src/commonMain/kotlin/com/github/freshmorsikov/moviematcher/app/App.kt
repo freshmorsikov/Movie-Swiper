@@ -1,6 +1,5 @@
 package com.github.freshmorsikov.moviematcher.app
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -16,6 +15,8 @@ import com.github.freshmorsikov.moviematcher.core.data.di.dataStoreModule
 import com.github.freshmorsikov.moviematcher.core.data.di.sqlDriverModule
 import com.github.freshmorsikov.moviematcher.feature.favorite.FavoriteScreen
 import com.github.freshmorsikov.moviematcher.feature.favorite.di.favoriteFeatureModule
+import com.github.freshmorsikov.moviematcher.feature.matches.MatchesScreen
+import com.github.freshmorsikov.moviematcher.feature.matches.di.matchesFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.di.swipeFeatureModule
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -35,6 +36,7 @@ fun App(contextModule: Module = module {}) {
                 dataModule,
                 swipeFeatureModule,
                 favoriteFeatureModule,
+                matchesFeatureModule,
             )
         }
     ) {
@@ -63,7 +65,7 @@ fun App(contextModule: Module = module {}) {
                     FavoriteScreen()
                 }
                 composable<NavigationRoute.Matches> {
-                    Box(modifier = Modifier.fillMaxSize())
+                    MatchesScreen()
                 }
             }
         }

@@ -23,7 +23,11 @@ val swipeFeatureModule = module {
         GetMovieListUseCase(movieRepository = get())
     }
     factory {
-        UpdateMovieStatusUseCase(movieRepository = get())
+        UpdateMovieStatusUseCase(
+            movieRepository = get(),
+            getPairIdUseCase = get(),
+            matchRepository = get(),
+        )
     }
     single {
         MovieRepository(

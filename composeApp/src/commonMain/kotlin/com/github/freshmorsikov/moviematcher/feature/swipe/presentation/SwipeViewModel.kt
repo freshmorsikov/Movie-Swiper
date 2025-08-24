@@ -95,10 +95,12 @@ class SwipeViewModel(
 
     private fun updateMovieStatus(movieStatus: MovieStatus) {
         currentState.movie?.id?.let { id ->
-            updateMovieStatusUseCase(
-                id = id,
-                movieStatus = movieStatus,
-            )
+            viewModelScope.launch {
+                updateMovieStatusUseCase(
+                    id = id,
+                    movieStatus = movieStatus,
+                )
+            }
         }
         viewModelScope.launch {
             delay(500)

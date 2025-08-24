@@ -17,6 +17,9 @@ sqldelight = "2.1.0"
 koin = "4.0.3"
 datastore = "1.1.7"
 navigationCompose = "2.9.0-beta05"
+googleServices = "4.4.3"
+firebaseBom = "34.1.0"
+gitlive = "2.3.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -48,6 +51,9 @@ koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmo
 
 datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-database = { group = "dev.gitlive", name = "firebase-database", version.ref = "gitlive" }
 
 [bundles]
 ktor = [
@@ -83,3 +89,4 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+googleServices = { id = "com.google.gms.google-services", version.ref = "googleServices" }

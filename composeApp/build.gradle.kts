@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.buildConfig)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.googleServices)
 }
 
 buildConfig {
@@ -27,7 +28,7 @@ buildConfig {
 kotlin {
     androidTarget {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
@@ -52,6 +53,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.okhttp)
             implementation(libs.sqldelight.android.driver)
+            implementation(project.dependencies.platform(libs.firebase.bom))
         }
         iosMain.dependencies {
             implementation(libs.ktor.darwin)
@@ -73,6 +75,7 @@ kotlin {
             implementation(libs.bundles.coil)
             implementation(libs.bundles.koin)
             implementation(libs.bundles.datastore)
+            implementation(libs.firebase.database)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
