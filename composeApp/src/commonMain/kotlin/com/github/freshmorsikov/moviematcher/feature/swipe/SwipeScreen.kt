@@ -1,6 +1,7 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
@@ -8,6 +9,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -62,27 +64,30 @@ fun SwipeScreenContent(
     onAction: (SwipeUdf.Action) -> Unit
 ) {
     MovieScaffold {
-        state.movieList.forEach { movie ->
-            MovieCard(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.Center),
-                movie = movie,
-                swipingMovieId = state.swipingMovieId
-            )
+        Box(
+            modifier = Modifier
+                .padding(
+                    start = 16.dp,
+                    top = 16.dp,
+                    end = 16.dp,
+                    bottom = 72.dp,
+                )
+                .align(Alignment.Center),
+        ) {
+            MovieCard(state = state)
         }
 
         Row(
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.BottomCenter),
-            horizontalArrangement = spacedBy(16.dp)
+            horizontalArrangement = spacedBy(8.dp)
         ) {
             MovieButton(
                 modifier = Modifier.weight(1f),
                 text = "Dislike",
                 containerColor = Color(0xFFF95667),
-                enabled = state.swipingMovieId == null,
+                enabled = state.isButtonsEnabled,
                 onClick = {
                     onAction(SwipeUdf.Action.Dislike)
                 }
@@ -91,7 +96,7 @@ fun SwipeScreenContent(
                 modifier = Modifier.weight(1f),
                 text = "Like",
                 containerColor = Color(0xFF00BE64),
-                enabled = state.swipingMovieId == null,
+                enabled = state.isButtonsEnabled,
                 onClick = {
                     onAction(SwipeUdf.Action.Like)
                 }
@@ -102,22 +107,27 @@ fun SwipeScreenContent(
 
 @Composable
 private fun MovieCard(
-    movie: Movie,
-    swipingMovieId: SwipeUdf.SwipingMovieId?,
+    state: SwipeUdf.State,
     modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(
-        modifier = modifier,
-        visible = movie.id != swipingMovieId?.id,
-        enter = EnterTransition.None,
-        exit = fadeOut(tween(durationMillis = 500)) + slideOutHorizontally { fullWidth ->
-            if (swipingMovieId is SwipeUdf.SwipingMovieId.Left) {
-                -fullWidth
-            } else {
-                fullWidth
-            }
+    val currentMovie = state.movie ?: return
+    AnimatedContent(
+        targetState = currentMovie,
+        transitionSpec = {
+            ContentTransform(
+                targetContentEnter = EnterTransition.None,
+                initialContentExit = fadeOut(tween(durationMillis = 500)) + slideOutHorizontally { fullWidth ->
+                    if (state.swipeDirection == SwipeUdf.SwipeDirection.Left) {
+                        -fullWidth
+                    } else {
+                        fullWidth
+                    }
+                },
+                targetContentZIndex = state.zIndex,
+            )
         },
-    ) {
+        label = "movieCardAnimation",
+    ) { movie ->
         Card(
             modifier = modifier,
             colors = CardDefaults.cardColors(
@@ -205,8 +215,20 @@ private fun MovieCard(
 private fun SwipeScreenContentPreview() {
     SwipeScreenContent(
         state = SwipeUdf.State(
-            movieList = emptyList(),
-            swipingMovieId = null
+            movie = Movie(
+                id = 0,
+                title = "Title",
+                originalTitle = "Original title",
+                posterPath = "path",
+                releaseDate = "2025",
+                voteAverage = 2.4,
+                popularity = 70.0,
+                status = "",
+                genres = listOf("Comedy", "Drama"),
+            ),
+            swipeDirection = SwipeUdf.SwipeDirection.Left,
+            zIndex = 0f,
+            isSwiping = false,
         ),
         onAction = {}
     )
