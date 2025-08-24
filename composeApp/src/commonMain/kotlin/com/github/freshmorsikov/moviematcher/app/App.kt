@@ -14,6 +14,8 @@ import androidx.navigation.compose.rememberNavController
 import com.github.freshmorsikov.moviematcher.core.data.di.dataModule
 import com.github.freshmorsikov.moviematcher.core.data.di.dataStoreModule
 import com.github.freshmorsikov.moviematcher.core.data.di.sqlDriverModule
+import com.github.freshmorsikov.moviematcher.feature.favorite.FavoriteScreen
+import com.github.freshmorsikov.moviematcher.feature.favorite.di.favoriteFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.di.swipeFeatureModule
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -32,6 +34,7 @@ fun App(contextModule: Module = module {}) {
                 dataStoreModule,
                 dataModule,
                 swipeFeatureModule,
+                favoriteFeatureModule,
             )
         }
     ) {
@@ -57,7 +60,7 @@ fun App(contextModule: Module = module {}) {
                     SwipeScreen()
                 }
                 composable<NavigationRoute.Favorite> {
-                    Box(modifier = Modifier.fillMaxSize())
+                    FavoriteScreen()
                 }
                 composable<NavigationRoute.Matches> {
                     Box(modifier = Modifier.fillMaxSize())

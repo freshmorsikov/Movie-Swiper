@@ -4,4 +4,6 @@
     <string name="navigation_favorite">Favorite</string>
     <string name="navigation_matches">Matches</string>
 
+    <string name="favorites_empty">No favorites yet</string>
+
 </resources>

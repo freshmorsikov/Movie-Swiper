@@ -7,22 +7,19 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -40,10 +37,8 @@ import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeViewModel
-import com.github.freshmorsikov.moviematcher.util.toRatingFormat
-import moviematcher.composeapp.generated.resources.Res
-import moviematcher.composeapp.generated.resources.ic_star
-import org.jetbrains.compose.resources.painterResource
+import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieGenres
+import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -131,7 +126,7 @@ private fun MovieCard(
         Card(
             modifier = modifier,
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)
             ),
             shape = RoundedCornerShape(8.dp),
             border = BorderStroke(0.5.dp, Color.Black.copy(alpha = 0.1f))
@@ -159,51 +154,11 @@ private fun MovieCard(
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
                     )
-
-                    Row(horizontalArrangement = spacedBy(8.dp)) {
-                        Text(
-                            text = movie.releaseDate.take(4),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Gray,
-                        )
-                        Text(
-                            text = "|",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Gray,
-                        )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = spacedBy(2.dp)
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(14.dp),
-                                painter = painterResource(Res.drawable.ic_star),
-                                tint = Color(0xFFEAAF00),
-                                contentDescription = null
-                            )
-                            Text(
-                                text = movie.voteAverage.toRatingFormat(),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color(0xFFEAAF00),
-                            )
-                        }
-                    }
-
-                    FlowRow(
-                        horizontalArrangement = spacedBy(8.dp),
-                        verticalArrangement = spacedBy(8.dp),
-                    ) {
-                        movie.genres.forEach { genre ->
-                            Text(
-                                modifier = Modifier
-                                    .background(Color.LightGray, RoundedCornerShape(4.dp))
-                                    .padding(horizontal = 6.dp, vertical = 2.dp),
-                                text = genre,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.DarkGray,
-                            )
-                        }
-                    }
+                    MovieInfo(
+                        releaseDate = movie.releaseDate,
+                        voteAverage = movie.voteAverage,
+                    )
+                    MovieGenres(movie.genres)
                 }
             }
         }
