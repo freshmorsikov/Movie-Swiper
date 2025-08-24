@@ -6,4 +6,8 @@
 
     <string name="favorites_empty">No favorites yet</string>
 
+    <string name="matches_send_code">To find match send your CODE to your mate</string>
+    <string name="matches_share">Share</string>
+    <string name="matches_copy">Copy</string>
+
 </resources>
