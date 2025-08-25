@@ -3,7 +3,7 @@ package com.github.freshmorsikov.moviematcher.feature.matches.domain
 import com.github.freshmorsikov.moviematcher.shared.data.MatchRepository
 import com.github.freshmorsikov.moviematcher.util.pow
 
-private const val PAIR_ID_ABC = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const val PAIR_ID_ABC = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 class GetPairIdUseCase(
     private val matchRepository: MatchRepository

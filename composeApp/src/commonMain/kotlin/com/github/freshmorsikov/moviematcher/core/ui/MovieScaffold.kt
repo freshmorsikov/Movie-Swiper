@@ -13,9 +13,11 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun MovieScaffold(
     background: Color = MaterialTheme.colorScheme.background,
-    content: @Composable BoxScope.() -> Unit
-){
+    modifier: Modifier = Modifier,
+    content: @Composable BoxScope.() -> Unit,
+) {
     Scaffold(
+        modifier = modifier,
         containerColor = background
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {

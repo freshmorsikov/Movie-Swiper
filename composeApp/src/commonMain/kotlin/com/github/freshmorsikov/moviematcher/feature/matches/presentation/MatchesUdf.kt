@@ -5,7 +5,7 @@ import com.github.freshmorsikov.moviematcher.core.presentation.Udf
 interface MatchesUdf {
 
     data class State(
-        val pairId: String?
+        val pairId: String
     ): Udf.State
 
     sealed interface Action: Udf.Action {

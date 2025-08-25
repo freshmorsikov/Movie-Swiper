@@ -9,7 +9,7 @@ class MatchesViewModel(
     private val getPairIdUseCase: GetPairIdUseCase
 ) : UdfViewModel<MatchesUdf.State, MatchesUdf.Action, MatchesUdf.Event>(
     initState = {
-        MatchesUdf.State(pairId = null)
+        MatchesUdf.State(pairId = "••••")
     }
 ) {
 

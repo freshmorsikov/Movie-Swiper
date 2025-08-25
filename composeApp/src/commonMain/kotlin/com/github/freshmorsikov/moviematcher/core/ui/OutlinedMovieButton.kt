@@ -1,0 +1,33 @@
+package com.github.freshmorsikov.moviematcher.core.ui
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun OutlinedMovieButton(
+    text: String,
+    onClick: () -> Unit,
+    color: Color,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedButton(
+        modifier = modifier,
+        border = BorderStroke(
+            width = 2.dp,
+            color = color
+        ),
+        enabled = enabled,
+        onClick = onClick,
+    ) {
+        Text(
+            text = text,
+            color = color,
+        )
+    }
+}
