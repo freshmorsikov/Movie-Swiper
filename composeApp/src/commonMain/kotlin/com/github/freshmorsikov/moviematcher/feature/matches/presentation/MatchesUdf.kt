@@ -9,9 +9,13 @@ interface MatchesUdf {
     ): Udf.State
 
     sealed interface Action: Udf.Action {
+        data object CreatePair: Action
+        data object JoinPair: Action
         data class UpdatePairId(val pairId: String): Action
     }
 
-    sealed interface Event: Udf.Event
+    sealed interface Event: Udf.Event {
+        data object OpenPair: Event
+    }
 
 }

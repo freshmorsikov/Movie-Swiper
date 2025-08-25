@@ -24,12 +24,25 @@ class MatchesViewModel(
 
     override fun reduce(action: MatchesUdf.Action): MatchesUdf.State {
         return when (action) {
+            MatchesUdf.Action.CreatePair -> {
+                currentState
+            }
+            MatchesUdf.Action.JoinPair -> {
+                currentState
+            }
             is MatchesUdf.Action.UpdatePairId -> {
                 currentState.copy(pairId = action.pairId)
             }
         }
     }
 
-    override suspend fun handleEffects(action: MatchesUdf.Action) {}
+    override suspend fun handleEffects(action: MatchesUdf.Action) {
+        when (action) {
+            MatchesUdf.Action.CreatePair -> {
+                sendEvent(MatchesUdf.Event.OpenPair)
+            }
+            else -> {}
+        }
+    }
 
 }

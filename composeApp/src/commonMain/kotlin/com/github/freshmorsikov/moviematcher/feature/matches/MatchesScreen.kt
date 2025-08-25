@@ -1,27 +1,20 @@
 package com.github.freshmorsikov.moviematcher.feature.matches
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,128 +26,93 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.github.freshmorsikov.moviematcher.app.NavigationRoute
+import com.github.freshmorsikov.moviematcher.core.presentation.Udf
 import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.OutlinedMovieButton
 import com.github.freshmorsikov.moviematcher.feature.matches.domain.PAIR_ID_ABC
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesUdf
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import moviematcher.composeapp.generated.resources.Res
-import moviematcher.composeapp.generated.resources.matches_copy
+import moviematcher.composeapp.generated.resources.matches_create_pair
 import moviematcher.composeapp.generated.resources.matches_enter_code
+import moviematcher.composeapp.generated.resources.matches_info
+import moviematcher.composeapp.generated.resources.matches_join_pair
 import moviematcher.composeapp.generated.resources.matches_save
-import moviematcher.composeapp.generated.resources.matches_send_code
-import moviematcher.composeapp.generated.resources.matches_share
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MatchesScreen(
+    navController: NavController,
     viewModel: MatchesViewModel = koinViewModel()
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    MatchesContent(state = state)
-}
-
-@Composable
-fun MatchesContent(state: MatchesUdf.State) {
-    MovieScaffold {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = spacedBy(40.dp),
-        ) {
-            SendCodeBlock(pairId = state.pairId)
-            Divider()
-            EnterCodeBlock()
-        }
-    }
-}
-
-@Composable
-private fun SendCodeBlock(
-    pairId: String,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(Res.string.matches_send_code),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-                        shape = RoundedCornerShape(8.dp)
-                    ).border(
-                        width = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant,
-                        shape = RoundedCornerShape(8.dp),
-                    ).padding(
-                        horizontal = 16.dp,
-                        vertical = 8.dp,
-                    ),
-                text = pairId,
-                style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.ExtraBold),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Row(
-                modifier = Modifier.padding(top = 16.dp),
-                horizontalArrangement = spacedBy(8.dp),
-            ) {
-                MovieButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(Res.string.matches_share),
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    onClick = {
-                        // TODO handle
-                    }
-                )
-                OutlinedMovieButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(Res.string.matches_copy),
-                    color = MaterialTheme.colorScheme.secondary,
-                    onClick = {
-                        // TODO handle
-                    }
-                )
+    MatchesContent(onAction = viewModel::onAction)
+    SubscribeOnEvents(viewModel.event) {event ->
+        when (event) {
+            is MatchesUdf.Event.OpenPair -> {
+                navController.navigate(route = NavigationRoute.Pair)
             }
         }
     }
 }
 
 @Composable
-private fun Divider(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        HorizontalDivider(
-            modifier = Modifier.weight(1f),
-            color = MaterialTheme.colorScheme.outlineVariant,
-        )
-        Text(
-            text = "OR",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        HorizontalDivider(
-            modifier = Modifier.weight(1f),
-            color = MaterialTheme.colorScheme.outlineVariant,
-        )
+private  fun <E: Udf.Event> SubscribeOnEvents(
+    events: Flow<E>,
+    block: (E) -> Unit
+) {
+    LaunchedEffect(Unit) {
+        events.onEach {
+            block(it)
+        }.launchIn(this)
+    }
+}
+
+
+
+@Composable
+fun MatchesContent(onAction: (MatchesUdf.Action) -> Unit) {
+    MovieScaffold {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.Center)
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(Res.string.matches_info),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+            )
+            MovieButton(
+                modifier = Modifier
+                    .padding(top = 32.dp)
+                    .fillMaxWidth(),
+                text = stringResource(Res.string.matches_create_pair),
+                containerColor = MaterialTheme.colorScheme.secondary,
+                onClick = {
+                    onAction(MatchesUdf.Action.CreatePair)
+                }
+            )
+            OutlinedMovieButton(
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .fillMaxWidth(),
+                text = stringResource(Res.string.matches_join_pair),
+                color = MaterialTheme.colorScheme.secondary,
+                onClick = {
+                    onAction(MatchesUdf.Action.JoinPair)
+                }
+            )
+        }
     }
 }
 
@@ -238,9 +196,7 @@ private fun EnterCodeBlock(modifier: Modifier = Modifier) {
 private fun MatchesContentPreview() {
     MaterialTheme {
         MatchesContent(
-            state = MatchesUdf.State(
-                pairId = "AB17"
-            )
+            onAction = {}
         )
     }
 }

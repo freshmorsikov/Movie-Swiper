@@ -17,6 +17,7 @@ import com.github.freshmorsikov.moviematcher.feature.favorite.FavoriteScreen
 import com.github.freshmorsikov.moviematcher.feature.favorite.di.favoriteFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.matches.MatchesScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.di.matchesFeatureModule
+import com.github.freshmorsikov.moviematcher.feature.pair.PairScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.di.swipeFeatureModule
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -65,7 +66,10 @@ fun App(contextModule: Module = module {}) {
                     FavoriteScreen()
                 }
                 composable<NavigationRoute.Matches> {
-                    MatchesScreen()
+                    MatchesScreen(navController = navController)
+                }
+                composable<NavigationRoute.Pair> {
+                    PairScreen()
                 }
             }
         }

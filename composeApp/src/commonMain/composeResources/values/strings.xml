@@ -6,11 +6,16 @@
 
     <string name="favorites_empty">No favorites yet</string>
 
-    <string name="matches_send_code">To find match send your CODE to your mate</string>
+    <string name="matches_info">To find a match, you first need to create a pair</string>
+    <string name="matches_create_pair">Create a Pair</string>
+    <string name="matches_join_pair">Join a Pair</string>
+
     <string name="matches_enter_code">Enter your mate's CODE here</string>
-    <string name="matches_share">Share</string>
-    <string name="matches_copy">Copy</string>
     <string name="matches_save">Save</string>
     <string name="matches_or">OR</string>
+
+    <string name="pair_send_code">Send the CODE to your mate</string>
+    <string name="pair_share">Share</string>
+    <string name="pair_copy">Copy</string>
 
 </resources>
