@@ -15,18 +15,17 @@ import com.github.freshmorsikov.moviematcher.core.data.di.dataStoreModule
 import com.github.freshmorsikov.moviematcher.core.data.di.sqlDriverModule
 import com.github.freshmorsikov.moviematcher.feature.favorite.FavoriteScreen
 import com.github.freshmorsikov.moviematcher.feature.favorite.di.favoriteFeatureModule
+import com.github.freshmorsikov.moviematcher.feature.join.JoinPairScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.MatchesScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.di.matchesFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.pair.PairScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.di.swipeFeatureModule
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 @Composable
-@Preview
 fun App(contextModule: Module = module {}) {
     KoinApplication(
         application = {
@@ -70,6 +69,9 @@ fun App(contextModule: Module = module {}) {
                 }
                 composable<NavigationRoute.Pair> {
                     PairScreen()
+                }
+                composable<NavigationRoute.JoinPair> {
+                    JoinPairScreen()
                 }
             }
         }

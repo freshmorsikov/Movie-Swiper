@@ -1,49 +1,31 @@
 package com.github.freshmorsikov.moviematcher.feature.matches
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.github.freshmorsikov.moviematcher.app.NavigationRoute
-import com.github.freshmorsikov.moviematcher.core.presentation.Udf
 import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.OutlinedMovieButton
-import com.github.freshmorsikov.moviematcher.feature.matches.domain.PAIR_ID_ABC
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesUdf
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import moviematcher.composeapp.generated.resources.Res
+import moviematcher.composeapp.generated.resources.ic_match
 import moviematcher.composeapp.generated.resources.matches_create_pair
-import moviematcher.composeapp.generated.resources.matches_enter_code
 import moviematcher.composeapp.generated.resources.matches_info
 import moviematcher.composeapp.generated.resources.matches_join_pair
-import moviematcher.composeapp.generated.resources.matches_save
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -54,28 +36,18 @@ fun MatchesScreen(
     viewModel: MatchesViewModel = koinViewModel()
 ) {
     MatchesContent(onAction = viewModel::onAction)
-    SubscribeOnEvents(viewModel.event) {event ->
+    SubscribeOnEvents(viewModel.event) { event ->
         when (event) {
             is MatchesUdf.Event.OpenPair -> {
                 navController.navigate(route = NavigationRoute.Pair)
             }
+
+            is MatchesUdf.Event.OpenJoinPair -> {
+                navController.navigate(route = NavigationRoute.JoinPair)
+            }
         }
     }
 }
-
-@Composable
-private  fun <E: Udf.Event> SubscribeOnEvents(
-    events: Flow<E>,
-    block: (E) -> Unit
-) {
-    LaunchedEffect(Unit) {
-        events.onEach {
-            block(it)
-        }.launchIn(this)
-    }
-}
-
-
 
 @Composable
 fun MatchesContent(onAction: (MatchesUdf.Action) -> Unit) {
@@ -83,10 +55,19 @@ fun MatchesContent(onAction: (MatchesUdf.Action) -> Unit) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .align(Alignment.Center)
+                .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Icon(
+                modifier = Modifier.size(120.dp),
+                painter = painterResource(Res.drawable.ic_match),
+                tint = MaterialTheme.colorScheme.secondary,
+                contentDescription = null
+            )
             Text(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .padding(top = 20.dp)
+                    .fillMaxWidth(),
                 text = stringResource(Res.string.matches_info),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -99,7 +80,7 @@ fun MatchesContent(onAction: (MatchesUdf.Action) -> Unit) {
                 text = stringResource(Res.string.matches_create_pair),
                 containerColor = MaterialTheme.colorScheme.secondary,
                 onClick = {
-                    onAction(MatchesUdf.Action.CreatePair)
+                    onAction(MatchesUdf.Action.CreatePairClick)
                 }
             )
             OutlinedMovieButton(
@@ -109,82 +90,7 @@ fun MatchesContent(onAction: (MatchesUdf.Action) -> Unit) {
                 text = stringResource(Res.string.matches_join_pair),
                 color = MaterialTheme.colorScheme.secondary,
                 onClick = {
-                    onAction(MatchesUdf.Action.JoinPair)
-                }
-            )
-        }
-    }
-}
-
-@Composable
-private fun EnterCodeBlock(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(Res.string.matches_enter_code),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-            )
-
-            val focusManager = LocalFocusManager.current
-            var input by remember { mutableStateOf("") }
-            OutlinedTextField(
-                modifier = Modifier
-                    .width(160.dp)
-                    .padding(top = 16.dp),
-                value = input,
-                onValueChange = { value ->
-                    input = value.filter { char ->
-                        PAIR_ID_ABC.contains(
-                            char = char,
-                            ignoreCase = true,
-                        )
-                    }.map { char ->
-                        if (char.isLetter()) {
-                            char.uppercase()
-                        } else {
-                            char
-                        }
-                    }.take(4).joinToString("")
-                },
-                textStyle = MaterialTheme.typography.displayMedium
-                    .copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        textAlign = TextAlign.Center,
-                    ),
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
-                    }
-                ),
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-                    cursorColor = MaterialTheme.colorScheme.outlineVariant,
-                    focusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                )
-            )
-            MovieButton(
-                modifier = Modifier
-                    .fillMaxWidth(fraction = 0.5f)
-                    .padding(top = 16.dp),
-                text = stringResource(Res.string.matches_save),
-                containerColor = MaterialTheme.colorScheme.secondary,
-                onClick = {
-                    // TODO handle
+                    onAction(MatchesUdf.Action.JoinPairClick)
                 }
             )
         }

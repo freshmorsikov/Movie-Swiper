@@ -18,4 +18,7 @@ interface NavigationRoute {
     @Serializable
     data object Pair: NavigationRoute
 
+    @Serializable
+    data object JoinPair: NavigationRoute
+
 }

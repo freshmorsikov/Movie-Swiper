@@ -24,10 +24,10 @@ class MatchesViewModel(
 
     override fun reduce(action: MatchesUdf.Action): MatchesUdf.State {
         return when (action) {
-            MatchesUdf.Action.CreatePair -> {
+            MatchesUdf.Action.CreatePairClick -> {
                 currentState
             }
-            MatchesUdf.Action.JoinPair -> {
+            MatchesUdf.Action.JoinPairClick -> {
                 currentState
             }
             is MatchesUdf.Action.UpdatePairId -> {
@@ -38,8 +38,11 @@ class MatchesViewModel(
 
     override suspend fun handleEffects(action: MatchesUdf.Action) {
         when (action) {
-            MatchesUdf.Action.CreatePair -> {
+            MatchesUdf.Action.CreatePairClick -> {
                 sendEvent(MatchesUdf.Event.OpenPair)
+            }
+            MatchesUdf.Action.JoinPairClick -> {
+                sendEvent(MatchesUdf.Event.OpenJoinPair)
             }
             else -> {}
         }

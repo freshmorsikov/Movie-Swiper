@@ -6,7 +6,7 @@
 
     <string name="favorites_empty">No favorites yet</string>
 
-    <string name="matches_info">To find a match, you first need to create a pair</string>
+    <string name="matches_info">To find a match, you first need to pair up</string>
     <string name="matches_create_pair">Create a Pair</string>
     <string name="matches_join_pair">Join a Pair</string>
 
