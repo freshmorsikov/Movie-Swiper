@@ -2,9 +2,8 @@ package com.github.freshmorsikov.moviematcher.feature.code
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,6 +29,7 @@ import com.github.freshmorsikov.moviematcher.feature.code.presentation.CodeUdf
 import com.github.freshmorsikov.moviematcher.feature.code.presentation.CodeViewModel
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import com.github.freshmorsikov.moviematcher.util.clickableWithoutIndication
+import com.github.freshmorsikov.moviematcher.util.clipEntryOf
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_close
 import moviematcher.composeapp.generated.resources.pair_copy
@@ -49,10 +50,20 @@ fun CodeScreen(
         pairId = state.pairId,
         onAction = viewModel::onAction
     )
+
+    val clipboard = LocalClipboard.current
     SubscribeOnEvents(viewModel.event) { event ->
         when (event) {
             CodeUdf.Event.GoBack -> {
                 navController.popBackStack()
+            }
+
+            is CodeUdf.Event.SaveToClipboard -> {
+                clipboard.setClipEntry(
+                    clipEntry = clipEntryOf(
+                        string = event.pairId
+                    )
+                )
             }
         }
     }
@@ -77,21 +88,20 @@ fun CodeContent(
             contentDescription = null
         )
         Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = spacedBy(32.dp)
         ) {
+            Spacer(modifier = Modifier.weight(1f))
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(Res.string.pair_send_code),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
             )
             Text(
                 modifier = Modifier
+                    .padding(top = 32.dp)
                     .background(
                         color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
                         shape = RoundedCornerShape(8.dp)
@@ -104,27 +114,30 @@ fun CodeContent(
                         vertical = 8.dp,
                     ),
                 text = pairId,
-                style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.ExtraBold),
+                style = MaterialTheme.typography.displayMedium.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                ),
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Row(horizontalArrangement = spacedBy(8.dp)) {
-                MovieButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(Res.string.pair_share),
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    onClick = {
-                        // TODO handle
-                    }
-                )
-                OutlinedMovieButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(Res.string.pair_copy),
-                    color = MaterialTheme.colorScheme.secondary,
-                    onClick = {
-                        // TODO handle
-                    }
-                )
-            }
+            OutlinedMovieButton(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(fraction = 0.5f),
+                text = stringResource(Res.string.pair_copy),
+                color = MaterialTheme.colorScheme.secondary,
+                onClick = {
+                    onAction(CodeUdf.Action.CopyClick)
+                }
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            MovieButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(Res.string.pair_share),
+                containerColor = MaterialTheme.colorScheme.secondary,
+                onClick = {
+                    // TODO handle
+                }
+            )
         }
     }
 }

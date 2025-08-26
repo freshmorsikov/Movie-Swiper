@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun <E: Udf.Event> SubscribeOnEvents(
     events: Flow<E>,
-    block: (E) -> Unit
+    block: suspend (E) -> Unit
 ) {
     LaunchedEffect(Unit) {
         events.onEach {

@@ -40,6 +40,14 @@ class CodeViewModel(
                 sendEvent(CodeUdf.Event.GoBack)
             }
 
+            CodeUdf.Action.CopyClick -> {
+                sendEvent(
+                    CodeUdf.Event.SaveToClipboard(
+                        pairId = currentState.pairId
+                    )
+                )
+            }
+
             else -> {}
         }
     }
