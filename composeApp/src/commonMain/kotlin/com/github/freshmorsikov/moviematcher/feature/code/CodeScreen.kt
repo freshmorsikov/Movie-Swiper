@@ -1,8 +1,7 @@
-package com.github.freshmorsikov.moviematcher.feature.pair
+package com.github.freshmorsikov.moviematcher.feature.code
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,14 +14,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.OutlinedMovieButton
+import com.github.freshmorsikov.moviematcher.feature.code.presentation.CodeUdf
+import com.github.freshmorsikov.moviematcher.feature.code.presentation.CodeViewModel
+import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
+import com.github.freshmorsikov.moviematcher.util.clickableWithoutIndication
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_close
 import moviematcher.composeapp.generated.resources.pair_copy
@@ -31,22 +37,40 @@ import moviematcher.composeapp.generated.resources.pair_share
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun PairScreen() {
-    PairContent("AAAA")
+fun CodeScreen(
+    navController: NavController,
+    viewModel: CodeViewModel = koinViewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    CodeContent(
+        pairId = state.pairId,
+        onAction = viewModel::onAction
+    )
+    SubscribeOnEvents(viewModel.event) { event ->
+        when (event) {
+            CodeUdf.Event.GoBack -> {
+                navController.popBackStack()
+            }
+        }
+    }
 }
 
 @Composable
-fun PairContent(pairId: String) {
+fun CodeContent(
+    pairId: String,
+    onAction: (CodeUdf.Action) -> Unit
+) {
     MovieScaffold {
         Icon(
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.TopEnd)
                 .size(24.dp)
-                .clickable {
-                    // TODO go back
+                .clickableWithoutIndication {
+                    onAction(CodeUdf.Action.CloseClick)
                 },
             painter = painterResource(Res.drawable.ic_close),
             tint = MaterialTheme.colorScheme.secondary,
@@ -107,8 +131,11 @@ fun PairContent(pairId: String) {
 
 @Preview
 @Composable
-private fun PairContentPreview() {
+private fun CodeContentPreview() {
     MaterialTheme {
-        PairContent(pairId = "AB17")
+        CodeContent(
+            pairId = "AB17",
+            onAction = {}
+        )
     }
 }

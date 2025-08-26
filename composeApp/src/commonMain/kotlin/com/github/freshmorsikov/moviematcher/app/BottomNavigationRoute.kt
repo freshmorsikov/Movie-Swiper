@@ -16,7 +16,7 @@ interface NavigationRoute {
     data object Matches: BottomNavigationRoute
 
     @Serializable
-    data object Pair: NavigationRoute
+    data object Code: NavigationRoute
 
     @Serializable
     data object JoinPair: NavigationRoute

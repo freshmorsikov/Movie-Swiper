@@ -18,7 +18,8 @@ import com.github.freshmorsikov.moviematcher.feature.favorite.di.favoriteFeature
 import com.github.freshmorsikov.moviematcher.feature.join.JoinPairScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.MatchesScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.di.matchesFeatureModule
-import com.github.freshmorsikov.moviematcher.feature.pair.PairScreen
+import com.github.freshmorsikov.moviematcher.feature.code.CodeScreen
+import com.github.freshmorsikov.moviematcher.feature.code.di.codeFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.di.swipeFeatureModule
 import org.koin.compose.KoinApplication
@@ -37,6 +38,7 @@ fun App(contextModule: Module = module {}) {
                 swipeFeatureModule,
                 favoriteFeatureModule,
                 matchesFeatureModule,
+                codeFeatureModule,
             )
         }
     ) {
@@ -67,8 +69,8 @@ fun App(contextModule: Module = module {}) {
                 composable<NavigationRoute.Matches> {
                     MatchesScreen(navController = navController)
                 }
-                composable<NavigationRoute.Pair> {
-                    PairScreen()
+                composable<NavigationRoute.Code> {
+                    CodeScreen(navController = navController)
                 }
                 composable<NavigationRoute.JoinPair> {
                     JoinPairScreen()

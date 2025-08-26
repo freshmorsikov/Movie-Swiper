@@ -38,8 +38,8 @@ fun MatchesScreen(
     MatchesContent(onAction = viewModel::onAction)
     SubscribeOnEvents(viewModel.event) { event ->
         when (event) {
-            is MatchesUdf.Event.OpenPair -> {
-                navController.navigate(route = NavigationRoute.Pair)
+            is MatchesUdf.Event.OpenCode -> {
+                navController.navigate(route = NavigationRoute.Code)
             }
 
             is MatchesUdf.Event.OpenJoinPair -> {

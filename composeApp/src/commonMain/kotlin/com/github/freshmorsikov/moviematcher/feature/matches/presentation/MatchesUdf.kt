@@ -15,7 +15,7 @@ interface MatchesUdf {
     }
 
     sealed interface Event: Udf.Event {
-        data object OpenPair: Event
+        data object OpenCode: Event
         data object OpenJoinPair: Event
     }
 

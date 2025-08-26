@@ -39,7 +39,7 @@ class MatchesViewModel(
     override suspend fun handleEffects(action: MatchesUdf.Action) {
         when (action) {
             MatchesUdf.Action.CreatePairClick -> {
-                sendEvent(MatchesUdf.Event.OpenPair)
+                sendEvent(MatchesUdf.Event.OpenCode)
             }
             MatchesUdf.Action.JoinPairClick -> {
                 sendEvent(MatchesUdf.Event.OpenJoinPair)
