@@ -1,12 +1,15 @@
 package com.github.freshmorsikov.moviematcher.feature.join
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -24,31 +27,62 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
+import com.github.freshmorsikov.moviematcher.feature.join.presentation.JoinPairUdf
+import com.github.freshmorsikov.moviematcher.feature.join.presentation.JoinPairViewModel
 import com.github.freshmorsikov.moviematcher.feature.matches.domain.PAIR_ID_ABC
+import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
+import com.github.freshmorsikov.moviematcher.util.clickableWithoutIndication
 import moviematcher.composeapp.generated.resources.Res
+import moviematcher.composeapp.generated.resources.ic_close
 import moviematcher.composeapp.generated.resources.matches_enter_code
 import moviematcher.composeapp.generated.resources.matches_save
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun JoinPairScreen() {
-    JoinPairContent()
+fun JoinPairScreen(
+    navController: NavController,
+    viewModel: JoinPairViewModel = koinViewModel(),
+) {
+    JoinPairContent(onAction = viewModel::onAction)
+    SubscribeOnEvents(viewModel.event) { event ->
+        when (event) {
+            JoinPairUdf.Event.GoBack -> {
+                navController.popBackStack()
+            }
+        }
+    }
 }
 
 @Composable
-fun JoinPairContent() {
+fun JoinPairContent(onAction: (JoinPairUdf.Action) -> Unit) {
     MovieScaffold {
+        Icon(
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.TopEnd)
+                .size(24.dp)
+                .clickableWithoutIndication {
+                    onAction(JoinPairUdf.Action.CloseClick)
+                },
+            painter = painterResource(Res.drawable.ic_close),
+            tint = MaterialTheme.colorScheme.secondary,
+            contentDescription = null
+        )
         Column(
-            modifier = Modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Spacer(modifier = Modifier.weight(1f))
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(Res.string.matches_enter_code),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
             )
@@ -58,7 +92,7 @@ fun JoinPairContent() {
             OutlinedTextField(
                 modifier = Modifier
                     .width(160.dp)
-                    .padding(top = 16.dp),
+                    .padding(top = 32.dp),
                 value = input,
                 onValueChange = { value ->
                     input = value.filter { char ->
@@ -99,14 +133,17 @@ fun JoinPairContent() {
                     unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                 )
             )
+            Spacer(modifier = Modifier.weight(1f))
             MovieButton(
                 modifier = Modifier
-                    .fillMaxWidth(fraction = 0.5f)
+                    .fillMaxWidth()
                     .padding(top = 16.dp),
                 text = stringResource(Res.string.matches_save),
                 containerColor = MaterialTheme.colorScheme.secondary,
                 onClick = {
-                    // TODO handle
+                    onAction(
+                        JoinPairUdf.Action.SaveCode(code = input)
+                    )
                 }
             )
         }
@@ -117,6 +154,6 @@ fun JoinPairContent() {
 @Composable
 private fun JoinPairContentPreview() {
     MaterialTheme {
-        JoinPairContent()
+        JoinPairContent(onAction = {})
     }
 }

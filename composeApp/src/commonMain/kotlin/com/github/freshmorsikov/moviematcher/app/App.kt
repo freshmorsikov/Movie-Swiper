@@ -20,6 +20,7 @@ import com.github.freshmorsikov.moviematcher.feature.matches.MatchesScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.di.matchesFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.code.CodeScreen
 import com.github.freshmorsikov.moviematcher.feature.code.di.codeFeatureModule
+import com.github.freshmorsikov.moviematcher.feature.join.di.joinPairFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.di.swipeFeatureModule
 import com.github.freshmorsikov.moviematcher.util.sharingModule
@@ -36,11 +37,12 @@ fun App(contextModule: Module = module {}) {
                 sqlDriverModule,
                 dataStoreModule,
                 dataModule,
+                sharingModule,
                 swipeFeatureModule,
                 favoriteFeatureModule,
                 matchesFeatureModule,
                 codeFeatureModule,
-                sharingModule,
+                joinPairFeatureModule,
             )
         }
     ) {
@@ -75,7 +77,7 @@ fun App(contextModule: Module = module {}) {
                     CodeScreen(navController = navController)
                 }
                 composable<NavigationRoute.JoinPair> {
-                    JoinPairScreen()
+                    JoinPairScreen(navController = navController)
                 }
             }
         }
