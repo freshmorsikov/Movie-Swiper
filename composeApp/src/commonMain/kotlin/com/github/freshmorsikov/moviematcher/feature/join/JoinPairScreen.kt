@@ -16,23 +16,22 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.feature.join.presentation.JoinPairUdf
 import com.github.freshmorsikov.moviematcher.feature.join.presentation.JoinPairViewModel
-import com.github.freshmorsikov.moviematcher.feature.matches.domain.PAIR_ID_ABC
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import com.github.freshmorsikov.moviematcher.util.clickableWithoutIndication
 import moviematcher.composeapp.generated.resources.Res
@@ -49,7 +48,11 @@ fun JoinPairScreen(
     navController: NavController,
     viewModel: JoinPairViewModel = koinViewModel(),
 ) {
-    JoinPairContent(onAction = viewModel::onAction)
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    JoinPairContent(
+        state = state,
+        onAction = viewModel::onAction
+    )
     SubscribeOnEvents(viewModel.event) { event ->
         when (event) {
             JoinPairUdf.Event.GoBack -> {
@@ -60,7 +63,10 @@ fun JoinPairScreen(
 }
 
 @Composable
-fun JoinPairContent(onAction: (JoinPairUdf.Action) -> Unit) {
+fun JoinPairContent(
+    state: JoinPairUdf.State,
+    onAction: (JoinPairUdf.Action) -> Unit
+) {
     MovieScaffold {
         Icon(
             modifier = Modifier
@@ -88,25 +94,18 @@ fun JoinPairContent(onAction: (JoinPairUdf.Action) -> Unit) {
             )
 
             val focusManager = LocalFocusManager.current
-            var input by remember { mutableStateOf("") }
+            LaunchedEffect(Unit) {
+                focusManager.moveFocus(FocusDirection.Next)
+            }
             OutlinedTextField(
                 modifier = Modifier
                     .width(160.dp)
                     .padding(top = 32.dp),
-                value = input,
+                value = state.code,
                 onValueChange = { value ->
-                    input = value.filter { char ->
-                        PAIR_ID_ABC.contains(
-                            char = char,
-                            ignoreCase = true,
-                        )
-                    }.map { char ->
-                        if (char.isLetter()) {
-                            char.uppercase()
-                        } else {
-                            char
-                        }
-                    }.take(4).joinToString("")
+                    onAction(
+                        JoinPairUdf.Action.UpdateCode(input = value)
+                    )
                 },
                 textStyle = MaterialTheme.typography.displayMedium
                     .copy(
@@ -140,10 +139,9 @@ fun JoinPairContent(onAction: (JoinPairUdf.Action) -> Unit) {
                     .padding(top = 16.dp),
                 text = stringResource(Res.string.matches_save),
                 containerColor = MaterialTheme.colorScheme.secondary,
+                enabled = state.saveButtonEnabled,
                 onClick = {
-                    onAction(
-                        JoinPairUdf.Action.SaveCode(code = input)
-                    )
+                    onAction(JoinPairUdf.Action.SaveCode)
                 }
             )
         }
@@ -154,6 +152,9 @@ fun JoinPairContent(onAction: (JoinPairUdf.Action) -> Unit) {
 @Composable
 private fun JoinPairContentPreview() {
     MaterialTheme {
-        JoinPairContent(onAction = {})
+        JoinPairContent(
+            state = JoinPairUdf.State(code = "AAAA"),
+            onAction = {},
+        )
     }
 }

@@ -4,11 +4,16 @@ import com.github.freshmorsikov.moviematcher.core.presentation.Udf
 
 interface JoinPairUdf {
 
-    data object State : Udf.State
+    data class State(val code: String) : Udf.State {
+
+        val saveButtonEnabled: Boolean = code.length == 4
+
+    }
 
     sealed interface Action : Udf.Action {
         data object CloseClick : Action
-        data class SaveCode(val code: String) : Action
+        data class UpdateCode(val input: String) : Action
+        data object SaveCode : Action
     }
 
     sealed interface Event : Udf.Event {
