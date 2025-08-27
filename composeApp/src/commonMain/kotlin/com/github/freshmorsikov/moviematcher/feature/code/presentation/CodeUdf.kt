@@ -10,11 +10,13 @@ interface CodeUdf {
         data class UpdatePairId(val pairId: String): Action
         data object CloseClick: Action
         data object CopyClick: Action
+        data object ShareClick: Action
     }
 
     sealed interface Event : Udf.Event {
         data object GoBack: Event
         data class SaveToClipboard(val pairId: String): Event
+        data class ShowSharingDialog(val pairId: String): Event
     }
 
 }

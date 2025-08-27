@@ -22,6 +22,7 @@ import com.github.freshmorsikov.moviematcher.feature.code.CodeScreen
 import com.github.freshmorsikov.moviematcher.feature.code.di.codeFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.di.swipeFeatureModule
+import com.github.freshmorsikov.moviematcher.util.sharingModule
 import org.koin.compose.KoinApplication
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -39,6 +40,7 @@ fun App(contextModule: Module = module {}) {
                 favoriteFeatureModule,
                 matchesFeatureModule,
                 codeFeatureModule,
+                sharingModule,
             )
         }
     ) {

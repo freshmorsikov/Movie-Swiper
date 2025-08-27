@@ -14,8 +14,10 @@
     <string name="matches_save">Save</string>
     <string name="matches_or">OR</string>
 
-    <string name="pair_send_code">Send the CODE to your mate</string>
-    <string name="pair_share">Share</string>
-    <string name="pair_copy">Copy</string>
+    <string name="code_send">Send the CODE to your mate</string>
+    <string name="code_share">Share</string>
+    <string name="code_copy">Copy</string>
+
+    <string name="sharing_title">Sharing</string>
 
 </resources>

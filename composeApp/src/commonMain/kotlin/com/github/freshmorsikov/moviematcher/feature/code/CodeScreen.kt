@@ -27,23 +27,27 @@ import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.OutlinedMovieButton
 import com.github.freshmorsikov.moviematcher.feature.code.presentation.CodeUdf
 import com.github.freshmorsikov.moviematcher.feature.code.presentation.CodeViewModel
+import com.github.freshmorsikov.moviematcher.util.SharingManager
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import com.github.freshmorsikov.moviematcher.util.clickableWithoutIndication
 import com.github.freshmorsikov.moviematcher.util.clipEntryOf
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_close
-import moviematcher.composeapp.generated.resources.pair_copy
-import moviematcher.composeapp.generated.resources.pair_send_code
-import moviematcher.composeapp.generated.resources.pair_share
+import moviematcher.composeapp.generated.resources.code_copy
+import moviematcher.composeapp.generated.resources.code_send
+import moviematcher.composeapp.generated.resources.code_share
+import moviematcher.composeapp.generated.resources.sharing_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun CodeScreen(
     navController: NavController,
-    viewModel: CodeViewModel = koinViewModel()
+    viewModel: CodeViewModel = koinViewModel(),
+    sharingManager: SharingManager = koinInject(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     CodeContent(
@@ -52,6 +56,7 @@ fun CodeScreen(
     )
 
     val clipboard = LocalClipboard.current
+    val sharingTitle = stringResource(Res.string.sharing_title)
     SubscribeOnEvents(viewModel.event) { event ->
         when (event) {
             CodeUdf.Event.GoBack -> {
@@ -63,6 +68,13 @@ fun CodeScreen(
                     clipEntry = clipEntryOf(
                         string = event.pairId
                     )
+                )
+            }
+
+            is CodeUdf.Event.ShowSharingDialog -> {
+                sharingManager.share(
+                    title = sharingTitle,
+                    text = event.pairId,
                 )
             }
         }
@@ -94,7 +106,7 @@ fun CodeContent(
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(Res.string.pair_send_code),
+                text = stringResource(Res.string.code_send),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
@@ -123,7 +135,7 @@ fun CodeContent(
                 modifier = Modifier
                     .padding(top = 16.dp)
                     .fillMaxWidth(fraction = 0.5f),
-                text = stringResource(Res.string.pair_copy),
+                text = stringResource(Res.string.code_copy),
                 color = MaterialTheme.colorScheme.secondary,
                 onClick = {
                     onAction(CodeUdf.Action.CopyClick)
@@ -132,10 +144,10 @@ fun CodeContent(
             Spacer(modifier = Modifier.weight(1f))
             MovieButton(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(Res.string.pair_share),
+                text = stringResource(Res.string.code_share),
                 containerColor = MaterialTheme.colorScheme.secondary,
                 onClick = {
-                    // TODO handle
+                    onAction(CodeUdf.Action.ShareClick)
                 }
             )
         }
