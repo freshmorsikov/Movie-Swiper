@@ -1,9 +1,14 @@
 package com.github.freshmorsikov.moviematcher.feature.join.presentation
 
+import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
-import com.github.freshmorsikov.moviematcher.feature.matches.domain.PAIR_ID_ABC
+import com.github.freshmorsikov.moviematcher.feature.join.domain.SaveCodeUseCase
+import com.github.freshmorsikov.moviematcher.shared.domain.PAIR_ID_ABC
+import kotlinx.coroutines.launch
 
-class JoinPairViewModel : UdfViewModel<JoinPairUdf.State, JoinPairUdf.Action, JoinPairUdf.Event>(
+class JoinPairViewModel(
+    private val saveCodeUseCase: SaveCodeUseCase
+) : UdfViewModel<JoinPairUdf.State, JoinPairUdf.Action, JoinPairUdf.Event>(
     initState = {
         JoinPairUdf.State(code = "")
     }
@@ -41,7 +46,10 @@ class JoinPairViewModel : UdfViewModel<JoinPairUdf.State, JoinPairUdf.Action, Jo
             }
 
             is JoinPairUdf.Action.SaveCode -> {
-                // TODO save
+                viewModelScope.launch {
+                    saveCodeUseCase(code = currentState.code)
+                    sendEvent(JoinPairUdf.Event.GoBack)
+                }
             }
 
             else -> Unit

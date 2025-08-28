@@ -2,24 +2,24 @@ package com.github.freshmorsikov.moviematcher.feature.matches.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
-import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetPairIdUseCase
-import kotlinx.coroutines.launch
+import com.github.freshmorsikov.moviematcher.shared.domain.GetCodeFlowCaseCase
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class MatchesViewModel(
-    private val getPairIdUseCase: GetPairIdUseCase
+    getCodeFlowCaseCase: GetCodeFlowCaseCase,
 ) : UdfViewModel<MatchesUdf.State, MatchesUdf.Action, MatchesUdf.Event>(
     initState = {
-        MatchesUdf.State(pairId = "••••")
+        MatchesUdf.State(code = "••••")
     }
 ) {
 
     init {
-        viewModelScope.launch {
-            val pairId = getPairIdUseCase()
+        getCodeFlowCaseCase().onEach { code ->
             onAction(
-                MatchesUdf.Action.UpdatePairId(pairId = pairId)
+                MatchesUdf.Action.UpdateCode(code = code)
             )
-        }
+        }.launchIn(viewModelScope)
     }
 
     override fun reduce(action: MatchesUdf.Action): MatchesUdf.State {
@@ -30,8 +30,8 @@ class MatchesViewModel(
             MatchesUdf.Action.JoinPairClick -> {
                 currentState
             }
-            is MatchesUdf.Action.UpdatePairId -> {
-                currentState.copy(pairId = action.pairId)
+            is MatchesUdf.Action.UpdateCode -> {
+                currentState.copy(code = action.code)
             }
         }
     }

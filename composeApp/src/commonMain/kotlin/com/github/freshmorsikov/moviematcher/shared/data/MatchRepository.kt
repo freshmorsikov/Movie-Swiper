@@ -1,106 +1,83 @@
 package com.github.freshmorsikov.moviematcher.shared.data
 
-import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.database.database
 import kotlinx.coroutines.flow.firstOrNull
 
-private const val PAIR_ID_KEY = "PAIR_ID_KEY"
+class MatchRepository() {
 
-class MatchRepository(
-    private val keyValueStore: KeyValueStore
-) {
-
-    suspend fun getPairId(): String? {
-        return keyValueStore.getString(PAIR_ID_KEY)
-    }
-
-    suspend fun savePairId(pairId: String) {
-        keyValueStore.putString(PAIR_ID_KEY, pairId)
-    }
-
-    suspend fun getCounter(): Long {
-        val snapshot = Firebase.database.reference("counter").valueEvents.firstOrNull()
-
-        return (snapshot?.value as? Long) ?: 0L
-    }
-
-    suspend fun updateCounter(counter: Long) {
-        Firebase.database.reference("counter").setValue(counter)
-    }
-
-    suspend fun getLiked(pairId: String): List<Long> {
+    suspend fun getLiked(code: String): List<Long> {
         return getCollection(
-            pairId = pairId,
+            code = code,
             collection = "liked"
         )
     }
 
-    suspend fun getDisliked(pairId: String): List<Long> {
+    suspend fun getDisliked(code: String): List<Long> {
         return getCollection(
-            pairId = pairId,
+            code = code,
             collection = "disliked"
         )
     }
 
-    suspend fun getMatched(pairId: String): List<Long> {
+    suspend fun getMatched(code: String): List<Long> {
         return getCollection(
-            pairId = pairId,
+            code = code,
             collection = "matched"
         )
     }
 
     suspend fun addToLiked(
-        pairId: String,
+        code: String,
         movieId: Long,
     ) {
         addToCollection(
-            pairId = pairId,
+            code = code,
             movieId = movieId,
             collection = "liked"
         )
     }
 
     suspend fun addToDisliked(
-        pairId: String,
+        code: String,
         movieId: Long,
     ) {
         addToCollection(
-            pairId = pairId,
+            code = code,
             movieId = movieId,
             collection = "disliked"
         )
     }
 
     suspend fun addToMatched(
-        pairId: String,
+        code: String,
         movieId: Long,
     ) {
         addToCollection(
-            pairId = pairId,
+            code = code,
             movieId = movieId,
             collection = "matched"
         )
     }
 
     suspend fun removeFromLiked(
-        pairId: String,
+        code: String,
         movieId: Long,
     ) {
         removeFromCollection(
-            pairId = pairId,
+            code = code,
             movieId = movieId,
             collection = "liked"
         )
     }
 
     private suspend fun getCollection(
-        pairId: String,
+        code: String,
         collection: String,
     ): List<Long> {
         val snapshot = Firebase.database.reference()
             .child("matches")
-            .child(pairId)
+            .child(code)
             .child(collection)
             .valueEvents
             .firstOrNull()
@@ -110,13 +87,13 @@ class MatchRepository(
     }
 
     private suspend fun addToCollection(
-        pairId: String,
+        code: String,
         movieId: Long,
         collection: String,
     ) {
         val reference = Firebase.database.reference()
             .child("matches")
-            .child(pairId)
+            .child(code)
             .child(collection)
         val snapshot = reference.valueEvents.firstOrNull()
         val listSize = (snapshot?.value as? List<*>)?.size ?: 0
@@ -124,13 +101,13 @@ class MatchRepository(
     }
 
     private suspend fun removeFromCollection(
-        pairId: String,
+        code: String,
         movieId: Long,
         collection: String,
     ) {
         val reference = Firebase.database.reference()
             .child("matches")
-            .child(pairId)
+            .child(code)
             .child(collection)
         val snapshot = reference.valueEvents.firstOrNull()
         val list = snapshot?.value as? List<*> ?: return

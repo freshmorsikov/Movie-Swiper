@@ -4,10 +4,10 @@ import com.github.freshmorsikov.moviematcher.core.presentation.Udf
 
 interface CodeUdf {
 
-    data class State(val pairId: String) : Udf.State
+    data class State(val code: String) : Udf.State
 
     sealed interface Action : Udf.Action {
-        data class UpdatePairId(val pairId: String): Action
+        data class UpdatePairId(val code: String): Action
         data object CloseClick: Action
         data object CopyClick: Action
         data object ShareClick: Action
@@ -15,8 +15,8 @@ interface CodeUdf {
 
     sealed interface Event : Udf.Event {
         data object GoBack: Event
-        data class SaveToClipboard(val pairId: String): Event
-        data class ShowSharingDialog(val pairId: String): Event
+        data class SaveToClipboard(val code: String): Event
+        data class ShowSharingDialog(val code: String): Event
     }
 
 }

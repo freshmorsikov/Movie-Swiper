@@ -23,6 +23,8 @@ import com.github.freshmorsikov.moviematcher.feature.code.di.codeFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.join.di.joinPairFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.di.swipeFeatureModule
+import com.github.freshmorsikov.moviematcher.shared.di.sharedDataModule
+import com.github.freshmorsikov.moviematcher.shared.di.sharedDomainModule
 import com.github.freshmorsikov.moviematcher.util.sharingModule
 import org.koin.compose.KoinApplication
 import org.koin.core.module.Module
@@ -38,6 +40,8 @@ fun App(contextModule: Module = module {}) {
                 dataStoreModule,
                 dataModule,
                 sharingModule,
+                sharedDomainModule,
+                sharedDataModule,
                 swipeFeatureModule,
                 favoriteFeatureModule,
                 matchesFeatureModule,

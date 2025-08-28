@@ -8,10 +8,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.github.freshmorsikov.moviematcher.app.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
@@ -35,6 +37,7 @@ fun MatchesScreen(
     navController: NavController,
     viewModel: MatchesViewModel = koinViewModel()
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
     MatchesContent(onAction = viewModel::onAction)
     SubscribeOnEvents(viewModel.event) { event ->
         when (event) {

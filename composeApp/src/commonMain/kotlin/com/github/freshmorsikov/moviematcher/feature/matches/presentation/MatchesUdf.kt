@@ -5,13 +5,13 @@ import com.github.freshmorsikov.moviematcher.core.presentation.Udf
 interface MatchesUdf {
 
     data class State(
-        val pairId: String
+        val code: String
     ): Udf.State
 
     sealed interface Action: Udf.Action {
         data object CreatePairClick: Action
         data object JoinPairClick: Action
-        data class UpdatePairId(val pairId: String): Action
+        data class UpdateCode(val code: String): Action
     }
 
     sealed interface Event: Udf.Event {

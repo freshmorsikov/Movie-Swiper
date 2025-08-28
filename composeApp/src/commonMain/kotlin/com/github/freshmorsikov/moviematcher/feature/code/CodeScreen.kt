@@ -51,7 +51,7 @@ fun CodeScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     CodeContent(
-        pairId = state.pairId,
+        pairId = state.code,
         onAction = viewModel::onAction
     )
 
@@ -66,7 +66,7 @@ fun CodeScreen(
             is CodeUdf.Event.SaveToClipboard -> {
                 clipboard.setClipEntry(
                     clipEntry = clipEntryOf(
-                        string = event.pairId
+                        string = event.code
                     )
                 )
             }
@@ -74,7 +74,7 @@ fun CodeScreen(
             is CodeUdf.Event.ShowSharingDialog -> {
                 sharingManager.share(
                     title = sharingTitle,
-                    text = event.pairId,
+                    text = event.code,
                 )
             }
         }

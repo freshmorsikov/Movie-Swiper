@@ -2,22 +2,22 @@ package com.github.freshmorsikov.moviematcher.feature.code.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
-import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetPairIdUseCase
+import com.github.freshmorsikov.moviematcher.shared.domain.GetCodeUseCase
 import kotlinx.coroutines.launch
 
 class CodeViewModel(
-    private val getPairIdUseCase: GetPairIdUseCase,
+    private val getCodeUseCase: GetCodeUseCase,
 ) : UdfViewModel<CodeUdf.State, CodeUdf.Action, CodeUdf.Event>(
     initState = {
-        CodeUdf.State(pairId = "••••")
+        CodeUdf.State(code = "••••")
     }
 ) {
 
     init {
         viewModelScope.launch {
-            val pairId = getPairIdUseCase()
+            val code = getCodeUseCase()
             onAction(
-                CodeUdf.Action.UpdatePairId(pairId = pairId)
+                CodeUdf.Action.UpdatePairId(code = code)
             )
         }
     }
@@ -25,7 +25,7 @@ class CodeViewModel(
     override fun reduce(action: CodeUdf.Action): CodeUdf.State {
         return when (action) {
             is CodeUdf.Action.UpdatePairId -> {
-                currentState.copy(pairId = action.pairId)
+                currentState.copy(code = action.code)
             }
 
             else -> {
@@ -43,7 +43,7 @@ class CodeViewModel(
             CodeUdf.Action.CopyClick -> {
                 sendEvent(
                     CodeUdf.Event.SaveToClipboard(
-                        pairId = currentState.pairId
+                        code = currentState.code
                     )
                 )
             }
@@ -51,7 +51,7 @@ class CodeViewModel(
             CodeUdf.Action.ShareClick -> {
                 sendEvent(
                     CodeUdf.Event.ShowSharingDialog(
-                        pairId = currentState.pairId
+                        code = currentState.code
                     )
                 )
             }
