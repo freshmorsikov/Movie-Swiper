@@ -1,6 +1,7 @@
 package com.github.freshmorsikov.moviematcher.feature.matches
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,6 +20,7 @@ import com.github.freshmorsikov.moviematcher.app.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.OutlinedMovieButton
+import com.github.freshmorsikov.moviematcher.feature.matches.domain.model.PairState
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesUdf
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesViewModel
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
@@ -38,7 +40,10 @@ fun MatchesScreen(
     viewModel: MatchesViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    MatchesContent(onAction = viewModel::onAction)
+    MatchesContent(
+        state = state,
+        onAction = viewModel::onAction
+    )
     SubscribeOnEvents(viewModel.event) { event ->
         when (event) {
             is MatchesUdf.Event.OpenCode -> {
@@ -53,50 +58,75 @@ fun MatchesScreen(
 }
 
 @Composable
-fun MatchesContent(onAction: (MatchesUdf.Action) -> Unit) {
+fun MatchesContent(
+    state: MatchesUdf.State,
+    onAction: (MatchesUdf.Action) -> Unit
+) {
     MovieScaffold {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Icon(
-                modifier = Modifier.size(120.dp),
-                painter = painterResource(Res.drawable.ic_match),
-                tint = MaterialTheme.colorScheme.secondary,
-                contentDescription = null
-            )
-            Text(
-                modifier = Modifier
-                    .padding(top = 20.dp)
-                    .fillMaxWidth(),
-                text = stringResource(Res.string.matches_info),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-            )
-            MovieButton(
-                modifier = Modifier
-                    .padding(top = 32.dp)
-                    .fillMaxWidth(),
-                text = stringResource(Res.string.matches_create_pair),
-                containerColor = MaterialTheme.colorScheme.secondary,
-                onClick = {
-                    onAction(MatchesUdf.Action.CreatePairClick)
+        when (state) {
+            MatchesUdf.State.Loading -> {}
+            is MatchesUdf.State.Data -> {
+                when (state.pairState) {
+                    PairState.NotPaired -> {
+                        CreatePairContent(onAction = onAction)
+                    }
+
+                    is PairState.Paired -> {
+                        Text(text = state.pairState.code)
+                    }
                 }
-            )
-            OutlinedMovieButton(
-                modifier = Modifier
-                    .padding(top = 4.dp)
-                    .fillMaxWidth(),
-                text = stringResource(Res.string.matches_join_pair),
-                color = MaterialTheme.colorScheme.secondary,
-                onClick = {
-                    onAction(MatchesUdf.Action.JoinPairClick)
-                }
-            )
+            }
         }
+    }
+}
+
+@Composable
+private fun CreatePairContent(
+    onAction: (MatchesUdf.Action) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        Icon(
+            modifier = Modifier.size(120.dp),
+            painter = painterResource(Res.drawable.ic_match),
+            tint = MaterialTheme.colorScheme.secondary,
+            contentDescription = null
+        )
+        Text(
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .fillMaxWidth(),
+            text = stringResource(Res.string.matches_info),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(modifier = Modifier.weight(1f))
+
+        MovieButton(
+            modifier = Modifier
+                .padding(top = 32.dp)
+                .fillMaxWidth(),
+            text = stringResource(Res.string.matches_create_pair),
+            containerColor = MaterialTheme.colorScheme.secondary,
+            onClick = {
+                onAction(MatchesUdf.Action.CreatePairClick)
+            }
+        )
+        OutlinedMovieButton(
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .fillMaxWidth(),
+            text = stringResource(Res.string.matches_join_pair),
+            color = MaterialTheme.colorScheme.secondary,
+            onClick = {
+                onAction(MatchesUdf.Action.JoinPairClick)
+            }
+        )
     }
 }
 
@@ -105,6 +135,9 @@ fun MatchesContent(onAction: (MatchesUdf.Action) -> Unit) {
 private fun MatchesContentPreview() {
     MaterialTheme {
         MatchesContent(
+            state = MatchesUdf.State.Data(
+                pairState = PairState.NotPaired
+            ),
             onAction = {}
         )
     }

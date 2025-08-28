@@ -1,22 +1,26 @@
 package com.github.freshmorsikov.moviematcher.feature.matches.presentation
 
 import com.github.freshmorsikov.moviematcher.core.presentation.Udf
+import com.github.freshmorsikov.moviematcher.feature.matches.domain.model.PairState
 
 interface MatchesUdf {
 
-    data class State(
-        val code: String
-    ): Udf.State
+    sealed interface State : Udf.State {
 
-    sealed interface Action: Udf.Action {
-        data object CreatePairClick: Action
-        data object JoinPairClick: Action
-        data class UpdateCode(val code: String): Action
+        data object Loading : State
+        data class Data(val pairState: PairState) : State
+
     }
 
-    sealed interface Event: Udf.Event {
-        data object OpenCode: Event
-        data object OpenJoinPair: Event
+    sealed interface Action : Udf.Action {
+        data object CreatePairClick : Action
+        data object JoinPairClick : Action
+        data class UpdatePair(val pairState: PairState) : Action
+    }
+
+    sealed interface Event : Udf.Event {
+        data object OpenCode : Event
+        data object OpenJoinPair : Event
     }
 
 }

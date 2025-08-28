@@ -2,9 +2,30 @@ package com.github.freshmorsikov.moviematcher.shared.data
 
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.database.database
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 
 class MatchRepository() {
+
+    suspend fun setPaired(code: String, paired: Boolean) {
+        val reference = Firebase.database.reference()
+            .child("matches")
+            .child(code)
+            .child("paired")
+        reference.setValue(paired)
+    }
+
+    fun getPairedFlow(code: String): Flow<Boolean> {
+        return Firebase.database.reference()
+            .child("matches")
+            .child(code)
+            .child("paired")
+            .valueEvents
+            .map { snapshot ->
+                (snapshot.value as? Boolean) == true
+            }
+    }
 
     suspend fun getLiked(code: String): List<Long> {
         return getCollection(
