@@ -9,14 +9,15 @@
     <string name="matches_info">To find a match, you first need to pair up</string>
     <string name="matches_create_pair">Create a Pair</string>
     <string name="matches_join_pair">Join a Pair</string>
-
-    <string name="matches_enter_code">Enter your mate's CODE here</string>
-    <string name="matches_save">Save</string>
-    <string name="matches_or">OR</string>
+    <string name="matches_paired">Paired</string>
+    <string name="matches_empty">No matches yet</string>
 
     <string name="code_send">Send the CODE to your mate</string>
     <string name="code_share">Share</string>
     <string name="code_copy">Copy</string>
+
+    <string name="join_enter_code">Enter your mate's CODE here</string>
+    <string name="join_save">Save</string>
 
     <string name="sharing_title">Sharing</string>
 

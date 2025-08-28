@@ -51,7 +51,7 @@ fun CodeScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     CodeContent(
-        pairId = state.code,
+        code = state.code,
         onAction = viewModel::onAction
     )
 
@@ -83,7 +83,7 @@ fun CodeScreen(
 
 @Composable
 fun CodeContent(
-    pairId: String,
+    code: String,
     onAction: (CodeUdf.Action) -> Unit
 ) {
     MovieScaffold {
@@ -125,7 +125,7 @@ fun CodeContent(
                         horizontal = 16.dp,
                         vertical = 8.dp,
                     ),
-                text = pairId,
+                text = code,
                 style = MaterialTheme.typography.displayMedium.copy(
                     fontWeight = FontWeight.ExtraBold,
                 ),
@@ -159,7 +159,7 @@ fun CodeContent(
 private fun CodeContentPreview() {
     MaterialTheme {
         CodeContent(
-            pairId = "AB17",
+            code = "AB17",
             onAction = {}
         )
     }

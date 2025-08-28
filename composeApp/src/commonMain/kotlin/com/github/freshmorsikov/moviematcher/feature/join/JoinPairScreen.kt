@@ -36,8 +36,8 @@ import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import com.github.freshmorsikov.moviematcher.util.clickableWithoutIndication
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_close
-import moviematcher.composeapp.generated.resources.matches_enter_code
-import moviematcher.composeapp.generated.resources.matches_save
+import moviematcher.composeapp.generated.resources.join_enter_code
+import moviematcher.composeapp.generated.resources.join_save
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -87,7 +87,7 @@ fun JoinPairContent(
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(Res.string.matches_enter_code),
+                text = stringResource(Res.string.join_enter_code),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
@@ -137,7 +137,7 @@ fun JoinPairContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
-                text = stringResource(Res.string.matches_save),
+                text = stringResource(Res.string.join_save),
                 containerColor = MaterialTheme.colorScheme.secondary,
                 enabled = state.saveButtonEnabled,
                 onClick = {
