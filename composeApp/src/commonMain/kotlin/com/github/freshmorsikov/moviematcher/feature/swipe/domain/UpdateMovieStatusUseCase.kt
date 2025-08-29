@@ -23,17 +23,61 @@ class UpdateMovieStatusUseCase(
         val code = getCodeUseCase()
         when (movieStatus) {
             MovieStatus.Liked -> {
-                matchRepository.addToLiked(
+                val isDisliked = matchRepository.isMovieDisliked(
                     code = code,
                     movieId = id,
                 )
+                if (isDisliked) {
+                    matchRepository.removeFromDisliked(
+                        code = code,
+                        movieId = id,
+                    )
+                } else {
+                    val isLiked = matchRepository.isMovieLiked(
+                        code = code,
+                        movieId = id,
+                    )
+                    if (isLiked) {
+                        matchRepository.addToMatched(
+                            code = code,
+                            movieId = id,
+                        )
+                    } else {
+                        matchRepository.addToLiked(
+                            code = code,
+                            movieId = id,
+                        )
+                    }
+                }
             }
 
             MovieStatus.Disliked -> {
-                matchRepository.addToDisliked(
+                val isLiked = matchRepository.isMovieLiked(
                     code = code,
                     movieId = id,
                 )
+                if (isLiked) {
+                    matchRepository.removeFromLiked(
+                        code = code,
+                        movieId = id,
+                    )
+                } else {
+                    val isDisliked = matchRepository.isMovieDisliked(
+                        code = code,
+                        movieId = id,
+                    )
+                    if (isDisliked) {
+                        matchRepository.removeFromDisliked(
+                            code = code,
+                            movieId = id,
+                        )
+                    } else {
+                        matchRepository.addToDisliked(
+                            code = code,
+                            movieId = id,
+                        )
+                    }
+                }
             }
 
             else -> Unit

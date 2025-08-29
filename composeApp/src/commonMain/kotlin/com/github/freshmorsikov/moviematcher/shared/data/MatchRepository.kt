@@ -1,50 +1,46 @@
 package com.github.freshmorsikov.moviematcher.shared.data
 
 import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.database.DatabaseReference
 import dev.gitlive.firebase.database.database
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
+private const val MATCHES = "matches"
+private const val PAIRED = "paired"
+private const val LIKED = "liked"
+private const val DISLIKED = "disliked"
+private const val MATCHED = "matched"
+
 class MatchRepository() {
 
     suspend fun setPaired(code: String, paired: Boolean) {
-        val reference = Firebase.database.reference()
-            .child("matches")
-            .child(code)
-            .child("paired")
+        val reference = getPairedReference(code = code)
         reference.setValue(paired)
     }
 
     fun getPairedFlow(code: String): Flow<Boolean> {
-        return Firebase.database.reference()
-            .child("matches")
-            .child(code)
-            .child("paired")
+        return getPairedReference(code = code)
             .valueEvents
             .map { snapshot ->
                 (snapshot.value as? Boolean) == true
             }
     }
 
-    suspend fun getLiked(code: String): List<Long> {
-        return getCollection(
+    suspend fun isMovieLiked(code: String, movieId: Long): Boolean {
+        return hasMovie(
             code = code,
-            collection = "liked"
+            collection = LIKED,
+            movieId = movieId,
         )
     }
 
-    suspend fun getDisliked(code: String): List<Long> {
-        return getCollection(
+    suspend fun isMovieDisliked(code: String, movieId: Long): Boolean {
+        return hasMovie(
             code = code,
-            collection = "disliked"
-        )
-    }
-
-    suspend fun getMatched(code: String): List<Long> {
-        return getCollection(
-            code = code,
-            collection = "matched"
+            collection = DISLIKED,
+            movieId = movieId,
         )
     }
 
@@ -55,7 +51,7 @@ class MatchRepository() {
         addToCollection(
             code = code,
             movieId = movieId,
-            collection = "liked"
+            collection = LIKED,
         )
     }
 
@@ -66,7 +62,7 @@ class MatchRepository() {
         addToCollection(
             code = code,
             movieId = movieId,
-            collection = "disliked"
+            collection = DISLIKED,
         )
     }
 
@@ -76,8 +72,8 @@ class MatchRepository() {
     ) {
         addToCollection(
             code = code,
+            collection = MATCHED,
             movieId = movieId,
-            collection = "matched"
         )
     }
 
@@ -87,55 +83,79 @@ class MatchRepository() {
     ) {
         removeFromCollection(
             code = code,
+            collection = LIKED,
             movieId = movieId,
-            collection = "liked"
         )
     }
 
-    private suspend fun getCollection(
+    suspend fun removeFromDisliked(
         code: String,
+        movieId: Long,
+    ) {
+        removeFromCollection(
+            code = code,
+            collection = DISLIKED,
+            movieId = movieId,
+        )
+    }
+
+    private suspend fun hasMovie(
+        code: String,
+        movieId: Long,
         collection: String,
-    ): List<Long> {
-        val snapshot = Firebase.database.reference()
-            .child("matches")
-            .child(code)
-            .child(collection)
-            .valueEvents
-            .firstOrNull()
-        return (snapshot?.value as? List<*>)?.mapNotNull { id ->
-            id as? Long
-        } ?: emptyList()
+    ): Boolean {
+        val snapshot = getMovieReference(
+            code = code,
+            collection = collection,
+            movieId = movieId,
+        ).valueEvents.firstOrNull()
+
+        return snapshot?.value != null
     }
 
     private suspend fun addToCollection(
         code: String,
-        movieId: Long,
         collection: String,
+        movieId: Long,
     ) {
-        val reference = Firebase.database.reference()
-            .child("matches")
-            .child(code)
-            .child(collection)
-        val snapshot = reference.valueEvents.firstOrNull()
-        val listSize = (snapshot?.value as? List<*>)?.size ?: 0
-        reference.child(listSize.toString()).setValue(movieId)
+        val reference = getMovieReference(
+            code = code,
+            collection = collection,
+            movieId = movieId,
+        )
+        reference.setValue(true)
     }
 
     private suspend fun removeFromCollection(
         code: String,
-        movieId: Long,
         collection: String,
+        movieId: Long,
     ) {
-        val reference = Firebase.database.reference()
-            .child("matches")
+        val reference = getMovieReference(
+            code = code,
+            collection = collection,
+            movieId = movieId,
+        )
+        reference.removeValue()
+    }
+
+    private fun getMovieReference(
+        code: String,
+        collection: String,
+        movieId: Long,
+    ): DatabaseReference {
+        return Firebase.database.reference()
+            .child(MATCHES)
             .child(code)
             .child(collection)
-        val snapshot = reference.valueEvents.firstOrNull()
-        val list = snapshot?.value as? List<*> ?: return
-        val updatedList = list.toMutableList().apply {
-            remove(movieId)
-        }
-        reference.setValue(updatedList)
+            .child(movieId.toString())
+    }
+
+    private fun getPairedReference(code: String): DatabaseReference {
+        return Firebase.database.reference()
+            .child(MATCHES)
+            .child(code)
+            .child(PAIRED)
     }
 
 }
