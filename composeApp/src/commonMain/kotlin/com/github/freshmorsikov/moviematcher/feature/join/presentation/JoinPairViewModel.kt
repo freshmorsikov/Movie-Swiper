@@ -58,7 +58,7 @@ class JoinPairViewModel(
 
                     saveCodeJob.join()
                     setPairedJob.join()
-                    sendEvent(JoinPairUdf.Event.GoBack)
+                    sendEvent(JoinPairUdf.Event.OpenSuccess)
                 }
             }
 

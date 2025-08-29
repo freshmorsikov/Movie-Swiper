@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.github.freshmorsikov.moviematcher.app.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.feature.join.presentation.JoinPairUdf
@@ -57,6 +58,11 @@ fun JoinPairScreen(
         when (event) {
             JoinPairUdf.Event.GoBack -> {
                 navController.popBackStack()
+            }
+            JoinPairUdf.Event.OpenSuccess -> {
+                navController.navigate(NavigationRoute.SuccessfulJoining) {
+                    popUpTo(NavigationRoute.Matches)
+                }
             }
         }
     }

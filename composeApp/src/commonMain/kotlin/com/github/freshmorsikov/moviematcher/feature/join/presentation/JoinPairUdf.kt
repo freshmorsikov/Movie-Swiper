@@ -18,6 +18,7 @@ interface JoinPairUdf {
 
     sealed interface Event : Udf.Event {
         data object GoBack : Event
+        data object OpenSuccess : Event
     }
 
 }

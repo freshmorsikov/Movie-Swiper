@@ -21,4 +21,7 @@ interface NavigationRoute {
     @Serializable
     data object JoinPair: NavigationRoute
 
+    @Serializable
+    data object SuccessfulJoining: NavigationRoute
+
 }

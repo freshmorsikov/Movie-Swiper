@@ -13,13 +13,14 @@ import androidx.navigation.compose.rememberNavController
 import com.github.freshmorsikov.moviematcher.core.data.di.dataModule
 import com.github.freshmorsikov.moviematcher.core.data.di.dataStoreModule
 import com.github.freshmorsikov.moviematcher.core.data.di.sqlDriverModule
-import com.github.freshmorsikov.moviematcher.feature.favorite.FavoriteScreen
-import com.github.freshmorsikov.moviematcher.feature.favorite.di.favoriteFeatureModule
+import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
+import com.github.freshmorsikov.moviematcher.feature.favorites.di.favoritesFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.join.JoinPairScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.MatchesScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.di.matchesFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.code.CodeScreen
 import com.github.freshmorsikov.moviematcher.feature.code.di.codeFeatureModule
+import com.github.freshmorsikov.moviematcher.feature.join.SuccessfulJoiningScreen
 import com.github.freshmorsikov.moviematcher.feature.join.di.joinPairFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.di.swipeFeatureModule
@@ -43,7 +44,7 @@ fun App(contextModule: Module = module {}) {
                 sharedDomainModule,
                 sharedDataModule,
                 swipeFeatureModule,
-                favoriteFeatureModule,
+                favoritesFeatureModule,
                 matchesFeatureModule,
                 codeFeatureModule,
                 joinPairFeatureModule,
@@ -82,6 +83,9 @@ fun App(contextModule: Module = module {}) {
                 }
                 composable<NavigationRoute.JoinPair> {
                     JoinPairScreen(navController = navController)
+                }
+                composable<NavigationRoute.SuccessfulJoining> {
+                    SuccessfulJoiningScreen(navController = navController)
                 }
             }
         }

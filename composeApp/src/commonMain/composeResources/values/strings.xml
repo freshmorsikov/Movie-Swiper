@@ -18,6 +18,10 @@
 
     <string name="join_enter_code">Enter your mate's CODE here</string>
     <string name="join_save">Save</string>
+    <string name="join_successfully_paired">Successfully paired!</string>
+    <string name="join_you_can_start_finding">You can start finding matches now.</string>
+    <string name="join_success">Done!\nYou are paired</string>
+    <string name="join_find_matches">Find matches</string>
 
     <string name="sharing_title">Sharing</string>
 

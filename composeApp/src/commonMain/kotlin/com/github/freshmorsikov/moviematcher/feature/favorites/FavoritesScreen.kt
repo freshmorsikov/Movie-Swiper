@@ -1,4 +1,4 @@
-package com.github.freshmorsikov.moviematcher.feature.favorite
+package com.github.freshmorsikov.moviematcher.feature.favorites
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -36,8 +36,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
-import com.github.freshmorsikov.moviematcher.feature.favorite.presentation.FavoriteUdf
-import com.github.freshmorsikov.moviematcher.feature.favorite.presentation.FavoriteViewModel
+import com.github.freshmorsikov.moviematcher.feature.favorites.presentation.FavoritesUdf
+import com.github.freshmorsikov.moviematcher.feature.favorites.presentation.FavoritesViewModel
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieGenres
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
@@ -51,18 +51,18 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FavoriteScreen(
-    viewModel: FavoriteViewModel = koinViewModel()
+    viewModel: FavoritesViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     FavoriteScreenContent(state = state)
 }
 
 @Composable
-fun FavoriteScreenContent(state: FavoriteUdf.State) {
+fun FavoriteScreenContent(state: FavoritesUdf.State) {
     MovieScaffold {
         when (state) {
-            FavoriteUdf.State.Loading -> {}
-            FavoriteUdf.State.Empty -> {
+            FavoritesUdf.State.Loading -> {}
+            FavoritesUdf.State.Empty -> {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -88,7 +88,7 @@ fun FavoriteScreenContent(state: FavoriteUdf.State) {
                 }
             }
 
-            is FavoriteUdf.State.Data -> {
+            is FavoritesUdf.State.Data -> {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp),
@@ -157,7 +157,7 @@ private fun FavoriteCard(
 private fun FavoriteScreenContentPreview() {
     MaterialTheme {
         FavoriteScreenContent(
-            state = FavoriteUdf.State.Data(
+            state = FavoritesUdf.State.Data(
                 movieList = List(10) { i ->
                     Movie(
                         id = i.toLong(),
@@ -181,7 +181,7 @@ private fun FavoriteScreenContentPreview() {
 private fun FavoriteScreenEmptyPreview() {
     MaterialTheme {
         FavoriteScreenContent(
-            state = FavoriteUdf.State.Empty
+            state = FavoritesUdf.State.Empty
         )
     }
 }
