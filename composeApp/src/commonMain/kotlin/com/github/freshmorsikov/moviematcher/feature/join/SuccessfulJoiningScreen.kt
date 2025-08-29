@@ -64,7 +64,7 @@ fun SuccessfulJoiningScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(top = 8.dp),
                 text = stringResource(Res.string.join_you_can_start_finding),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.secondary,
                 textAlign = TextAlign.Center,
             )

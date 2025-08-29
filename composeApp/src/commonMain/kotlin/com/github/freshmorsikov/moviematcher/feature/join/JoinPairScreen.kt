@@ -94,8 +94,8 @@ fun JoinPairContent(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(Res.string.join_enter_code),
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.secondary,
                 textAlign = TextAlign.Center,
             )
 

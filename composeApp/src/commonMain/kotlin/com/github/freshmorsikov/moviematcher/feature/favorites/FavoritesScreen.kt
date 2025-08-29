@@ -81,7 +81,7 @@ fun FavoriteScreenContent(state: FavoritesUdf.State) {
                             .fillMaxWidth()
                             .padding(top = 20.dp),
                         text = stringResource(Res.string.favorites_empty),
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.secondary,
                         textAlign = TextAlign.Center
                     )

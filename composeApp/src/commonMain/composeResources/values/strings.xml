@@ -6,10 +6,11 @@
 
     <string name="favorites_empty">No favorites yet</string>
 
-    <string name="matches_info">To find a match, you first need to pair up</string>
-    <string name="matches_create_pair">Create a Pair</string>
-    <string name="matches_join_pair">Join a Pair</string>
-    <string name="matches_paired">Paired</string>
+    <string name="matches_pair_up">Pair up to start matching</string>
+    <string name="matches_create_or_join">Create a pair or join with a code.</string>
+    <string name="matches_create_pair">Create pair</string>
+    <string name="matches_join_with_code">Join with code</string>
+    <string name="matches_paired_with">Paired with</string>
     <string name="matches_empty">No matches yet</string>
 
     <string name="code_send">Send the CODE to your mate</string>

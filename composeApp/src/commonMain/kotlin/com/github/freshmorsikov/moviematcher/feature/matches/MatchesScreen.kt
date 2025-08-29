@@ -3,6 +3,7 @@ package com.github.freshmorsikov.moviematcher.feature.matches
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,11 +32,12 @@ import com.github.freshmorsikov.moviematcher.feature.matches.presentation.Matche
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_match
+import moviematcher.composeapp.generated.resources.matches_create_or_join
 import moviematcher.composeapp.generated.resources.matches_create_pair
 import moviematcher.composeapp.generated.resources.matches_empty
-import moviematcher.composeapp.generated.resources.matches_info
-import moviematcher.composeapp.generated.resources.matches_join_pair
-import moviematcher.composeapp.generated.resources.matches_paired
+import moviematcher.composeapp.generated.resources.matches_join_with_code
+import moviematcher.composeapp.generated.resources.matches_pair_up
+import moviematcher.composeapp.generated.resources.matches_paired_with
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -100,7 +102,16 @@ private fun CreatePairContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.weight(1f))
-        MatchesInfo(text = stringResource(Res.string.matches_info))
+        MatchesInfo(text = stringResource(Res.string.matches_pair_up))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            text = stringResource(Res.string.matches_create_or_join),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.secondary,
+            textAlign = TextAlign.Center,
+        )
         Spacer(modifier = Modifier.weight(1f))
 
         MovieButton(
@@ -117,7 +128,7 @@ private fun CreatePairContent(
             modifier = Modifier
                 .padding(top = 4.dp)
                 .fillMaxWidth(),
-            text = stringResource(Res.string.matches_join_pair),
+            text = stringResource(Res.string.matches_join_with_code),
             color = MaterialTheme.colorScheme.secondary,
             onClick = {
                 onAction(MatchesUdf.Action.JoinPairClick)
@@ -136,33 +147,34 @@ private fun PairedContent(
         modifier = modifier.padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(Res.string.matches_paired),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground,
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-                    shape = RoundedCornerShape(4.dp)
-                ).border(
-                    width = 0.5.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant,
-                    shape = RoundedCornerShape(4.dp),
-                ).padding(
-                    horizontal = 8.dp,
-                    vertical = 4.dp,
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(Res.string.matches_paired_with),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+            )
+            Text(
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                        shape = RoundedCornerShape(4.dp)
+                    ).border(
+                        width = 0.5.dp,
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        shape = RoundedCornerShape(4.dp),
+                    ).padding(
+                        horizontal = 8.dp,
+                        vertical = 4.dp,
+                    ),
+                text = code,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold,
                 ),
-            text = code,
-            style = MaterialTheme.typography.bodyMedium.copy(
-                fontWeight = FontWeight.Bold,
-            ),
-            color = MaterialTheme.colorScheme.onBackground
-        )
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
 
         Spacer(modifier = Modifier.weight(1f))
         MatchesInfo(text = stringResource(Res.string.matches_empty))
@@ -181,10 +193,10 @@ private fun MatchesInfo(text: String) {
         )
         Text(
             modifier = Modifier
-                .padding(top = 20.dp)
+                .padding(top = 24.dp)
                 .fillMaxWidth(),
             text = text,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.secondary,
             textAlign = TextAlign.Center,
         )
@@ -193,11 +205,24 @@ private fun MatchesInfo(text: String) {
 
 @Preview
 @Composable
-private fun MatchesContentPreview() {
+private fun NotPairedPreview() {
     MaterialTheme {
         MatchesContent(
             state = MatchesUdf.State.Data(
                 pairState = PairState.NotPaired
+            ),
+            onAction = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PairedPreview() {
+    MaterialTheme {
+        MatchesContent(
+            state = MatchesUdf.State.Data(
+                pairState = PairState.Paired(code = "XXXX")
             ),
             onAction = {}
         )

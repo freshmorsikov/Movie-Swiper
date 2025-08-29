@@ -32,10 +32,10 @@ import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import com.github.freshmorsikov.moviematcher.util.clickableWithoutIndication
 import com.github.freshmorsikov.moviematcher.util.clipEntryOf
 import moviematcher.composeapp.generated.resources.Res
-import moviematcher.composeapp.generated.resources.ic_close
 import moviematcher.composeapp.generated.resources.code_copy
 import moviematcher.composeapp.generated.resources.code_send
 import moviematcher.composeapp.generated.resources.code_share
+import moviematcher.composeapp.generated.resources.ic_close
 import moviematcher.composeapp.generated.resources.sharing_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -107,13 +107,13 @@ fun CodeContent(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(Res.string.code_send),
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.secondary,
                 textAlign = TextAlign.Center,
             )
             Text(
                 modifier = Modifier
-                    .padding(top = 32.dp)
+                    .padding(top = 24.dp)
                     .background(
                         color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
                         shape = RoundedCornerShape(8.dp)
@@ -131,19 +131,20 @@ fun CodeContent(
                 ),
                 color = MaterialTheme.colorScheme.onBackground
             )
+            Spacer(modifier = Modifier.weight(1f))
+
             OutlinedMovieButton(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .fillMaxWidth(fraction = 0.5f),
+                modifier = Modifier.fillMaxWidth(),
                 text = stringResource(Res.string.code_copy),
                 color = MaterialTheme.colorScheme.secondary,
                 onClick = {
                     onAction(CodeUdf.Action.CopyClick)
                 }
             )
-            Spacer(modifier = Modifier.weight(1f))
             MovieButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
                 text = stringResource(Res.string.code_share),
                 containerColor = MaterialTheme.colorScheme.secondary,
                 onClick = {
