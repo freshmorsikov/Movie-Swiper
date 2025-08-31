@@ -35,7 +35,7 @@ class MatchesViewModel(
 
             is MatchesUdf.Action.UpdatePair -> {
                 when (action.pairState) {
-                    PairState.NotPaired -> {
+                    is PairState.NotPaired -> {
                         MatchesUdf.State.NotPaired
                     }
 

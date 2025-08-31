@@ -4,10 +4,15 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
 
 sealed interface PairState {
 
+    val code: String
+
     data class Paired(
-        val code: String,
+        override val code: String,
         val matchedMovieList: List<Movie>,
-    ): PairState
-    data object NotPaired: PairState
+    ) : PairState
+
+    data class NotPaired(
+        override val code: String
+    ) : PairState
 
 }

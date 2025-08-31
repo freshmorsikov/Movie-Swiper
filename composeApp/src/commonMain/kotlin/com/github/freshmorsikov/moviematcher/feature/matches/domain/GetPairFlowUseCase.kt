@@ -29,7 +29,7 @@ class GetPairFlowUseCase(
                         )
                     }
                 } else {
-                    flowOf(PairState.NotPaired)
+                    flowOf(PairState.NotPaired(code = code))
                 }
             }
         }
