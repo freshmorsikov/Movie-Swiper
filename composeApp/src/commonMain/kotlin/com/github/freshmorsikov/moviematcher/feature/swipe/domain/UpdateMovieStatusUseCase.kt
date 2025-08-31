@@ -38,6 +38,10 @@ class UpdateMovieStatusUseCase(
                         movieId = id,
                     )
                     if (isLiked) {
+                        matchRepository.removeFromLiked(
+                            code = code,
+                            movieId = id,
+                        )
                         matchRepository.addToMatched(
                             code = code,
                             movieId = id,
