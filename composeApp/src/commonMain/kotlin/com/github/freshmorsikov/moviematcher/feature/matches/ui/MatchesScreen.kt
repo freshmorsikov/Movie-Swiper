@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -80,7 +81,15 @@ fun MatchesContent(
 ) {
     MovieScaffold {
         when (state) {
-            MatchesUdf.State.Loading -> {}
+            MatchesUdf.State.Loading -> {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(40.dp),
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
+
             MatchesUdf.State.NotPaired -> {
                 NotPairedContent(onAction = onAction)
             }
