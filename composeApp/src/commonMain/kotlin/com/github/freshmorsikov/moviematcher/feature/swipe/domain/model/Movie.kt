@@ -19,8 +19,8 @@ data class Movie(
             originalTitle = "Original movie",
             posterPath = "/path",
             releaseDate = "2025-01-01",
-            voteAverage = 12.34,
-            popularity = 9.87,
+            voteAverage = 9.87,
+            popularity = 12.34,
             status = "liked",
             genres = listOf("Comedy", "Drama", "Animation"),
         )

@@ -16,7 +16,7 @@ import com.github.freshmorsikov.moviematcher.core.data.di.sqlDriverModule
 import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
 import com.github.freshmorsikov.moviematcher.feature.favorites.di.favoritesFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.join.JoinPairScreen
-import com.github.freshmorsikov.moviematcher.feature.matches.MatchesScreen
+import com.github.freshmorsikov.moviematcher.feature.matches.ui.MatchesScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.di.matchesFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.code.CodeScreen
 import com.github.freshmorsikov.moviematcher.feature.code.di.codeFeatureModule

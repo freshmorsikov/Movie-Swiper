@@ -8,7 +8,9 @@ interface MatchesUdf {
     sealed interface State : Udf.State {
 
         data object Loading : State
-        data class Data(val pairState: PairState) : State
+        data object NotPaired : State
+        data class Empty(val code: String) : State
+        data class Data(val pairState: PairState.Paired) : State
 
     }
 

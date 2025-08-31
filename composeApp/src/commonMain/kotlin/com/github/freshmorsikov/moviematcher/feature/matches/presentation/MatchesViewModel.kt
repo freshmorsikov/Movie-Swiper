@@ -3,6 +3,7 @@ package com.github.freshmorsikov.moviematcher.feature.matches.presentation
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetPairFlowUseCase
+import com.github.freshmorsikov.moviematcher.feature.matches.domain.model.PairState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -27,11 +28,25 @@ class MatchesViewModel(
             MatchesUdf.Action.CreatePairClick -> {
                 currentState
             }
+
             MatchesUdf.Action.JoinPairClick -> {
                 currentState
             }
+
             is MatchesUdf.Action.UpdatePair -> {
-                MatchesUdf.State.Data(pairState = action.pairState)
+                when (action.pairState) {
+                    PairState.NotPaired -> {
+                        MatchesUdf.State.NotPaired
+                    }
+
+                    is PairState.Paired -> {
+                        if (action.pairState.matchedMovieList.isEmpty()) {
+                            MatchesUdf.State.Empty(code = action.pairState.code)
+                        } else {
+                            MatchesUdf.State.Data(pairState = action.pairState)
+                        }
+                    }
+                }
             }
         }
     }
@@ -41,9 +56,11 @@ class MatchesViewModel(
             MatchesUdf.Action.CreatePairClick -> {
                 sendEvent(MatchesUdf.Event.OpenCode)
             }
+
             MatchesUdf.Action.JoinPairClick -> {
                 sendEvent(MatchesUdf.Event.OpenJoinPair)
             }
+
             else -> {}
         }
     }

@@ -1,13 +1,18 @@
-package com.github.freshmorsikov.moviematcher.feature.matches
+package com.github.freshmorsikov.moviematcher.feature.matches.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +34,7 @@ import com.github.freshmorsikov.moviematcher.core.ui.OutlinedMovieButton
 import com.github.freshmorsikov.moviematcher.feature.matches.domain.model.PairState
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesUdf
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesViewModel
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
+import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieItem
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_match
@@ -42,6 +47,7 @@ import moviematcher.composeapp.generated.resources.matches_paired_with
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -75,26 +81,23 @@ fun MatchesContent(
     MovieScaffold {
         when (state) {
             MatchesUdf.State.Loading -> {}
-            is MatchesUdf.State.Data -> {
-                when (state.pairState) {
-                    PairState.NotPaired -> {
-                        CreatePairContent(onAction = onAction)
-                    }
+            MatchesUdf.State.NotPaired -> {
+                NotPairedContent(onAction = onAction)
+            }
 
-                    is PairState.Paired -> {
-                        PairedContent(
-                            code = state.pairState.code,
-                            onAction = onAction
-                        )
-                    }
-                }
+            is MatchesUdf.State.Empty -> {
+                EmptyContent(code = state.code)
+            }
+
+            is MatchesUdf.State.Data -> {
+                MatchesListContent(pairState = state.pairState)
             }
         }
     }
 }
 
 @Composable
-private fun CreatePairContent(
+private fun NotPairedContent(
     onAction: (MatchesUdf.Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -139,47 +142,81 @@ private fun CreatePairContent(
 }
 
 @Composable
-private fun PairedContent(
+private fun EmptyContent(
     code: String,
-    onAction: (MatchesUdf.Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = stringResource(Res.string.matches_paired_with),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                modifier = Modifier
-                    .padding(start = 4.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-                        shape = RoundedCornerShape(4.dp)
-                    ).border(
-                        width = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant,
-                        shape = RoundedCornerShape(4.dp),
-                    ).padding(
-                        horizontal = 8.dp,
-                        vertical = 4.dp,
-                    ),
-                text = code,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.Bold,
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-        }
-
+        PairedInfo(code = code)
         Spacer(modifier = Modifier.weight(1f))
         MatchesInfo(text = stringResource(Res.string.matches_empty))
         Spacer(modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+private fun MatchesListContent(
+    pairState: PairState.Paired,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        PairedInfo(
+            modifier = Modifier.padding(16.dp),
+            code = pairState.code
+        )
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = spacedBy(8.dp)
+        ) {
+            items(pairState.matchedMovieList) { movie ->
+                MovieItem(movie = movie)
+            }
+        }
+    }
+}
+
+@Composable
+private fun PairedInfo(
+    code: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(Res.string.matches_paired_with),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                    shape = RoundedCornerShape(4.dp)
+                ).border(
+                    width = 0.5.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    shape = RoundedCornerShape(4.dp),
+                ).padding(
+                    horizontal = 8.dp,
+                    vertical = 4.dp,
+                ),
+            text = code,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontWeight = FontWeight.Bold,
+            ),
+            color = MaterialTheme.colorScheme.onBackground,
+        )
     }
 }
 
@@ -206,28 +243,12 @@ private fun MatchesInfo(text: String) {
 
 @Preview
 @Composable
-private fun NotPairedPreview() {
+private fun PairedPreview(
+    @PreviewParameter(MatchesStateProvider::class) state: MatchesUdf.State
+) {
     MaterialTheme {
         MatchesContent(
-            state = MatchesUdf.State.Data(
-                pairState = PairState.NotPaired
-            ),
-            onAction = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun PairedPreview() {
-    MaterialTheme {
-        MatchesContent(
-            state = MatchesUdf.State.Data(
-                pairState = PairState.Paired(
-                    code = "XXXX",
-                    matchedMovieList = List(6) { i -> Movie.mock }
-                )
-            ),
+            state = state,
             onAction = {}
         )
     }
