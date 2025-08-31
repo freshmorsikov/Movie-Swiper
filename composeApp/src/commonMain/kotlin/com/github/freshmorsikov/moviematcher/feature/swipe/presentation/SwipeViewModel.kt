@@ -38,7 +38,7 @@ class SwipeViewModel(
 
     private fun subscribeOnMovieList() {
         getMovieListUseCase().onEach { movieList ->
-            movieList.firstOrNull()?.let { movie ->
+            movieList.lastOrNull()?.let { movie ->
                 onAction(SwipeUdf.Action.UpdateMovie(movie = movie))
             }
         }.launchIn(viewModelScope)

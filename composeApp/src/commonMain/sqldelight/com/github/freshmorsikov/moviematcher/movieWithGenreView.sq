@@ -8,9 +8,10 @@ getMoviesWithGenreByStatus:
 SELECT *
 FROM movieWithGenreView
 WHERE status = :status
-ORDER BY uploadTimestamp, popularity DESC;
+ORDER BY uploadTimestamp DESC, popularity ASC;
 
 getMoviesWithGenreByIds:
 SELECT *
 FROM movieWithGenreView
-WHERE id IN :ids;
+WHERE id IN :ids
+ORDER BY uploadTimestamp DESC, popularity ASC;

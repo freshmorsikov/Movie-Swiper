@@ -14,7 +14,7 @@ class FavoritesViewModel(
 
     init {
         getFavoriteMovieListUseCase().onEach { movieList ->
-            onAction(FavoritesUdf.Action.UpdateMovieList(movieList = movieList.reversed()))
+            onAction(FavoritesUdf.Action.UpdateMovieList(movieList = movieList))
         }.launchIn(viewModelScope)
     }
 
