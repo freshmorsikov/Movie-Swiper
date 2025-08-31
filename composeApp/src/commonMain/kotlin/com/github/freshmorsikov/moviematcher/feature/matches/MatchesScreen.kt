@@ -29,6 +29,7 @@ import com.github.freshmorsikov.moviematcher.core.ui.OutlinedMovieButton
 import com.github.freshmorsikov.moviematcher.feature.matches.domain.model.PairState
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesUdf
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesViewModel
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_match
@@ -222,7 +223,10 @@ private fun PairedPreview() {
     MaterialTheme {
         MatchesContent(
             state = MatchesUdf.State.Data(
-                pairState = PairState.Paired(code = "XXXX")
+                pairState = PairState.Paired(
+                    code = "XXXX",
+                    matchedMovieList = List(6) { i -> Movie.mock }
+                )
             ),
             onAction = {}
         )

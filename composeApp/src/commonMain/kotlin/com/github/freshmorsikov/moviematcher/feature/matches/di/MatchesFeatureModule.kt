@@ -13,6 +13,7 @@ val matchesFeatureModule = module {
         GetPairFlowUseCase(
             getCodeFlowCaseCase = get(),
             matchRepository = get(),
+            movieRepository = get(),
         )
     }
 }

@@ -1,4 +1,4 @@
-package com.github.freshmorsikov.moviematcher.feature.swipe.data
+package com.github.freshmorsikov.moviematcher.shared.data
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
@@ -8,6 +8,8 @@ import com.github.freshmorsikov.moviematcher.MovieEntity
 import com.github.freshmorsikov.moviematcher.MovieEntityQueries
 import com.github.freshmorsikov.moviematcher.MovieGenreReference
 import com.github.freshmorsikov.moviematcher.MovieGenreReferenceQueries
+import com.github.freshmorsikov.moviematcher.MovieWithGenreView
+import com.github.freshmorsikov.moviematcher.MovieWithGenreViewQueries
 import com.github.freshmorsikov.moviematcher.core.data.api.ApiService
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
@@ -23,6 +25,7 @@ private const val PAGE_KEY = "PAGE_KEY"
 class MovieRepository(
     private val movieEntityQueries: MovieEntityQueries,
     private val genreEntityQueries: GenreEntityQueries,
+    private val movieWithGenreViewQueries: MovieWithGenreViewQueries,
     private val movieGenreReferenceQueries: MovieGenreReferenceQueries,
     private val keyValueStore: KeyValueStore,
     private val apiService: ApiService,
@@ -42,26 +45,11 @@ class MovieRepository(
     }
 
     fun getMovieListFlowByStatus(status: MovieStatus): Flow<List<Movie>> {
-        return movieEntityQueries.getMoviesWithGenreByStatus(status = status.name)
+        return movieWithGenreViewQueries.getMoviesWithGenreByStatus(status = status.name)
             .asFlow()
             .mapToList(Dispatchers.Default)
             .map { movieWithGenreList ->
-                movieWithGenreList.groupBy { movie ->
-                    movie.id
-                }.map { (_, movieWithGenreList) ->
-                    val movie = movieWithGenreList.first()
-                    Movie(
-                        id = movie.id,
-                        title = movie.title,
-                        originalTitle = movie.originalTitle,
-                        posterPath = movie.posterPath,
-                        releaseDate = movie.releaseDate,
-                        voteAverage = movie.voteAverage,
-                        popularity = movie.popularity,
-                        status = MovieStatus.Undefined.name,
-                        genres = movieWithGenreList.map { it.genreName }
-                    )
-                }
+                movieWithGenreList.toMovieList()
             }
     }
 
@@ -92,8 +80,8 @@ class MovieRepository(
                     movieEntityQueries.insert(movieEntity = movieEntity)
                     movie.genreIds.onEach { genreId ->
                         val movieGenreReference = MovieGenreReference(
-                             movieReference = movie.id,
-                             genreReference = genreId
+                            movieReference = movie.id,
+                            genreReference = genreId
                         )
                         movieGenreReferenceQueries.insert(movieGenreReference = movieGenreReference)
                     }
@@ -109,6 +97,31 @@ class MovieRepository(
             id = id,
             status = status.name,
         )
+    }
+
+    fun getMoviesByIds(ids: List<Long>): List<Movie> {
+        return movieWithGenreViewQueries.getMoviesWithGenreByIds(ids = ids)
+            .executeAsList()
+            .toMovieList()
+    }
+
+    fun List<MovieWithGenreView>.toMovieList(): List<Movie> {
+        return groupBy { movieWithGenres ->
+            movieWithGenres.id
+        }.map { (_, movieWithGenreList) ->
+            val movie = movieWithGenreList.first()
+            Movie(
+                id = movie.id,
+                title = movie.title,
+                originalTitle = movie.originalTitle,
+                posterPath = movie.posterPath,
+                releaseDate = movie.releaseDate,
+                voteAverage = movie.voteAverage,
+                popularity = movie.popularity,
+                status = MovieStatus.Undefined.name,
+                genres = movieWithGenreList.map { it.genreName }
+            )
+        }
     }
 
 

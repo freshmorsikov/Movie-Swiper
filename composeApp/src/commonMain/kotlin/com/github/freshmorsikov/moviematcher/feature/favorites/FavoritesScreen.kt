@@ -158,19 +158,7 @@ private fun FavoriteScreenContentPreview() {
     MaterialTheme {
         FavoriteScreenContent(
             state = FavoritesUdf.State.Data(
-                movieList = List(10) { i ->
-                    Movie(
-                        id = i.toLong(),
-                        title = "Title $i",
-                        originalTitle = "",
-                        posterPath = "",
-                        releaseDate = "2024-11-11",
-                        voteAverage = 2.9090,
-                        popularity = 0.0,
-                        status = "",
-                        genres = listOf("Comedy", "Drama", "Horror"),
-                    )
-                }
+                movieList = List(6) { i -> Movie.mock }
             )
         )
     }

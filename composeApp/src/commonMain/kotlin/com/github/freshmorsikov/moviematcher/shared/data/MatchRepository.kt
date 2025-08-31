@@ -28,6 +28,19 @@ class MatchRepository() {
             }
     }
 
+    fun getMatchedListFlow(code: String): Flow<List<Long>> {
+        return Firebase.database.reference()
+            .child(MATCHES)
+            .child(code)
+            .child(MATCHED)
+            .valueEvents
+            .map { snapshot ->
+                snapshot.children.mapNotNull { child ->
+                    child.key?.toLongOrNull()
+                }
+            }
+    }
+
     suspend fun isMovieLiked(code: String, movieId: Long): Boolean {
         return hasMovie(
             code = code,

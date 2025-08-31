@@ -10,4 +10,19 @@ data class Movie(
     val popularity: Double,
     val status: String,
     val genres: List<String>,
-)
+) {
+
+    companion object {
+        val mock = Movie(
+            id = 1,
+            title = "Movie",
+            originalTitle = "Original movie",
+            posterPath = "/path",
+            releaseDate = "2025-01-01",
+            voteAverage = 12.34,
+            popularity = 9.87,
+            status = "liked",
+            genres = listOf("Comedy", "Drama", "Animation"),
+        )
+    }
+}

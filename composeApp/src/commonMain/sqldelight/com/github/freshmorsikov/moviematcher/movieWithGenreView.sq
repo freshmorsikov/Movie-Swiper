@@ -1,0 +1,16 @@
+CREATE VIEW movieWithGenreView AS
+SELECT movieEntity.*, genreEntity.genreName
+FROM movieEntity
+JOIN movieGenreReference ON movieGenreReference.movieReference = movieEntity.id
+JOIN genreEntity ON movieGenreReference.genreReference = genreEntity.id;
+
+getMoviesWithGenreByStatus:
+SELECT *
+FROM movieWithGenreView
+WHERE status = :status
+ORDER BY uploadTimestamp, popularity DESC;
+
+getMoviesWithGenreByIds:
+SELECT *
+FROM movieWithGenreView
+WHERE id IN :ids;

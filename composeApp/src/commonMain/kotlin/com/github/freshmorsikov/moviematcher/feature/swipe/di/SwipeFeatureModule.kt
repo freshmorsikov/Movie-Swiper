@@ -1,6 +1,6 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe.di
 
-import com.github.freshmorsikov.moviematcher.feature.swipe.data.MovieRepository
+import com.github.freshmorsikov.moviematcher.shared.data.MovieRepository
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
@@ -33,6 +33,7 @@ val swipeFeatureModule = module {
         MovieRepository(
             movieEntityQueries = get(),
             genreEntityQueries = get(),
+            movieWithGenreViewQueries = get(),
             movieGenreReferenceQueries = get(),
             keyValueStore = get(),
             apiService = get(),

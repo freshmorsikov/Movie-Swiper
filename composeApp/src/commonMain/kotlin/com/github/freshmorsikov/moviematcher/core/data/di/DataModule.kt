@@ -38,6 +38,9 @@ val dataModule = module {
     factory {
         get<Database>().movieGenreReferenceQueries
     }
+    factory {
+        get<Database>().movieWithGenreViewQueries
+    }
 
     single {
         ApiService(httpClient = get())

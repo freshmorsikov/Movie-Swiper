@@ -15,15 +15,6 @@ INSERT OR IGNORE
 INTO movieEntity
 VALUES ?;
 
-getMoviesWithGenreByStatus:
-SELECT movieEntity.*,
-    genreEntity.genreName
-FROM movieEntity
-JOIN movieGenreReference ON movieGenreReference.movieReference = movieEntity.id
-JOIN genreEntity ON movieGenreReference.genreReference = genreEntity.id
-WHERE status = :status
-ORDER BY uploadTimestamp, popularity DESC;
-
 getMovieCountByStatus:
 SELECT COUNT(*)
 FROM movieEntity
