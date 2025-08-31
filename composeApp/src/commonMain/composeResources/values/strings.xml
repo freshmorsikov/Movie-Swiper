@@ -3,7 +3,7 @@
     <string name="app_new_match_found">New match found</string>
 
     <string name="navigation_swipe">Swipe</string>
-    <string name="navigation_favorite">Favorite</string>
+    <string name="navigation_favorites">Favorites</string>
     <string name="navigation_matches">Matches</string>
 
     <string name="favorites_empty">No favorites yet</string>

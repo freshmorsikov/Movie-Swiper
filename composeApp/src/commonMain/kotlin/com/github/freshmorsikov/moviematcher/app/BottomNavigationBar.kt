@@ -29,7 +29,7 @@ import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_heart
 import moviematcher.composeapp.generated.resources.ic_match
 import moviematcher.composeapp.generated.resources.ic_swipe
-import moviematcher.composeapp.generated.resources.navigation_favorite
+import moviematcher.composeapp.generated.resources.navigation_favorites
 import moviematcher.composeapp.generated.resources.navigation_matches
 import moviematcher.composeapp.generated.resources.navigation_swipe
 import org.jetbrains.compose.resources.DrawableResource
@@ -174,7 +174,7 @@ private fun BottomNavigationRoute.icon(): DrawableResource {
 private fun BottomNavigationRoute.text(): StringResource {
     return when (this) {
         NavigationRoute.Swipe -> Res.string.navigation_swipe
-        NavigationRoute.Favorite -> Res.string.navigation_favorite
+        NavigationRoute.Favorite -> Res.string.navigation_favorites
         NavigationRoute.Matches -> Res.string.navigation_matches
     }
 }
