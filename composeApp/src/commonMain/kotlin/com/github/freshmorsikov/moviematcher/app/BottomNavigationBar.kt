@@ -1,8 +1,10 @@
 package com.github.freshmorsikov.moviematcher.app
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -11,10 +13,12 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
@@ -51,13 +55,21 @@ data class BottomNavigationItemList(
 data class BottomNavigationItem(
     val route: BottomNavigationRoute,
     val isSelected: Boolean,
-    val hasBadge: Boolean
+    val badgeCount: Int?
 )
 
 @Composable
-fun BottomNavigationBar(navController: NavHostController) {
+fun BottomNavigationBar(
+    navController: NavHostController,
+    newMatches: Int,
+    onChangeIsCurrentMatches: (Boolean) -> Unit,
+) {
     val backStack by navController.currentBackStackEntryAsState()
     val currentDestination = backStack?.destination
+
+    LaunchedEffect(currentDestination) {
+        onChangeIsCurrentMatches(currentDestination.same(NavigationRoute.Matches))
+    }
 
     if (!currentDestination.isBottomNavigation()) {
         return
@@ -68,7 +80,9 @@ fun BottomNavigationBar(navController: NavHostController) {
             BottomNavigationItem(
                 route = route,
                 isSelected = currentDestination.same(route),
-                hasBadge = false
+                badgeCount = newMatches.takeIf { count ->
+                    (route is NavigationRoute.Matches) && (count > 0)
+                }
             )
         }
     )
@@ -96,9 +110,26 @@ private fun BottomNavigationBarContent(
                 NavigationBarItem(
                     selected = item.isSelected,
                     icon = {
-                        Box {
+                        BadgedBox(
+                            badge = {
+                                item.badgeCount?.let { count ->
+                                    Badge(containerColor = MaterialTheme.colorScheme.error) {
+                                        Text(
+                                            text = count.toString(),
+                                            style = MaterialTheme.typography.labelMedium.copy(
+                                                fontSize = 12.sp,
+                                                lineHeight = 16.sp,
+                                            ),
+                                            color = MaterialTheme.colorScheme.onError,
+                                        )
+                                    }
+                                }
+                            }
+                        ) {
                             Icon(
-                                modifier = Modifier.size(14.dp),
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .size(24.dp),
                                 painter = painterResource(route.icon()),
                                 contentDescription = null
                             )
@@ -171,17 +202,17 @@ private fun BottomNavigationBarPreview() {
                     BottomNavigationItem(
                         route = NavigationRoute.Favorite,
                         isSelected = false,
-                        hasBadge = true
+                        badgeCount = null,
                     ),
                     BottomNavigationItem(
                         route = NavigationRoute.Swipe,
                         isSelected = true,
-                        hasBadge = false
+                        badgeCount = null,
                     ),
                     BottomNavigationItem(
                         route = NavigationRoute.Matches,
                         isSelected = false,
-                        hasBadge = false
+                        badgeCount = 2,
                     )
                 )
             )

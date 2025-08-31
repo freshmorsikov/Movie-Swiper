@@ -8,9 +8,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -70,6 +72,8 @@ fun App(contextModule: Module = module {}) {
         val viewModel: AppViewModel = koinViewModel()
         val scope = rememberCoroutineScope()
 
+        val state by viewModel.state.collectAsStateWithLifecycle()
+
         val snackbarMessage = stringResource(Res.string.app_new_match_found)
         SubscribeOnEvents(viewModel.event) { event ->
             when (event) {
@@ -87,7 +91,15 @@ fun App(contextModule: Module = module {}) {
                 .navigationBarsPadding(),
             bottomBar = {
                 BottomNavigationBar(
-                    navController = navController
+                    navController = navController,
+                    newMatches = state.newMatches,
+                    onChangeIsCurrentMatches = { isCurrent ->
+                        viewModel.onAction(
+                            AppUdf.Action.UpdateIsCurrentMatches(
+                                isCurrentMatches = isCurrent
+                            )
+                        )
+                    }
                 )
             },
         ) { padding ->

@@ -9,7 +9,12 @@ import kotlinx.coroutines.launch
 class AppViewModel(
     private val getPairFlowUseCase: GetPairFlowUseCase,
 ) : UdfViewModel<AppUdf.State, AppUdf.Action, AppUdf.Event>(
-    initState = { AppUdf.State(newMatches = 0) }
+    initState = {
+        AppUdf.State(
+            newMatches = 0,
+            isCurrentMatches = false,
+        )
+    }
 ) {
 
     init {
@@ -30,9 +35,24 @@ class AppViewModel(
     }
 
     override fun reduce(action: AppUdf.Action): AppUdf.State {
-        return when(action) {
+        return when (action) {
             AppUdf.Action.UpdateNewMatches -> {
-                currentState.copy(newMatches = currentState.newMatches + 1)
+                if (currentState.isCurrentMatches) {
+                    currentState.copy(newMatches = 0)
+                } else {
+                    currentState.copy(newMatches = currentState.newMatches + 1)
+                }
+            }
+
+            is AppUdf.Action.UpdateIsCurrentMatches -> {
+                currentState.copy(
+                    newMatches = if (action.isCurrentMatches) {
+                        0
+                    } else {
+                        currentState.newMatches
+                    },
+                    isCurrentMatches = action.isCurrentMatches,
+                )
             }
         }
     }
