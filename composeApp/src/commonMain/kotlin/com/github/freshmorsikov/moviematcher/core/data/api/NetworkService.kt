@@ -27,8 +27,9 @@ class ApiService(
                     parameter("language", "en-US")
                     parameter("page", page)
                     parameter("sort_by", "popularity.desc")
-                    parameter("primary_release_date.lte", "2024-12-01")
+                    parameter("primary_release_date.lte", "2025-01-01")
                     parameter("vote_average.gte", 6)
+                    parameter("vote_count.gte", 200)
                 }
             }
         }
