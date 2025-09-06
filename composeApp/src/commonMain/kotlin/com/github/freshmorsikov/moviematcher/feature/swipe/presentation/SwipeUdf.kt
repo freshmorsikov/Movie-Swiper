@@ -5,14 +5,20 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
 
 interface SwipeUdf {
 
-    data class State(
-        val movie: Movie?,
-        val swipeDirection: SwipeDirection?,
-        val zIndex: Float,
-        val isSwiping: Boolean,
-    ) : Udf.State {
+    sealed interface State: Udf.State {
 
-        val isButtonsEnabled: Boolean = movie != null && !isSwiping
+        data object Loading : State
+
+        data class Data(
+            val movies: List<Movie>,
+            val swipeDirection: SwipeDirection?,
+            val zIndex: Float,
+            val isSwiping: Boolean,
+        ) : State {
+
+            //val isButtonsEnabled: Boolean = movie != null && !isSwiping
+
+        }
 
     }
 

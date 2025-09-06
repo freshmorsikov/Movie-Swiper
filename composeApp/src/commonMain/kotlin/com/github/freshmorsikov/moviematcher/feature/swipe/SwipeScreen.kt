@@ -3,14 +3,21 @@ package com.github.freshmorsikov.moviematcher.feature.swipe
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -59,17 +66,25 @@ fun SwipeScreenContent(
     onAction: (SwipeUdf.Action) -> Unit
 ) {
     MovieScaffold {
-        Box(
-            modifier = Modifier
-                .padding(
-                    start = 16.dp,
-                    top = 16.dp,
-                    end = 16.dp,
-                    bottom = 72.dp,
-                )
-                .align(Alignment.Center),
-        ) {
-            MovieCard(state = state)
+        Box(modifier = Modifier.padding(16.dp)) {
+            Box(
+                modifier = Modifier
+                    .padding(bottom = 72.dp)
+                    .align(Alignment.Center),
+            ) {
+                when (state) {
+                    SwipeUdf.State.Loading -> {
+                        LoadingContent(modifier = Modifier.align(Alignment.Center))
+                    }
+
+                    is SwipeUdf.State.Data -> {
+                        DataContent(
+                            modifier = Modifier.align(Alignment.Center),
+                            state = state,
+                        )
+                    }
+                }
+            }
         }
 
         Row(
@@ -82,7 +97,7 @@ fun SwipeScreenContent(
                 modifier = Modifier.weight(1f),
                 text = "Dislike",
                 containerColor = Color(0xFFF95667),
-                enabled = state.isButtonsEnabled,
+                //enabled = state.isButtonsEnabled,
                 onClick = {
                     onAction(SwipeUdf.Action.Dislike)
                 }
@@ -91,7 +106,7 @@ fun SwipeScreenContent(
                 modifier = Modifier.weight(1f),
                 text = "Like",
                 containerColor = Color(0xFF00BE64),
-                enabled = state.isButtonsEnabled,
+                //enabled = state.isButtonsEnabled,
                 onClick = {
                     onAction(SwipeUdf.Action.Like)
                 }
@@ -101,11 +116,95 @@ fun SwipeScreenContent(
 }
 
 @Composable
-private fun MovieCard(
-    state: SwipeUdf.State,
+private fun LoadingContent(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(600.dp)
+            .containerShimmer(),
+    ) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp),
+            verticalArrangement = spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Spacer(
+                modifier = Modifier
+                    .height(24.dp)
+                    .width(120.dp)
+                    .contentShimmer()
+            )
+            Spacer(
+                modifier = Modifier
+                    .height(32.dp)
+                    .fillMaxWidth()
+                    .contentShimmer()
+            )
+            Spacer(
+                modifier = Modifier
+                    .height(32.dp)
+                    .fillMaxWidth()
+                    .contentShimmer()
+            )
+        }
+    }
+}
+
+@Composable
+private fun Modifier.containerShimmer(): Modifier {
+    val transition = rememberInfiniteTransition(label = "containerTransition")
+    val alpha by transition.animateFloat(
+        initialValue = 0.5f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(800),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "containerAnimation"
+    )
+    return background(
+        color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = alpha),
+        shape = RoundedCornerShape(8.dp)
+    )
+}
+
+@Composable
+private fun Modifier.contentShimmer(): Modifier {
+    val transition = rememberInfiniteTransition(label = "contentTransition")
+    val alpha by transition.animateFloat(
+        initialValue = 0.5f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(800),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "contentAnimation"
+    )
+    return background(
+        color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = alpha),
+        shape = RoundedCornerShape(8.dp)
+    )
+}
+
+@Composable
+private fun DataContent(
+    state: SwipeUdf.State.Data,
     modifier: Modifier = Modifier,
 ) {
-    val currentMovie = state.movie ?: return
+    MovieCard(
+        state = state,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun MovieCard(
+    state: SwipeUdf.State.Data,
+    modifier: Modifier = Modifier,
+) {
+    val currentMovie = state.movies.firstOrNull() ?: return
     AnimatedContent(
         targetState = currentMovie,
         transitionSpec = {
@@ -167,24 +266,35 @@ private fun MovieCard(
 
 @Preview
 @Composable
-private fun SwipeScreenContentPreview() {
+private fun SwipeScreenDataPreview() {
     SwipeScreenContent(
-        state = SwipeUdf.State(
-            movie = Movie(
-                id = 0,
-                title = "Title",
-                originalTitle = "Original title",
-                posterPath = "path",
-                releaseDate = "2025",
-                voteAverage = 2.4,
-                popularity = 70.0,
-                status = "",
-                genres = listOf("Comedy", "Drama"),
-            ),
+        state = SwipeUdf.State.Data(
+            movies = List(3) { i ->
+                Movie(
+                    id = i.toLong(),
+                    title = "Title $i",
+                    originalTitle = "Original title",
+                    posterPath = "path",
+                    releaseDate = "2025",
+                    voteAverage = 2.4,
+                    popularity = 70.0,
+                    status = "",
+                    genres = listOf("Comedy", "Drama"),
+                )
+            },
             swipeDirection = SwipeUdf.SwipeDirection.Left,
             zIndex = 0f,
             isSwiping = false,
         ),
+        onAction = {}
+    )
+}
+
+@Preview
+@Composable
+private fun SwipeScreenLoadingPreview() {
+    SwipeScreenContent(
+        state = SwipeUdf.State.Loading,
         onAction = {}
     )
 }

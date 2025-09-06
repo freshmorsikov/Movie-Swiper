@@ -17,14 +17,7 @@ class SwipeViewModel(
     private val getMovieListUseCase: GetMovieListUseCase,
     private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
 ) : UdfViewModel<SwipeUdf.State, SwipeUdf.Action, SwipeUdf.Event>(
-    initState = {
-        SwipeUdf.State(
-            movie = null,
-            swipeDirection = null,
-            zIndex = 1f,
-            isSwiping = false,
-        )
-    }
+    initState = { SwipeUdf.State.Loading }
 ) {
 
     private var zIndex = 1000f
@@ -48,28 +41,30 @@ class SwipeViewModel(
         return when (action) {
             is SwipeUdf.Action.UpdateMovie -> {
                 zIndex--
-                currentState.copy(
-                    movie = action.movie,
-                    zIndex = zIndex
+                SwipeUdf.State.Data(
+                    movies = listOf(action.movie),
+                    swipeDirection = null,
+                    zIndex = 1f,
+                    isSwiping = false,
                 )
             }
 
             SwipeUdf.Action.Like -> {
-                currentState.copy(
+                (currentState as? SwipeUdf.State.Data)?.copy(
                     swipeDirection = SwipeDirection.Right,
                     isSwiping = true
-                )
+                ) ?: currentState
             }
 
             SwipeUdf.Action.Dislike -> {
-                currentState.copy(
+                (currentState as? SwipeUdf.State.Data)?.copy(
                     swipeDirection = SwipeDirection.Left,
                     isSwiping = true
-                )
+                ) ?: currentState
             }
 
             SwipeUdf.Action.FinishSwiping -> {
-                currentState.copy(isSwiping = false)
+                (currentState as? SwipeUdf.State.Data)?.copy(isSwiping = false) ?: currentState
             }
 
             is SwipeUdf.Action.MoreClick -> {
@@ -94,7 +89,9 @@ class SwipeViewModel(
     }
 
     private fun updateMovieStatus(movieStatus: MovieStatus) {
-        currentState.movie?.id?.let { id ->
+        val state = (currentState as? SwipeUdf.State.Data) ?: return
+
+        state.movies.firstOrNull()?.id?.let { id ->
             viewModelScope.launch {
                 updateMovieStatusUseCase(
                     id = id,
