@@ -5,7 +5,6 @@ android-minSdk = "24"
 android-targetSdk = "36"
 androidx-activity = "1.10.1"
 androidx-lifecycle = "2.9.3"
-composeHotReload = "1.0.0-alpha11"
 composeMultiplatform = "1.8.2"
 kotlin = "2.2.10"
 ktor = "3.2.1"
@@ -52,6 +51,7 @@ datastore-preferences = { group = "androidx.datastore", name = "datastore-prefer
 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-database = { group = "dev.gitlive", name = "firebase-database", version.ref = "gitlive" }
+firebase-analytics = { group = "dev.gitlive", name = "firebase-analytics", version.ref = "gitlive" }
 
 [bundles]
 ktor = [

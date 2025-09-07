@@ -70,6 +70,7 @@ kotlin {
             implementation(libs.bundles.koin)
             implementation(libs.bundles.datastore)
             implementation(libs.firebase.database)
+            implementation(libs.firebase.analytics)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

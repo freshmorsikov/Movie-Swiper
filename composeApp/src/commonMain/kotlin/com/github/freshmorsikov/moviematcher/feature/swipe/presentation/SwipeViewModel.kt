@@ -7,7 +7,8 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListU
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.MovieStatus
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf.SwipeDirection
-import kotlinx.coroutines.delay
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.analytics.analytics
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -29,12 +30,17 @@ class SwipeViewModel(
             loadGenreListUseCase()
         }
         subscribeOnMovieList()
+        viewModelScope.launch {
+            Firebase.analytics.logEvent("open swipe screen")
+        }
     }
 
     private fun subscribeOnMovieList() {
         getMovieListUseCase().onEach { movieList ->
             if (movieList.isNotEmpty()) {
-                delay(1_000)
+                if (currentState == SwipeUdf.State.Loading) {
+                    Firebase.analytics.logEvent("fetch movies")
+                }
                 onAction(
                     SwipeUdf.Action.UpdateMovie(
                         movies = movieList.takeLast(MOVIE_COUNT + 1)
