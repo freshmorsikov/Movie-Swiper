@@ -5,20 +5,14 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
 
 interface SwipeUdf {
 
-    sealed interface State: Udf.State {
+    sealed interface State : Udf.State {
 
         data object Loading : State
 
         data class Data(
             val movies: List<Movie>,
-            val swipeDirection: SwipeDirection?,
-            val zIndex: Float,
-            val isSwiping: Boolean,
-        ) : State {
-
-            //val isButtonsEnabled: Boolean = movie != null && !isSwiping
-
-        }
+            val swipe: SwipeDirection?,
+        ) : State
 
     }
 
@@ -28,7 +22,7 @@ interface SwipeUdf {
     }
 
     sealed interface Action : Udf.Action {
-        data class UpdateMovie(val movie: Movie) : Action
+        data class UpdateMovie(val movies: List<Movie>) : Action
         data object Like : Action
         data object Dislike : Action
         data object FinishSwiping : Action

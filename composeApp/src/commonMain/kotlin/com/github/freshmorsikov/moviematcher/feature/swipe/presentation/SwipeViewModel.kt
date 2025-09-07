@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
+private const val MOVIE_COUNT = 3
+
 class SwipeViewModel(
     private val loadGenreListUseCase: LoadGenreListUseCase,
     private val getMovieListUseCase: GetMovieListUseCase,
@@ -20,7 +22,7 @@ class SwipeViewModel(
     initState = { SwipeUdf.State.Loading }
 ) {
 
-    private var zIndex = 1000f
+    private var currentMovieStatus: MovieStatus? = null
 
     init {
         viewModelScope.launch {
@@ -31,8 +33,13 @@ class SwipeViewModel(
 
     private fun subscribeOnMovieList() {
         getMovieListUseCase().onEach { movieList ->
-            movieList.lastOrNull()?.let { movie ->
-                onAction(SwipeUdf.Action.UpdateMovie(movie = movie))
+            if (movieList.isNotEmpty()) {
+                delay(1_000)
+                onAction(
+                    SwipeUdf.Action.UpdateMovie(
+                        movies = movieList.takeLast(MOVIE_COUNT + 1)
+                    )
+                )
             }
         }.launchIn(viewModelScope)
     }
@@ -40,31 +47,32 @@ class SwipeViewModel(
     override fun reduce(action: SwipeUdf.Action): SwipeUdf.State {
         return when (action) {
             is SwipeUdf.Action.UpdateMovie -> {
-                zIndex--
                 SwipeUdf.State.Data(
-                    movies = listOf(action.movie),
-                    swipeDirection = null,
-                    zIndex = 1f,
-                    isSwiping = false,
+                    movies = action.movies,
+                    swipe = null,
                 )
             }
 
             SwipeUdf.Action.Like -> {
-                (currentState as? SwipeUdf.State.Data)?.copy(
-                    swipeDirection = SwipeDirection.Right,
-                    isSwiping = true
-                ) ?: currentState
+                val state = (currentState as? SwipeUdf.State.Data) ?: return currentState
+                if (state.swipe != null) {
+                    return currentState
+                }
+
+                state.copy(swipe = SwipeDirection.Right)
             }
 
             SwipeUdf.Action.Dislike -> {
-                (currentState as? SwipeUdf.State.Data)?.copy(
-                    swipeDirection = SwipeDirection.Left,
-                    isSwiping = true
-                ) ?: currentState
+                val state = (currentState as? SwipeUdf.State.Data) ?: return currentState
+                if (state.swipe != null) {
+                    return currentState
+                }
+
+                state.copy(swipe = SwipeDirection.Left)
             }
 
             SwipeUdf.Action.FinishSwiping -> {
-                (currentState as? SwipeUdf.State.Data)?.copy(isSwiping = false) ?: currentState
+                currentState
             }
 
             is SwipeUdf.Action.MoreClick -> {
@@ -77,11 +85,18 @@ class SwipeViewModel(
     override suspend fun handleEffects(action: SwipeUdf.Action) {
         when (action) {
             SwipeUdf.Action.Dislike -> {
-                updateMovieStatus(movieStatus = MovieStatus.Disliked)
+                currentMovieStatus = MovieStatus.Disliked
             }
 
             SwipeUdf.Action.Like -> {
-                updateMovieStatus(movieStatus = MovieStatus.Liked)
+                currentMovieStatus = MovieStatus.Liked
+            }
+
+            SwipeUdf.Action.FinishSwiping -> {
+                currentMovieStatus?.let { movieStatus ->
+                    updateMovieStatus(movieStatus = movieStatus)
+                }
+                currentMovieStatus = null
             }
 
             else -> {}
@@ -91,17 +106,13 @@ class SwipeViewModel(
     private fun updateMovieStatus(movieStatus: MovieStatus) {
         val state = (currentState as? SwipeUdf.State.Data) ?: return
 
-        state.movies.firstOrNull()?.id?.let { id ->
+        state.movies.lastOrNull()?.id?.let { id ->
             viewModelScope.launch {
                 updateMovieStatusUseCase(
                     id = id,
                     movieStatus = movieStatus,
                 )
             }
-        }
-        viewModelScope.launch {
-            delay(500)
-            onAction(SwipeUdf.Action.FinishSwiping)
         }
     }
 
