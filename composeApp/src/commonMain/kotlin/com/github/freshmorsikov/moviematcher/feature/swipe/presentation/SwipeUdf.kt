@@ -10,8 +10,7 @@ interface SwipeUdf {
         data object Loading : State
 
         data class Data(
-            val movies: List<Movie>,
-            val swipe: SwipeDirection?,
+            val movies: List<Movie>
         ) : State
 
     }
@@ -23,9 +22,7 @@ interface SwipeUdf {
 
     sealed interface Action : Udf.Action {
         data class UpdateMovie(val movies: List<Movie>) : Action
-        data object Like : Action
-        data object Dislike : Action
-        data object FinishSwiping : Action
+        data class FinishSwiping(val direction: SwipeDirection) : Action
         data class MoreClick(val id: Long) : Action
     }
 

@@ -9,10 +9,12 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
-import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf
@@ -56,6 +56,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 private val cardShape = RoundedCornerShape(8.dp)
+private const val SWIPE_THRESHOLD = 120f
 
 @Composable
 fun SwipeScreen(
@@ -94,30 +95,6 @@ fun SwipeScreenContent(
                     }
                 }
             }
-        }
-
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.BottomCenter),
-            horizontalArrangement = spacedBy(8.dp)
-        ) {
-            MovieButton(
-                modifier = Modifier.weight(1f),
-                text = "Dislike",
-                containerColor = Color(0xFFF95667),
-                onClick = {
-                    onAction(SwipeUdf.Action.Dislike)
-                }
-            )
-            MovieButton(
-                modifier = Modifier.weight(1f),
-                text = "Like",
-                containerColor = Color(0xFF00BE64),
-                onClick = {
-                    onAction(SwipeUdf.Action.Like)
-                }
-            )
         }
     }
 }
@@ -203,7 +180,6 @@ private fun DataContent(
 ) {
     MovieStack(
         modifier = modifier,
-        swipe = state.swipe,
         top = state.movies.lastOrNull(),
         middle = state.movies.getOrNull(state.movies.lastIndex - 1),
         bottom = state.movies.getOrNull(state.movies.lastIndex - 2),
@@ -214,7 +190,6 @@ private fun DataContent(
 
 @Composable
 private fun MovieStack(
-    swipe: SwipeUdf.SwipeDirection?,
     top: Movie?,
     middle: Movie?,
     bottom: Movie?,
@@ -226,9 +201,9 @@ private fun MovieStack(
         modifier = modifier,
         contentAlignment = Alignment.TopCenter,
     ) {
-        val newScale = remember(swipe) { Animatable(0.7f) }
-        val newOffsetDp = remember(swipe) { Animatable(-16f) }
-        val newAlpha = remember(swipe) { Animatable(0f) }
+        val newScale = remember(new) { Animatable(0.7f) }
+        val newOffsetDp = remember(new) { Animatable(-16f) }
+        val newAlpha = remember(new) { Animatable(0f) }
         new?.let {
             MovieCard(
                 modifier = Modifier.graphicsLayer {
@@ -248,8 +223,8 @@ private fun MovieStack(
             )
         }
 
-        val bottomScale = remember(swipe) { Animatable(0.8f) }
-        val bottomOffsetDp = remember(swipe) { Animatable(0f) }
+        val bottomScale = remember(bottom) { Animatable(0.8f) }
+        val bottomOffsetDp = remember(bottom) { Animatable(0f) }
         bottom?.let {
             MovieCard(
                 modifier = Modifier.graphicsLayer {
@@ -268,9 +243,9 @@ private fun MovieStack(
             )
         }
 
-        val middleScale = remember(swipe) { Animatable(0.9f) }
-        val middleOffsetDp = remember(swipe) { Animatable(16f) }
-        val middleBlur = remember(swipe) { Animatable(initialValue = 10f) }
+        val middleScale = remember(middle) { Animatable(0.9f) }
+        val middleOffsetDp = remember(middle) { Animatable(16f) }
+        val middleBlur = remember(middle) { Animatable(initialValue = 10f) }
         middle?.let {
             MovieCard(
                 modifier = Modifier.graphicsLayer {
@@ -289,16 +264,19 @@ private fun MovieStack(
             )
         }
 
-        val topOffsetDp = remember(swipe) { Animatable(0f) }
-        val topAlpha = remember(swipe) { Animatable(1f) }
+        val topOffsetDp = remember(top) { Animatable(0f) }
+        val dragOffsetDp = remember(top) { Animatable(0f) }
+        val topAlpha = remember(top) { Animatable(1f) }
 
         val scope = rememberCoroutineScope()
-        fun startAnimations(swipe: SwipeUdf.SwipeDirection) {
-            val animationSpec: AnimationSpec<Float> = tween(500)
+        val animationSpec: AnimationSpec<Float> = tween(500)
+
+        fun startAnimations(direction: SwipeUdf.SwipeDirection) {
             scope.launch {
                 listOf(
                     launch {
-                        val multiplier = if (swipe == SwipeUdf.SwipeDirection.Right) 1 else -1
+                        val multiplier = if (direction == SwipeUdf.SwipeDirection.Right) 1 else -1
+                        topOffsetDp.snapTo(dragOffsetDp.value)
                         topOffsetDp.animateTo(multiplier * 380f)
                     },
                     launch { topAlpha.animateTo(0f, animationSpec) },
@@ -311,25 +289,49 @@ private fun MovieStack(
                     launch { newOffsetDp.animateTo(0f, animationSpec) },
                     launch { newAlpha.animateTo(1f, animationSpec) },
                 ).joinAll()
-                onAction(SwipeUdf.Action.FinishSwiping)
+                onAction(
+                    SwipeUdf.Action.FinishSwiping(direction = direction)
+                )
             }
         }
 
         top?.let {
             MovieCard(
-                modifier = Modifier.graphicsLayer {
-                    translationY = 32 * density
-                    translationX = topOffsetDp.value * density
-                    alpha = topAlpha.value
-                },
+                modifier = Modifier
+                    .graphicsLayer {
+                        translationY = 32 * density
+                        translationX = (topOffsetDp.value + dragOffsetDp.value) * density
+                        alpha = topAlpha.value
+                    }.draggable(
+                        orientation = Orientation.Horizontal,
+                        state = rememberDraggableState { delta ->
+                            scope.launch {
+                                dragOffsetDp.animateTo(targetValue = dragOffsetDp.value + delta)
+                            }
+                        },
+                        onDragStopped = {
+                            when {
+                                dragOffsetDp.value > SWIPE_THRESHOLD -> {
+                                    startAnimations(direction = SwipeUdf.SwipeDirection.Right)
+                                }
+
+                                dragOffsetDp.value < -SWIPE_THRESHOLD -> {
+                                    startAnimations(direction = SwipeUdf.SwipeDirection.Left)
+                                }
+
+                                else -> {
+                                    scope.launch {
+                                        dragOffsetDp.animateTo(
+                                            targetValue = 0f,
+                                            animationSpec = animationSpec
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    ),
                 movie = top,
             )
-        }
-
-        LaunchedEffect(swipe) {
-            if (swipe != null) {
-                startAnimations(swipe = swipe)
-            }
         }
     }
 }
@@ -397,8 +399,7 @@ private fun SwipeScreenDataPreview() {
                     status = "",
                     genres = listOf("Comedy", "Drama"),
                 )
-            },
-            swipe = SwipeUdf.SwipeDirection.Left,
+            }
         ),
         onAction = {}
     )

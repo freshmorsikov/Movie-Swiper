@@ -23,8 +23,6 @@ class SwipeViewModel(
     initState = { SwipeUdf.State.Loading }
 ) {
 
-    private var currentMovieStatus: MovieStatus? = null
-
     init {
         viewModelScope.launch {
             loadGenreListUseCase()
@@ -53,31 +51,10 @@ class SwipeViewModel(
     override fun reduce(action: SwipeUdf.Action): SwipeUdf.State {
         return when (action) {
             is SwipeUdf.Action.UpdateMovie -> {
-                SwipeUdf.State.Data(
-                    movies = action.movies,
-                    swipe = null,
-                )
+                SwipeUdf.State.Data(movies = action.movies)
             }
 
-            SwipeUdf.Action.Like -> {
-                val state = (currentState as? SwipeUdf.State.Data) ?: return currentState
-                if (state.swipe != null) {
-                    return currentState
-                }
-
-                state.copy(swipe = SwipeDirection.Right)
-            }
-
-            SwipeUdf.Action.Dislike -> {
-                val state = (currentState as? SwipeUdf.State.Data) ?: return currentState
-                if (state.swipe != null) {
-                    return currentState
-                }
-
-                state.copy(swipe = SwipeDirection.Left)
-            }
-
-            SwipeUdf.Action.FinishSwiping -> {
+            is SwipeUdf.Action.FinishSwiping -> {
                 currentState
             }
 
@@ -90,19 +67,12 @@ class SwipeViewModel(
 
     override suspend fun handleEffects(action: SwipeUdf.Action) {
         when (action) {
-            SwipeUdf.Action.Dislike -> {
-                currentMovieStatus = MovieStatus.Disliked
-            }
-
-            SwipeUdf.Action.Like -> {
-                currentMovieStatus = MovieStatus.Liked
-            }
-
-            SwipeUdf.Action.FinishSwiping -> {
-                currentMovieStatus?.let { movieStatus ->
-                    updateMovieStatus(movieStatus = movieStatus)
+            is SwipeUdf.Action.FinishSwiping -> {
+                val movieStatus = when (action.direction) {
+                    SwipeDirection.Left -> MovieStatus.Disliked
+                    SwipeDirection.Right -> MovieStatus.Liked
                 }
-                currentMovieStatus = null
+                updateMovieStatus(movieStatus = movieStatus)
             }
 
             else -> {}
