@@ -1,9 +1,7 @@
 package com.github.freshmorsikov.moviematcher.app
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -86,9 +84,7 @@ fun App(contextModule: Module = module {}) {
         }
 
         Scaffold(
-            modifier = Modifier
-                .statusBarsPadding()
-                .navigationBarsPadding(),
+            containerColor = MaterialTheme.colorScheme.background,
             bottomBar = {
                 BottomNavigationBar(
                     navController = navController,
@@ -106,9 +102,7 @@ fun App(contextModule: Module = module {}) {
             NavHost(
                 navController = navController,
                 startDestination = NavigationRoute.Swipe,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
+                modifier = Modifier.padding(paddingValues = padding)
             ) {
                 composable<NavigationRoute.Swipe> {
                     SwipeScreen()

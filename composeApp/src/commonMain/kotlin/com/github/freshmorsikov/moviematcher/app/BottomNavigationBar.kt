@@ -103,7 +103,7 @@ private fun BottomNavigationBarContent(
             color = MaterialTheme.colorScheme.outlineVariant
         )
         NavigationBar(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = Color.Transparent
         ) {
             itemList.items.forEach { item ->
                 val route = item.route
