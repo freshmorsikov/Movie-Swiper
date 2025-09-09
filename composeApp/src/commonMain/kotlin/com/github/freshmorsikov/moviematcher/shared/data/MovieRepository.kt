@@ -10,8 +10,11 @@ import com.github.freshmorsikov.moviematcher.MovieGenreReference
 import com.github.freshmorsikov.moviematcher.MovieGenreReferenceQueries
 import com.github.freshmorsikov.moviematcher.MovieWithGenreView
 import com.github.freshmorsikov.moviematcher.MovieWithGenreViewQueries
+import com.github.freshmorsikov.moviematcher.core.analytics.AnalyticsManager
 import com.github.freshmorsikov.moviematcher.core.data.api.ApiService
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
+import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.FetchMoviesEvent
+import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.FetchMoviesFailedEvent
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.MovieStatus
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +32,7 @@ class MovieRepository(
     private val movieGenreReferenceQueries: MovieGenreReferenceQueries,
     private val keyValueStore: KeyValueStore,
     private val apiService: ApiService,
+    private val analyticsManager: AnalyticsManager,
 ) {
 
     suspend fun loadGenreList() {
@@ -64,6 +68,9 @@ class MovieRepository(
         } ?: 1
         apiService.getMovieList(page = page)
             .onSuccess { movieResponse ->
+                if (page == 1) {
+                    analyticsManager.sendEvent(event = FetchMoviesEvent)
+                }
                 keyValueStore.putInt(PAGE_KEY, page)
                 movieResponse.results.onEach { movie ->
                     val movieEntity = MovieEntity(
@@ -85,6 +92,10 @@ class MovieRepository(
                         )
                         movieGenreReferenceQueries.insert(movieGenreReference = movieGenreReference)
                     }
+                }
+            }.onFailure {
+                if (page == 1) {
+                    analyticsManager.sendEvent(event = FetchMoviesFailedEvent)
                 }
             }
     }

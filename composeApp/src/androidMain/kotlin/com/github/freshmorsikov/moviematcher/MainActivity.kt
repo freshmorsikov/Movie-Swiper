@@ -12,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowInsetsControllerCompat
 import com.github.freshmorsikov.moviematcher.app.App
+import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
+import com.google.firebase.analytics.analytics
 import org.koin.dsl.module
 
 class MainActivity : ComponentActivity() {
@@ -23,6 +25,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         FirebaseApp.initializeApp(this)
+        Firebase.analytics.setAnalyticsCollectionEnabled(true)
         setContent {
             MaterialTheme {
                 App(contextModule = contextModule())

@@ -14,6 +14,7 @@ val swipeFeatureModule = module {
             loadGenreListUseCase = get(),
             getMovieListUseCase = get(),
             updateMovieStatusUseCase = get(),
+            analyticsManager = get(),
         )
     }
     factory {
@@ -37,6 +38,7 @@ val swipeFeatureModule = module {
             movieGenreReferenceQueries = get(),
             keyValueStore = get(),
             apiService = get(),
+            analyticsManager = get(),
         )
     }
 }

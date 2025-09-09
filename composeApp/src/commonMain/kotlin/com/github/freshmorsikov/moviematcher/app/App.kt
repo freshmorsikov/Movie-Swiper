@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.github.freshmorsikov.moviematcher.app.di.appModule
 import com.github.freshmorsikov.moviematcher.app.presentation.AppUdf
 import com.github.freshmorsikov.moviematcher.app.presentation.AppViewModel
+import com.github.freshmorsikov.moviematcher.core.analytics.di.analyticsModule
 import com.github.freshmorsikov.moviematcher.core.data.di.dataModule
 import com.github.freshmorsikov.moviematcher.core.data.di.dataStoreModule
 import com.github.freshmorsikov.moviematcher.core.data.di.sqlDriverModule
@@ -54,6 +55,7 @@ fun App(contextModule: Module = module {}) {
                 sqlDriverModule,
                 dataStoreModule,
                 dataModule,
+                analyticsModule,
                 sharingModule,
                 sharedDomainModule,
                 sharedDataModule,
