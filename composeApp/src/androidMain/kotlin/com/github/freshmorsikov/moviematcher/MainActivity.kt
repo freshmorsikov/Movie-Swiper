@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         FirebaseApp.initializeApp(this)
-        Firebase.analytics.setAnalyticsCollectionEnabled(true)
+        Firebase.analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG)
         setContent {
             MaterialTheme {
                 App(contextModule = contextModule())
