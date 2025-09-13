@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -48,6 +49,9 @@ import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeViewModel
+import com.github.freshmorsikov.moviematcher.feature.swipe.ui.ColorIndicators
+import com.github.freshmorsikov.moviematcher.feature.swipe.ui.DragState
+import com.github.freshmorsikov.moviematcher.feature.swipe.ui.rememberDragState
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieGenres
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
 import kotlinx.coroutines.joinAll
@@ -56,6 +60,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 private val cardShape = RoundedCornerShape(8.dp)
+private val swipeAnimationSpec: AnimationSpec<Float> = tween(500)
 private const val SWIPE_THRESHOLD = 120f
 
 @Composable
@@ -75,25 +80,17 @@ fun SwipeScreenContent(
     onAction: (SwipeUdf.Action) -> Unit
 ) {
     MovieScaffold {
-        Box(modifier = Modifier.padding(16.dp)) {
-            Box(
-                modifier = Modifier
-                    .padding(bottom = 72.dp)
-                    .align(Alignment.Center),
-            ) {
-                when (state) {
-                    SwipeUdf.State.Loading -> {
-                        LoadingContent(modifier = Modifier.align(Alignment.Center))
-                    }
+        when (state) {
+            SwipeUdf.State.Loading -> {
+                LoadingContent(modifier = Modifier.padding(16.dp))
+            }
 
-                    is SwipeUdf.State.Data -> {
-                        DataContent(
-                            modifier = Modifier.align(Alignment.Center),
-                            state = state,
-                            onAction = onAction,
-                        )
-                    }
-                }
+            is SwipeUdf.State.Data -> {
+                DataContent(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = state,
+                    onAction = onAction,
+                )
             }
         }
     }
@@ -123,7 +120,7 @@ private fun LoadingContent(modifier: Modifier = Modifier) {
             Spacer(
                 modifier = Modifier
                     .height(32.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(fraction = 0.4f)
                     .contentShimmer()
             )
             Spacer(
@@ -172,24 +169,42 @@ private fun Modifier.contentShimmer(): Modifier {
     )
 }
 
+// TODO
+// 4. Expand to top edge
+
 @Composable
 private fun DataContent(
     state: SwipeUdf.State.Data,
     onAction: (SwipeUdf.Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    MovieStack(
-        modifier = modifier,
-        top = state.movies.lastOrNull(),
-        middle = state.movies.getOrNull(state.movies.lastIndex - 1),
-        bottom = state.movies.getOrNull(state.movies.lastIndex - 2),
-        new = state.movies.getOrNull(state.movies.lastIndex - 3),
-        onAction = onAction,
-    )
+    Box(modifier = modifier) {
+        val top = state.movies.lastOrNull()
+        val dragState = rememberDragState(
+            key = top,
+            animationSpec = swipeAnimationSpec,
+        )
+        MovieStack(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            dragState = dragState,
+            top = state.movies.lastOrNull(),
+            middle = state.movies.getOrNull(state.movies.lastIndex - 1),
+            bottom = state.movies.getOrNull(state.movies.lastIndex - 2),
+            new = state.movies.getOrNull(state.movies.lastIndex - 3),
+            onAction = onAction,
+        )
+        ColorIndicators(
+            modifier = Modifier.fillMaxSize(),
+            dragState = dragState
+        )
+    }
 }
 
 @Composable
 private fun MovieStack(
+    dragState: DragState,
     top: Movie?,
     middle: Movie?,
     bottom: Movie?,
@@ -265,29 +280,27 @@ private fun MovieStack(
         }
 
         val topOffsetDp = remember(top) { Animatable(0f) }
-        val dragOffsetDp = remember(top) { Animatable(0f) }
         val topAlpha = remember(top) { Animatable(1f) }
 
         val scope = rememberCoroutineScope()
-        val animationSpec: AnimationSpec<Float> = tween(500)
 
         fun startAnimations(direction: SwipeUdf.SwipeDirection) {
             scope.launch {
                 listOf(
                     launch {
                         val multiplier = if (direction == SwipeUdf.SwipeDirection.Right) 1 else -1
-                        topOffsetDp.snapTo(dragOffsetDp.value)
+                        topOffsetDp.snapTo(dragState.offsetDp.value)
                         topOffsetDp.animateTo(multiplier * 380f)
                     },
-                    launch { topAlpha.animateTo(0f, animationSpec) },
-                    launch { middleScale.animateTo(1f, animationSpec) },
-                    launch { middleOffsetDp.animateTo(32f, animationSpec) },
-                    launch { middleBlur.animateTo(0f, animationSpec) },
-                    launch { bottomScale.animateTo(0.9f, animationSpec) },
-                    launch { bottomOffsetDp.animateTo(16f, animationSpec) },
-                    launch { newScale.animateTo(0.8f, animationSpec) },
-                    launch { newOffsetDp.animateTo(0f, animationSpec) },
-                    launch { newAlpha.animateTo(1f, animationSpec) },
+                    launch { topAlpha.animateTo(0f, swipeAnimationSpec) },
+                    launch { middleScale.animateTo(1f, swipeAnimationSpec) },
+                    launch { middleOffsetDp.animateTo(32f, swipeAnimationSpec) },
+                    launch { middleBlur.animateTo(0f, swipeAnimationSpec) },
+                    launch { bottomScale.animateTo(0.9f, swipeAnimationSpec) },
+                    launch { bottomOffsetDp.animateTo(16f, swipeAnimationSpec) },
+                    launch { newScale.animateTo(0.8f, swipeAnimationSpec) },
+                    launch { newOffsetDp.animateTo(0f, swipeAnimationSpec) },
+                    launch { newAlpha.animateTo(1f, swipeAnimationSpec) },
                 ).joinAll()
                 onAction(
                     SwipeUdf.Action.FinishSwiping(direction = direction)
@@ -300,31 +313,28 @@ private fun MovieStack(
                 modifier = Modifier
                     .graphicsLayer {
                         translationY = 32 * density
-                        translationX = (topOffsetDp.value + dragOffsetDp.value) * density
+                        translationX = (topOffsetDp.value + dragState.offsetDp.value) * density
                         alpha = topAlpha.value
                     }.draggable(
                         orientation = Orientation.Horizontal,
                         state = rememberDraggableState { delta ->
                             scope.launch {
-                                dragOffsetDp.animateTo(targetValue = dragOffsetDp.value + delta)
+                                dragState.updateOffset(delta = delta)
                             }
                         },
                         onDragStopped = {
                             when {
-                                dragOffsetDp.value > SWIPE_THRESHOLD -> {
+                                dragState.offsetDp.value > SWIPE_THRESHOLD -> {
                                     startAnimations(direction = SwipeUdf.SwipeDirection.Right)
                                 }
 
-                                dragOffsetDp.value < -SWIPE_THRESHOLD -> {
+                                dragState.offsetDp.value < -SWIPE_THRESHOLD -> {
                                     startAnimations(direction = SwipeUdf.SwipeDirection.Left)
                                 }
 
                                 else -> {
                                     scope.launch {
-                                        dragOffsetDp.animateTo(
-                                            targetValue = 0f,
-                                            animationSpec = animationSpec
-                                        )
+                                        dragState.resetOffset()
                                     }
                                 }
                             }
