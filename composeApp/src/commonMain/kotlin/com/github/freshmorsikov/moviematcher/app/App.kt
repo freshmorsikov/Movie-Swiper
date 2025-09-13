@@ -39,18 +39,18 @@ import kotlinx.coroutines.launch
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.app_new_match_found
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.KoinApplication
+import org.koin.compose.KoinMultiplatformApplication
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.module.Module
-import org.koin.dsl.module
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.dsl.KoinConfiguration
 
 @Composable
-fun App(contextModule: Module = module {}) {
-    KoinApplication(
-        application = {
+@OptIn(KoinExperimentalAPI::class)
+fun App() {
+    KoinMultiplatformApplication(
+        config = KoinConfiguration {
             modules(
                 appModule,
-                contextModule,
                 sqlDriverModule,
                 dataStoreModule,
                 dataModule,

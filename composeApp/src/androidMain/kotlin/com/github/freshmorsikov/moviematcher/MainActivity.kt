@@ -1,6 +1,5 @@
 package com.github.freshmorsikov.moviematcher
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,7 +14,6 @@ import com.github.freshmorsikov.moviematcher.app.App
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.analytics
-import org.koin.dsl.module
 
 class MainActivity : ComponentActivity() {
 
@@ -28,14 +26,8 @@ class MainActivity : ComponentActivity() {
         Firebase.analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG)
         setContent {
             MaterialTheme {
-                App(contextModule = contextModule())
+                App()
             }
-        }
-    }
-
-    private fun contextModule() = module {
-        single<Context> {
-            application.applicationContext
         }
     }
 
