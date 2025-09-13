@@ -1,12 +1,13 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -44,16 +45,24 @@ private fun ColorIndicator(
     alignment: IndicatorAlignment,
     modifier: Modifier = Modifier,
 ) {
-    val startColor = if (alignment == IndicatorAlignment.Start) color.copy(alpha = alpha) else Color.Transparent
-    val endColor = if (alignment == IndicatorAlignment.Start) Color.Transparent else color.copy(alpha = alpha)
     Box(
         modifier = modifier
             .fillMaxHeight()
             .width(100.dp)
-            .background(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(startColor, endColor)
+            .alpha(alpha = alpha)
+            .drawWithCache {
+                val startColor = if (alignment == IndicatorAlignment.Start) color else Color.Transparent
+                val endColor = if (alignment == IndicatorAlignment.Start) Color.Transparent else color
+                val brush = Brush.horizontalGradient(
+                    colorStops = arrayOf(
+                        0f to startColor,
+                        1f to endColor
+                    )
                 )
-            )
+
+                onDrawBehind {
+                    drawRect(brush)
+                }
+            }
     )
 }

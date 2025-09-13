@@ -2,6 +2,7 @@ package com.github.freshmorsikov.moviematcher.feature.swipe.ui
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -60,7 +61,10 @@ data class DragState(
         updateJob = launch {
             val newOffset = offsetDp.value + delta
             launch {
-                offsetDp.animateTo(targetValue = newOffset)
+                offsetDp.animateTo(
+                    targetValue = newOffset,
+                    animationSpec = tween(50)
+                )
             }
 
             val newPositiveAlpha = (newOffset / 200f).coerceIn(0f, 0.5f)

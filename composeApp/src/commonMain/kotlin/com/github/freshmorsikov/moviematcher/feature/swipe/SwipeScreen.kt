@@ -24,9 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -190,11 +188,9 @@ private fun DataContent(
             key = top,
             animationSpec = swipeAnimationSpec,
         )
-        val scrollState = rememberScrollState()
         MovieStack(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(state = scrollState)
                 .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding())
                 .padding(16.dp),
             dragState = dragState,
@@ -297,9 +293,12 @@ private fun MovieStack(
             scope.launch {
                 listOf(
                     launch {
-                        val multiplier = if (direction == SwipeUdf.SwipeDirection.Right) 1 else -1
+                        val multiplier = when (direction) {
+                            SwipeUdf.SwipeDirection.Right -> 1
+                            SwipeUdf.SwipeDirection.Left -> -1
+                        }
                         topOffsetDp.snapTo(dragState.offsetDp.value)
-                        topOffsetDp.animateTo(multiplier * 380f)
+                        topOffsetDp.animateTo(multiplier * 380f, swipeAnimationSpec)
                     },
                     launch { topAlpha.animateTo(0f, swipeAnimationSpec) },
                     launch { middleScale.animateTo(1f, swipeAnimationSpec) },
@@ -326,6 +325,7 @@ private fun MovieStack(
                         alpha = topAlpha.value
                     }.draggable(
                         orientation = Orientation.Horizontal,
+                        startDragImmediately = true,
                         state = rememberDraggableState { delta ->
                             scope.launch {
                                 dragState.updateOffset(delta = delta)
