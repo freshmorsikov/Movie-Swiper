@@ -96,11 +96,8 @@ fun SwipeScreenContent(
             }
 
             is SwipeUdf.State.Data -> {
-                val scrollState = rememberScrollState()
                 DataContent(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(state = scrollState),
+                    modifier = Modifier.fillMaxSize(),
                     state = state,
                     onAction = onAction,
                 )
@@ -194,9 +191,11 @@ private fun DataContent(
             key = top,
             animationSpec = swipeAnimationSpec,
         )
+        val scrollState = rememberScrollState()
         MovieStack(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(state = scrollState)
                 .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding())
                 .padding(16.dp),
             dragState = dragState,
