@@ -104,7 +104,7 @@ fun App(contextModule: Module = module {}) {
             NavHost(
                 navController = navController,
                 startDestination = NavigationRoute.Swipe,
-                modifier = Modifier.padding(paddingValues = padding)
+                modifier = Modifier.padding(bottom = padding.calculateBottomPadding())
             ) {
                 composable<NavigationRoute.Swipe> {
                     SwipeScreen()

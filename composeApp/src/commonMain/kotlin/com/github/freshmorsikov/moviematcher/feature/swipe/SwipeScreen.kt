@@ -16,10 +16,13 @@ import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -46,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
+import com.github.freshmorsikov.moviematcher.core.ui.none
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeViewModel
@@ -79,10 +83,14 @@ fun SwipeScreenContent(
     state: SwipeUdf.State,
     onAction: (SwipeUdf.Action) -> Unit
 ) {
-    MovieScaffold {
+    MovieScaffold(contentWindowInsets = WindowInsets.none) {
         when (state) {
             SwipeUdf.State.Loading -> {
-                LoadingContent(modifier = Modifier.padding(16.dp))
+                LoadingContent(
+                    modifier = Modifier
+                        .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding())
+                        .padding(16.dp)
+                )
             }
 
             is SwipeUdf.State.Data -> {
@@ -169,9 +177,6 @@ private fun Modifier.contentShimmer(): Modifier {
     )
 }
 
-// TODO
-// 4. Expand to top edge
-
 @Composable
 private fun DataContent(
     state: SwipeUdf.State.Data,
@@ -187,6 +192,7 @@ private fun DataContent(
         MovieStack(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding())
                 .padding(16.dp),
             dragState = dragState,
             top = state.movies.lastOrNull(),
