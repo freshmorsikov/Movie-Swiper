@@ -14,13 +14,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -131,11 +131,11 @@ fun JoinPairContent(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = MaterialTheme.colorScheme.onBackground,
                     unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-                    cursorColor = MaterialTheme.colorScheme.outlineVariant,
-                    focusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    cursorColor = Color.Black.copy(alpha = 0.2f),
+                    focusedBorderColor = Color.Black.copy(alpha = 0.2f),
+                    unfocusedBorderColor = Color.Black.copy(alpha = 0.2f),
                 )
             )
             Spacer(modifier = Modifier.weight(1f))

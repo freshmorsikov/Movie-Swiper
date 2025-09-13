@@ -100,11 +100,9 @@ private fun BottomNavigationBarContent(
     Column {
         HorizontalDivider(
             thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
+            color = Color.Black.copy(alpha = 0.1f)
         )
-        NavigationBar(
-            containerColor = Color.Transparent
-        ) {
+        NavigationBar(containerColor = Color.White) {
             itemList.items.forEach { item ->
                 val route = item.route
                 NavigationBarItem(

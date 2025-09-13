@@ -18,11 +18,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -210,11 +210,11 @@ private fun PairedInfo(
             modifier = Modifier
                 .padding(start = 4.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                    color = Color.White,
                     shape = RoundedCornerShape(4.dp)
                 ).border(
                     width = 0.5.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant,
+                    color = Color.Black.copy(alpha = 0.1f),
                     shape = RoundedCornerShape(4.dp),
                 ).padding(
                     horizontal = 8.dp,

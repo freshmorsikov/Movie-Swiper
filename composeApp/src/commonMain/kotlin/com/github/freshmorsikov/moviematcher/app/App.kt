@@ -1,7 +1,6 @@
 package com.github.freshmorsikov.moviematcher.app
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -86,7 +85,6 @@ fun App(contextModule: Module = module {}) {
         }
 
         Scaffold(
-            containerColor = MaterialTheme.colorScheme.background,
             bottomBar = {
                 BottomNavigationBar(
                     navController = navController,

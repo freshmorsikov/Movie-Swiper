@@ -31,7 +31,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -364,10 +363,10 @@ private fun MovieCard(
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)
+            containerColor = Color.White
         ),
         shape = cardShape,
-        border = BorderStroke(0.5.dp, Color.Black.copy(alpha = 0.1f))
+        border = BorderStroke(1.dp, Color.Black.copy(alpha = 0.1f))
     ) {
         Column {
             AsyncImage(

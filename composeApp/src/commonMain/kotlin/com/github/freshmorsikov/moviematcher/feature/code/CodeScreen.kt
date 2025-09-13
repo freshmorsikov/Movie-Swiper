@@ -11,11 +11,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -115,11 +115,11 @@ fun CodeContent(
                 modifier = Modifier
                     .padding(top = 24.dp)
                     .background(
-                        color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                        color = Color.White,
                         shape = RoundedCornerShape(8.dp)
                     ).border(
                         width = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant,
+                        color = Color.Black.copy(alpha = 0.2f),
                         shape = RoundedCornerShape(8.dp),
                     ).padding(
                         horizontal = 16.dp,
