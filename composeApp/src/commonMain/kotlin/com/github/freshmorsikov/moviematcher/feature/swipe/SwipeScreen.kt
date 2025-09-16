@@ -9,9 +9,10 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -51,10 +54,9 @@ import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.none
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf
+import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf.MovieCardState
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeViewModel
 import com.github.freshmorsikov.moviematcher.feature.swipe.ui.ColorIndicators
-import com.github.freshmorsikov.moviematcher.feature.swipe.ui.DragState
-import com.github.freshmorsikov.moviematcher.feature.swipe.ui.rememberDragState
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieGenres
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
 import kotlinx.coroutines.joinAll
@@ -64,7 +66,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 private val cardShape = RoundedCornerShape(8.dp)
 private val swipeAnimationSpec: AnimationSpec<Float> = tween(500)
-private const val SWIPE_THRESHOLD = 120f
 
 @Composable
 fun SwipeScreen(
@@ -184,41 +185,52 @@ private fun DataContent(
 ) {
     Box(modifier = modifier) {
         val top = state.movies.lastOrNull()
-        val dragState = rememberDragState(
-            key = top,
-            animationSpec = swipeAnimationSpec,
-        )
+        val windowInfo = LocalWindowInfo.current
+        val draggableState = remember(top) {
+            val width = windowInfo.containerSize.width.toFloat()
+            AnchoredDraggableState<MovieCardState>(
+                MovieCardState.Center,
+                DraggableAnchors {
+                    MovieCardState.Swiped.Left at -width
+                    MovieCardState.Center at 0f
+                    MovieCardState.Swiped.Right at width
+                }
+            )
+        }
         MovieStack(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding())
                 .padding(16.dp),
-            dragState = dragState,
-            top = state.movies.lastOrNull(),
+            top = top,
             middle = state.movies.getOrNull(state.movies.lastIndex - 1),
             bottom = state.movies.getOrNull(state.movies.lastIndex - 2),
             new = state.movies.getOrNull(state.movies.lastIndex - 3),
+            draggableState = draggableState,
             onAction = onAction,
         )
         ColorIndicators(
             modifier = Modifier.fillMaxSize(),
-            dragState = dragState
+            draggableState = draggableState
         )
     }
 }
 
 @Composable
 private fun MovieStack(
-    dragState: DragState,
     top: Movie?,
     middle: Movie?,
     bottom: Movie?,
     new: Movie?,
+    draggableState: AnchoredDraggableState<MovieCardState>,
     onAction: (SwipeUdf.Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier,
+        modifier = modifier.anchoredDraggable(
+            state = draggableState,
+            orientation = Orientation.Horizontal,
+        ),
         contentAlignment = Alignment.TopCenter,
     ) {
         val newScale = remember(new) { Animatable(0.7f) }
@@ -284,22 +296,12 @@ private fun MovieStack(
             )
         }
 
-        val topOffsetDp = remember(top) { Animatable(0f) }
         val topAlpha = remember(top) { Animatable(1f) }
-
         val scope = rememberCoroutineScope()
 
-        fun startAnimations(direction: SwipeUdf.SwipeDirection) {
+        fun startAnimations(movieCardState: MovieCardState.Swiped) {
             scope.launch {
                 listOf(
-                    launch {
-                        val multiplier = when (direction) {
-                            SwipeUdf.SwipeDirection.Right -> 1
-                            SwipeUdf.SwipeDirection.Left -> -1
-                        }
-                        topOffsetDp.snapTo(dragState.offsetDp.value)
-                        topOffsetDp.animateTo(multiplier * 380f, swipeAnimationSpec)
-                    },
                     launch { topAlpha.animateTo(0f, swipeAnimationSpec) },
                     launch { middleScale.animateTo(1f, swipeAnimationSpec) },
                     launch { middleOffsetDp.animateTo(32f, swipeAnimationSpec) },
@@ -311,8 +313,15 @@ private fun MovieStack(
                     launch { newAlpha.animateTo(1f, swipeAnimationSpec) },
                 ).joinAll()
                 onAction(
-                    SwipeUdf.Action.FinishSwiping(direction = direction)
+                    SwipeUdf.Action.FinishSwiping(movieCardState = movieCardState)
                 )
+            }
+        }
+
+        LaunchedEffect(draggableState.settledValue) {
+            val settledValue = draggableState.settledValue
+            if (settledValue is MovieCardState.Swiped) {
+                startAnimations(movieCardState = settledValue)
             }
         }
 
@@ -321,34 +330,9 @@ private fun MovieStack(
                 modifier = Modifier
                     .graphicsLayer {
                         translationY = 32 * density
-                        translationX = (topOffsetDp.value + dragState.offsetDp.value) * density
+                        translationX = draggableState.offset
                         alpha = topAlpha.value
-                    }.draggable(
-                        orientation = Orientation.Horizontal,
-                        startDragImmediately = true,
-                        state = rememberDraggableState { delta ->
-                            scope.launch {
-                                dragState.updateOffset(delta = delta)
-                            }
-                        },
-                        onDragStopped = {
-                            when {
-                                dragState.offsetDp.value > SWIPE_THRESHOLD -> {
-                                    startAnimations(direction = SwipeUdf.SwipeDirection.Right)
-                                }
-
-                                dragState.offsetDp.value < -SWIPE_THRESHOLD -> {
-                                    startAnimations(direction = SwipeUdf.SwipeDirection.Left)
-                                }
-
-                                else -> {
-                                    scope.launch {
-                                        dragState.resetOffset()
-                                    }
-                                }
-                            }
-                        }
-                    ),
+                    },
                 movie = top,
             )
         }

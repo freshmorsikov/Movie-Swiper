@@ -15,14 +15,17 @@ interface SwipeUdf {
 
     }
 
-    enum class SwipeDirection {
-        Left,
-        Right
+    sealed interface MovieCardState {
+        data object Center : MovieCardState
+        sealed interface Swiped : MovieCardState {
+            data object Left : Swiped
+            data object Right : Swiped
+        }
     }
 
     sealed interface Action : Udf.Action {
         data class UpdateMovie(val movies: List<Movie>) : Action
-        data class FinishSwiping(val direction: SwipeDirection) : Action
+        data class FinishSwiping(val movieCardState: MovieCardState.Swiped) : Action
         data class MoreClick(val id: Long) : Action
     }
 

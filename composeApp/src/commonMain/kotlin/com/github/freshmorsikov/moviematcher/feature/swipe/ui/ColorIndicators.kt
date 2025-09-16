@@ -1,5 +1,6 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe.ui
 
+import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
@@ -11,6 +12,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf.MovieCardState
 
 enum class IndicatorAlignment {
     Start,
@@ -19,20 +21,24 @@ enum class IndicatorAlignment {
 
 @Composable
 fun ColorIndicators(
-    dragState: DragState,
+    draggableState: AnchoredDraggableState<MovieCardState>,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
         ColorIndicator(
             modifier = Modifier.align(Alignment.CenterStart),
             color = Color(0xFFFF3A31),
-            alpha = dragState.negativeColorAlpha.value,
+            alpha = draggableState
+                .progress(MovieCardState.Center, MovieCardState.Swiped.Left)
+                .coerceIn(0f, 0.5f),
             alignment = IndicatorAlignment.Start
         )
         ColorIndicator(
             modifier = Modifier.align(Alignment.CenterEnd),
             color = Color(0xFF4ED964),
-            alpha = dragState.positiveColorAlpha.value,
+            alpha = draggableState
+                .progress(MovieCardState.Center, MovieCardState.Swiped.Right)
+                .coerceIn(0f, 0.5f),
             alignment = IndicatorAlignment.End
         )
     }

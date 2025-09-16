@@ -8,7 +8,6 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUs
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.MovieStatus
-import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf.SwipeDirection
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -64,9 +63,9 @@ class SwipeViewModel(
     override suspend fun handleEffects(action: SwipeUdf.Action) {
         when (action) {
             is SwipeUdf.Action.FinishSwiping -> {
-                val movieStatus = when (action.direction) {
-                    SwipeDirection.Left -> MovieStatus.Disliked
-                    SwipeDirection.Right -> MovieStatus.Liked
+                val movieStatus = when (action.movieCardState) {
+                    SwipeUdf.MovieCardState.Swiped.Left -> MovieStatus.Disliked
+                    SwipeUdf.MovieCardState.Swiped.Right -> MovieStatus.Liked
                 }
                 updateMovieStatus(movieStatus = movieStatus)
             }
