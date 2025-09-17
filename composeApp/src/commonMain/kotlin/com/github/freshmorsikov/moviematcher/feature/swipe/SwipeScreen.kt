@@ -25,7 +25,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -197,11 +199,14 @@ private fun DataContent(
                 }
             )
         }
+        val scrollState = rememberScrollState()
         MovieStack(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding())
-                .padding(16.dp),
+                .verticalScroll(scrollState)
+                .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 16.dp)
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 48.dp),
             top = top,
             middle = state.movies.getOrNull(state.movies.lastIndex - 1),
             bottom = state.movies.getOrNull(state.movies.lastIndex - 2),
