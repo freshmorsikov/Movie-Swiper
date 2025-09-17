@@ -3,6 +3,7 @@ package com.github.freshmorsikov.moviematcher.core.data.api
 import com.github.freshmorsikov.moviematcher.core.data.api.model.GenreListResponse
 import com.github.freshmorsikov.moviematcher.core.data.api.model.MovieResponse
 import com.github.freshmorsikov.moviematcher.core.data.api.model.PageResponse
+import com.github.freshmorsikov.moviematcher.util.getSystemLanguage
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
@@ -14,8 +15,7 @@ import io.ktor.http.path
 
 expect val engine: HttpClientEngine
 
-class ApiService(
-    private val httpClient: HttpClient) {
+class ApiService(private val httpClient: HttpClient) {
 
     suspend fun getMovieList(page: Int): Result<PageResponse<MovieResponse>> {
         return safeApiCall {
@@ -24,7 +24,7 @@ class ApiService(
                     path("discover/movie")
                     parameter("include_adult", false)
                     parameter("include_video", false)
-                    parameter("language", "en-US")
+                    parameter("language", getSystemLanguage())
                     parameter("page", page)
                     parameter("sort_by", "popularity.desc")
                     parameter("primary_release_date.lte", "2025-01-01")
@@ -40,7 +40,7 @@ class ApiService(
             httpClient.get {
                 url {
                     path("genre/movie/list")
-                    parameter("language", "en-US")
+                    parameter("language", getSystemLanguage())
                 }
             }
         }
