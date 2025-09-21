@@ -1,8 +1,8 @@
 package com.github.freshmorsikov.moviematcher.feature.favorites.domain
 
 import com.github.freshmorsikov.moviematcher.shared.data.MovieRepository
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.MovieStatus
+import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
+import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 import kotlinx.coroutines.flow.Flow
 
 class GetFavoriteMovieListUseCase(

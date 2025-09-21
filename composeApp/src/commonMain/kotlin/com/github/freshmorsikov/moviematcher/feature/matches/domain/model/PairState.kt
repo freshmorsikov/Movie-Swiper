@@ -1,6 +1,6 @@
 package com.github.freshmorsikov.moviematcher.feature.matches.domain.model
 
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
+import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 
 sealed interface PairState {
 

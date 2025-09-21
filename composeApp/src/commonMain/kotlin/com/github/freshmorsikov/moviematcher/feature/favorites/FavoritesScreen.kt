@@ -23,7 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.feature.favorites.presentation.FavoritesUdf
 import com.github.freshmorsikov.moviematcher.feature.favorites.presentation.FavoritesViewModel
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
+import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieItem
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.favorites_empty

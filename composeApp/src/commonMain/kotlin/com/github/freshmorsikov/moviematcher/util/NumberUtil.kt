@@ -9,3 +9,12 @@ fun Double.toRatingFormat(): String {
 fun Int.pow(x: Int): Int {
     return this.toDouble().pow(x).toInt()
 }
+
+fun Int.toAmountFormat(): String {
+    return this.toString()
+        .reversed()
+        .windowed(size = 3, step = 3, partialWindows = true) {
+            it.reversed()
+        }.reversed()
+        .joinToString(",")
+}

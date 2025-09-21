@@ -7,7 +7,7 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.OpenSwipeSc
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.MovieStatus
+import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -49,12 +49,7 @@ class SwipeViewModel(
                 SwipeUdf.State.Data(movies = action.movies)
             }
 
-            is SwipeUdf.Action.FinishSwiping -> {
-                currentState
-            }
-
-            is SwipeUdf.Action.MoreClick -> {
-                // TODO implement
+            else -> {
                 currentState
             }
         }

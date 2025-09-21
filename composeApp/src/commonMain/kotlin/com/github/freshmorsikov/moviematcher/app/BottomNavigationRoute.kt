@@ -24,4 +24,7 @@ interface NavigationRoute {
     @Serializable
     data object SuccessfulJoining: NavigationRoute
 
+    @Serializable
+    data class MovieDetails(val movieId: Long): NavigationRoute
+
 }

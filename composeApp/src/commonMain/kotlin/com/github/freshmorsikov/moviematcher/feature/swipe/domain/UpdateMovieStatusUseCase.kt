@@ -1,7 +1,7 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe.domain
 
 import com.github.freshmorsikov.moviematcher.shared.data.MovieRepository
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.MovieStatus
+import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 import com.github.freshmorsikov.moviematcher.shared.data.MatchRepository
 import com.github.freshmorsikov.moviematcher.shared.domain.GetCodeUseCase
 

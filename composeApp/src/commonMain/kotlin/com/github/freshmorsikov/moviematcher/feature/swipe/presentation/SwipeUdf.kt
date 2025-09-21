@@ -1,7 +1,7 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe.presentation
 
 import com.github.freshmorsikov.moviematcher.core.presentation.Udf
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
+import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 
 interface SwipeUdf {
 

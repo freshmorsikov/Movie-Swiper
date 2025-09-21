@@ -10,6 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.github.freshmorsikov.moviematcher.util.toRatingFormat
 import moviematcher.composeapp.generated.resources.Res
@@ -20,6 +23,8 @@ import org.jetbrains.compose.resources.painterResource
 fun MovieInfo(
     releaseDate: String,
     voteAverage: Double,
+    voteCount: Int? = null,
+    runtime: Int? = null,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -46,10 +51,41 @@ fun MovieInfo(
                 tint = Color(0xFFEAAF00),
                 contentDescription = null
             )
+            val voteText = buildAnnotatedString {
+                withStyle(SpanStyle(color = Color(0xFFEAAF00))) {
+                    append(voteAverage.toRatingFormat())
+                }
+                if (voteCount != null && voteCount > 0) {
+                    append(" ($voteCount)")
+                }
+            }
             Text(
-                text = voteAverage.toRatingFormat(),
+                text = voteText,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFFEAAF00),
+                color = Color.Gray,
+            )
+        }
+        if (runtime != null) {
+            Text(
+                text = "|",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray,
+            )
+            val runtimeText = buildString {
+                val hours = runtime / 60
+                if (hours > 0) {
+                    append("${hours}h ")
+                }
+
+                val minutes = runtime % 60
+                if (minutes > 0) {
+                    append("${minutes}m")
+                }
+            }
+            Text(
+                text = runtimeText,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray,
             )
         }
     }

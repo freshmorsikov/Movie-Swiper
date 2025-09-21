@@ -13,6 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.github.freshmorsikov.moviematcher.app.di.appModule
 import com.github.freshmorsikov.moviematcher.app.presentation.AppUdf
 import com.github.freshmorsikov.moviematcher.app.presentation.AppViewModel
@@ -22,6 +23,7 @@ import com.github.freshmorsikov.moviematcher.core.data.di.dataStoreModule
 import com.github.freshmorsikov.moviematcher.core.data.di.sqlDriverModule
 import com.github.freshmorsikov.moviematcher.feature.code.CodeScreen
 import com.github.freshmorsikov.moviematcher.feature.code.di.codeFeatureModule
+import com.github.freshmorsikov.moviematcher.feature.details.MovieDetailsScreen
 import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
 import com.github.freshmorsikov.moviematcher.feature.favorites.di.favoritesFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.join.JoinPairScreen
@@ -121,6 +123,10 @@ fun App() {
                 }
                 composable<NavigationRoute.SuccessfulJoining> {
                     SuccessfulJoiningScreen(navController = navController)
+                }
+                composable<NavigationRoute.MovieDetails> { backStackEntry ->
+                    val route: NavigationRoute.MovieDetails = backStackEntry.toRoute()
+                    MovieDetailsScreen(movieId = route.movieId)
                 }
             }
 

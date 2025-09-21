@@ -15,8 +15,8 @@ import com.github.freshmorsikov.moviematcher.core.data.api.ApiService
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.FetchMoviesEvent
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.FetchMoviesFailedEvent
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.MovieStatus
+import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
+import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -128,9 +128,14 @@ class MovieRepository(
                 posterPath = movie.posterPath,
                 releaseDate = movie.releaseDate,
                 voteAverage = movie.voteAverage,
+                voteCount = 0,
                 popularity = movie.popularity,
                 status = MovieStatus.Undefined.name,
-                genres = movieWithGenreList.map { it.genreName }
+                genres = movieWithGenreList.map { it.genreName },
+                overview = null,
+                runtime = null,
+                budget = null,
+                revenue = null,
             )
         }
     }

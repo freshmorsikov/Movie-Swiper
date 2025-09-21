@@ -2,13 +2,8 @@ package com.github.freshmorsikov.moviematcher.feature.swipe
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
@@ -16,7 +11,6 @@ import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,13 +46,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
+import com.github.freshmorsikov.moviematcher.core.ui.ContainerShimmer
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
+import com.github.freshmorsikov.moviematcher.core.ui.Shimmer
 import com.github.freshmorsikov.moviematcher.core.ui.none
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf.MovieCardState
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeViewModel
 import com.github.freshmorsikov.moviematcher.feature.swipe.ui.ColorIndicators
+import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieGenres
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
 import kotlinx.coroutines.joinAll
@@ -108,11 +104,10 @@ fun SwipeScreenContent(
 
 @Composable
 private fun LoadingContent(modifier: Modifier = Modifier) {
-    Box(
+    ContainerShimmer(
         modifier = modifier
             .fillMaxWidth()
-            .height(600.dp)
-            .containerShimmer(),
+            .height(600.dp),
     ) {
         Column(
             modifier = Modifier
@@ -121,62 +116,23 @@ private fun LoadingContent(modifier: Modifier = Modifier) {
             verticalArrangement = spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(
+            Shimmer(
                 modifier = Modifier
                     .height(24.dp)
                     .width(120.dp)
-                    .contentShimmer()
             )
-            Spacer(
+            Shimmer(
                 modifier = Modifier
                     .height(32.dp)
                     .fillMaxWidth(fraction = 0.4f)
-                    .contentShimmer()
             )
-            Spacer(
+            Shimmer(
                 modifier = Modifier
                     .height(32.dp)
                     .fillMaxWidth()
-                    .contentShimmer()
             )
         }
     }
-}
-
-@Composable
-private fun Modifier.containerShimmer(): Modifier {
-    val transition = rememberInfiniteTransition(label = "containerTransition")
-    val alpha by transition.animateFloat(
-        initialValue = 0.5f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(800),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "containerAnimation"
-    )
-    return background(
-        color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = alpha),
-        shape = cardShape
-    )
-}
-
-@Composable
-private fun Modifier.contentShimmer(): Modifier {
-    val transition = rememberInfiniteTransition(label = "contentTransition")
-    val alpha by transition.animateFloat(
-        initialValue = 0.5f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(800),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "contentAnimation"
-    )
-    return background(
-        color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = alpha),
-        shape = RoundedCornerShape(8.dp)
-    )
 }
 
 @Composable
@@ -396,17 +352,7 @@ private fun SwipeScreenDataPreview() {
     SwipeScreenContent(
         state = SwipeUdf.State.Data(
             movies = List(3) { i ->
-                Movie(
-                    id = i.toLong(),
-                    title = "Title $i",
-                    originalTitle = "Original title",
-                    posterPath = "path",
-                    releaseDate = "2025",
-                    voteAverage = 2.4,
-                    popularity = 70.0,
-                    status = "",
-                    genres = listOf("Comedy", "Drama"),
-                )
+                Movie.mock
             }
         ),
         onAction = {}

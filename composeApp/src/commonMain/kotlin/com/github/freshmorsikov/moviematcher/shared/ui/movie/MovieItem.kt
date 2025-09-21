@@ -23,7 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.model.Movie
+import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
