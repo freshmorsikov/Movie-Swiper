@@ -18,6 +18,6 @@ val movieDetailsFeatureModule = module {
         GetMovieFlowByIdUseCase(movieRepository = get())
     }
     factory {
-        LoadMovieDetailsUseCase()
+        LoadMovieDetailsUseCase(movieRepository = get())
     }
 }

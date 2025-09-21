@@ -1,6 +1,7 @@
 package com.github.freshmorsikov.moviematcher.core.data.api
 
 import com.github.freshmorsikov.moviematcher.core.data.api.model.GenreListResponse
+import com.github.freshmorsikov.moviematcher.core.data.api.model.MovieDetailsResponse
 import com.github.freshmorsikov.moviematcher.core.data.api.model.MovieResponse
 import com.github.freshmorsikov.moviematcher.core.data.api.model.PageResponse
 import com.github.freshmorsikov.moviematcher.util.getSystemLanguage
@@ -40,6 +41,17 @@ class ApiService(private val httpClient: HttpClient) {
             httpClient.get {
                 url {
                     path("genre/movie/list")
+                    parameter("language", getSystemLanguage())
+                }
+            }
+        }
+    }
+
+    suspend fun getMovieDetailsById(movieId: Long): Result<MovieDetailsResponse> {
+        return safeApiCall {
+            httpClient.get {
+                url {
+                    path("movie/$movieId")
                     parameter("language", getSystemLanguage())
                 }
             }

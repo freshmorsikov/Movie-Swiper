@@ -1,9 +1,13 @@
 package com.github.freshmorsikov.moviematcher.feature.details.domain
 
-class LoadMovieDetailsUseCase() {
+import com.github.freshmorsikov.moviematcher.shared.data.MovieRepository
 
-    operator fun invoke(id: Long) {
-        // TODO: implement
+class LoadMovieDetailsUseCase(
+    private val movieRepository: MovieRepository
+) {
+
+    suspend operator fun invoke(movieId: Long) {
+        movieRepository.loadMovieDetailsById(id = movieId)
     }
 
 }

@@ -48,6 +48,22 @@ class MovieRepository(
             }
     }
 
+    suspend fun loadMovieDetailsById(id: Long) {
+        apiService.getMovieDetailsById(movieId = id)
+            .onSuccess { movieDetails ->
+                movieEntityQueries.updateMovieDetails(
+                    voteAverage = movieDetails.voteAverage,
+                    voteCount = movieDetails.voteCount.toLong(),
+                    popularity = movieDetails.popularity,
+                    overview = movieDetails.overview,
+                    runtime = movieDetails.runtime.toLong(),
+                    budget = movieDetails.budget.toLong(),
+                    revenue = movieDetails.revenue.toLong(),
+                    id = id,
+                )
+            }
+    }
+
     fun getMovieListFlowByStatus(status: MovieStatus): Flow<List<Movie>> {
         return movieWithGenreViewQueries.getMoviesWithGenreByStatus(status = status.name)
             .asFlow()
@@ -80,7 +96,12 @@ class MovieRepository(
                         posterPath = movie.posterPath,
                         releaseDate = movie.releaseDate,
                         voteAverage = movie.voteAverage,
+                        voteCount = movie.voteCount.toLong(),
                         popularity = movie.popularity,
+                        overview = null,
+                        runtime = null,
+                        budget = null,
+                        revenue = null,
                         status = MovieStatus.Undefined.name,
                         uploadTimestamp = Clock.System.now().epochSeconds
                     )
@@ -158,14 +179,14 @@ class MovieRepository(
             posterPath = movie.posterPath,
             releaseDate = movie.releaseDate,
             voteAverage = movie.voteAverage,
-            voteCount = 0,
+            voteCount = movie.voteCount.toInt(),
             popularity = movie.popularity,
             status = MovieStatus.Undefined.name,
             genres = map { it.genreName },
-            overview = null,
-            runtime = null,
-            budget = null,
-            revenue = null,
+            overview = movie.overview,
+            runtime = movie.runtime?.toInt(),
+            budget = movie.budget?.toInt(),
+            revenue = movie.revenue?.toInt(),
         )
     }
 

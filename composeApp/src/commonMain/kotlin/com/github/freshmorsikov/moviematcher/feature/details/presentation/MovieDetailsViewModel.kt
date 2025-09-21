@@ -6,6 +6,7 @@ import com.github.freshmorsikov.moviematcher.feature.details.domain.GetMovieFlow
 import com.github.freshmorsikov.moviematcher.feature.details.domain.LoadMovieDetailsUseCase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class MovieDetailsViewModel(
     movieId: Long,
@@ -22,7 +23,9 @@ class MovieDetailsViewModel(
             .onEach { movie ->
                 onAction(MovieDetailsUdf.Action.UpdateMovie(movie = movie))
             }.launchIn(viewModelScope)
-        loadMovieDetailsUseCase(id = movieId)
+        viewModelScope.launch {
+            loadMovieDetailsUseCase(movieId = movieId)
+        }
     }
 
     override fun reduce(action: MovieDetailsUdf.Action): MovieDetailsUdf.State {

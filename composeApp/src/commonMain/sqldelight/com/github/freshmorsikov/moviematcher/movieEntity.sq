@@ -5,7 +5,12 @@ CREATE TABLE movieEntity (
     posterPath TEXT NOT NULL,
     releaseDate TEXT NOT NULL,
     voteAverage REAL NOT NULL,
+    voteCount INTEGER NOT NULL,
     popularity REAL NOT NULL,
+    overview TEXT,
+    runtime INTEGER,
+    budget INTEGER,
+    revenue INTEGER,
     status TEXT NOT NULL,
     uploadTimestamp INTEGER NOT NULL
 );
@@ -23,4 +28,15 @@ WHERE status = :status;
 updateMovieStatus:
 UPDATE movieEntity
 SET status = :status
+WHERE id = :id;
+
+updateMovieDetails:
+UPDATE movieEntity
+SET voteAverage = :voteAverage,
+    voteCount = :voteCount,
+    popularity = :popularity,
+    overview = :overview,
+    runtime = :runtime,
+    budget = :budget,
+    revenue = :revenue
 WHERE id = :id;
