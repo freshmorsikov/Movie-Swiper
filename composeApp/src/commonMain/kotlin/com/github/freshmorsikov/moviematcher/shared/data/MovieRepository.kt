@@ -116,7 +116,16 @@ class MovieRepository(
             .toMovieList()
     }
 
-    fun List<MovieWithGenreView>.toMovieList(): List<Movie> {
+    fun getMovieFlowById(id: Long): Flow<Movie> {
+        return movieWithGenreViewQueries.getMovieWithGenreById(id = id)
+            .asFlow()
+            .mapToList(Dispatchers.Default)
+            .map { list ->
+                list.toMovie()
+            }
+    }
+
+    private fun List<MovieWithGenreView>.toMovieList(): List<Movie> {
         return groupBy { movieWithGenres ->
             movieWithGenres.id
         }.map { (_, movieWithGenreList) ->
@@ -138,6 +147,26 @@ class MovieRepository(
                 revenue = null,
             )
         }
+    }
+
+    private fun List<MovieWithGenreView>.toMovie(): Movie {
+        val movie = first()
+        return Movie(
+            id = movie.id,
+            title = movie.title,
+            originalTitle = movie.originalTitle,
+            posterPath = movie.posterPath,
+            releaseDate = movie.releaseDate,
+            voteAverage = movie.voteAverage,
+            voteCount = 0,
+            popularity = movie.popularity,
+            status = MovieStatus.Undefined.name,
+            genres = map { it.genreName },
+            overview = null,
+            runtime = null,
+            budget = null,
+            revenue = null,
+        )
     }
 
 

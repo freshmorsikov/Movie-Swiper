@@ -15,3 +15,8 @@ SELECT *
 FROM movieWithGenreView
 WHERE id IN :ids
 ORDER BY uploadTimestamp DESC, popularity ASC;
+
+getMovieWithGenreById:
+SELECT *
+FROM movieWithGenreView
+WHERE id = :id;
