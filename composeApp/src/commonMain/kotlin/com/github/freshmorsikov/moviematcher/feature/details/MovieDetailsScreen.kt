@@ -1,22 +1,34 @@
 package com.github.freshmorsikov.moviematcher.feature.details
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
@@ -28,6 +40,9 @@ import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieGenres
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
 import com.github.freshmorsikov.moviematcher.util.toAmountFormat
+import moviematcher.composeapp.generated.resources.Res
+import moviematcher.composeapp.generated.resources.ic_back
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -35,6 +50,7 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun MovieDetailsScreen(
     movieId: Long,
+    navController: NavController,
     viewModel: MovieDetailsViewModel = koinViewModel(
         parameters = { parametersOf(movieId) }
     )
@@ -44,13 +60,17 @@ fun MovieDetailsScreen(
     MovieDetailsScreenContent(
         state = state,
         onAction = viewModel::onAction,
+        onBackClick = {
+            navController.popBackStack()
+        },
     )
 }
 
 @Composable
 private fun MovieDetailsScreenContent(
     state: MovieDetailsUdf.State,
-    onAction: (MovieDetailsUdf.Action) -> Unit
+    onAction: (MovieDetailsUdf.Action) -> Unit,
+    onBackClick: () -> Unit,
 ) {
     MovieScaffold(contentWindowInsets = WindowInsets.none) {
         when (state) {
@@ -65,6 +85,23 @@ private fun MovieDetailsScreenContent(
                 )
             }
         }
+        FilledIconButton(
+            modifier = Modifier
+                .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 8.dp)
+                .padding(start = 16.dp)
+                .size(48.dp),
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = Color.White.copy(alpha = 0.3f)
+            ),
+            onClick = onBackClick
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(Res.drawable.ic_back),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                contentDescription = null
+            )
+        }
     }
 }
 
@@ -78,16 +115,20 @@ private fun LoadedMovieDetailsScreenContent(
     state: MovieDetailsUdf.State.Data,
     onAction: (MovieDetailsUdf.Action) -> Unit,
 ) {
-    Column {
+    Column(
+        modifier = Modifier.verticalScroll(
+            state = rememberScrollState()
+        )
+    ) {
         AsyncImage(
             modifier = Modifier.fillMaxWidth(),
             model = "$IMAGE_BASE_URL${state.movie.posterPath}",
-            contentScale = ContentScale.FillBounds,
+            contentScale = ContentScale.FillWidth,
             contentDescription = null,
         )
         Column(
             modifier = Modifier
-                .width(380.dp)
+                .fillMaxWidth()
                 .padding(16.dp),
             verticalArrangement = spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -105,18 +146,23 @@ private fun LoadedMovieDetailsScreenContent(
             )
             MovieGenres(state.movie.genres)
 
+            Spacer(modifier = Modifier.height(8.dp))
+
             if (state.movie.overview == null) {
-                Shimmer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(20.dp)
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Shimmer(
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(20.dp)
+                    )
+                    Shimmer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(20.dp)
+                    )
+                }
             } else {
-                Column(
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .fillMaxWidth()
-                ) {
+                Column {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = "Overview",
@@ -130,11 +176,21 @@ private fun LoadedMovieDetailsScreenContent(
                 }
             }
             if (state.movie.budget == null) {
-                Shimmer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(20.dp)
-                )
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Shimmer(
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(20.dp)
+                    )
+                    Shimmer(
+                        modifier = Modifier
+                            .width(160.dp)
+                            .height(20.dp)
+                    )
+                }
             } else if (state.movie.budget > 0) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
@@ -148,11 +204,21 @@ private fun LoadedMovieDetailsScreenContent(
                 }
             }
             if (state.movie.revenue == null) {
-                Shimmer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(20.dp)
-                )
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Shimmer(
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(20.dp)
+                    )
+                    Shimmer(
+                        modifier = Modifier
+                            .width(160.dp)
+                            .height(20.dp)
+                    )
+                }
             } else if (state.movie.revenue > 0) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
@@ -178,6 +244,7 @@ private fun MovieDetailsScreenPreview() {
                 movie = Movie.mock
             ),
             onAction = {},
+            onBackClick = {},
         )
     }
 }

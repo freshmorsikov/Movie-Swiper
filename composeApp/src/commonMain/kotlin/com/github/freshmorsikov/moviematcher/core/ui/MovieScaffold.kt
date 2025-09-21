@@ -17,12 +17,14 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 @Composable
 fun MovieScaffold(
     modifier: Modifier = Modifier,
+    topBar: @Composable () -> Unit = {},
     background: Color = Color(0xFFF8F6F7),
     contentWindowInsets: WindowInsets = WindowInsets.systemBars,
     content: @Composable BoxScope.() -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
+        topBar = topBar,
         contentWindowInsets = contentWindowInsets,
         containerColor = background,
     ) { padding ->

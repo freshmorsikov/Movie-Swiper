@@ -24,6 +24,7 @@ import com.github.freshmorsikov.moviematcher.core.data.di.sqlDriverModule
 import com.github.freshmorsikov.moviematcher.feature.code.CodeScreen
 import com.github.freshmorsikov.moviematcher.feature.code.di.codeFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.details.MovieDetailsScreen
+import com.github.freshmorsikov.moviematcher.feature.details.di.movieDetailsFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
 import com.github.freshmorsikov.moviematcher.feature.favorites.di.favoritesFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.join.JoinPairScreen
@@ -65,6 +66,7 @@ fun App() {
                 matchesFeatureModule,
                 codeFeatureModule,
                 joinPairFeatureModule,
+                movieDetailsFeatureModule,
             )
         }
     ) {
@@ -107,7 +109,7 @@ fun App() {
                 modifier = Modifier.padding(bottom = padding.calculateBottomPadding())
             ) {
                 composable<NavigationRoute.Swipe> {
-                    SwipeScreen()
+                    SwipeScreen(navController = navController)
                 }
                 composable<NavigationRoute.Favorite> {
                     FavoriteScreen()
@@ -126,7 +128,10 @@ fun App() {
                 }
                 composable<NavigationRoute.MovieDetails> { backStackEntry ->
                     val route: NavigationRoute.MovieDetails = backStackEntry.toRoute()
-                    MovieDetailsScreen(movieId = route.movieId)
+                    MovieDetailsScreen(
+                        movieId = route.movieId,
+                        navController = navController,
+                    )
                 }
             }
 

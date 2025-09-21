@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
@@ -44,7 +45,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.github.freshmorsikov.moviematcher.app.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
 import com.github.freshmorsikov.moviematcher.core.ui.ContainerShimmer
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
@@ -67,19 +70,26 @@ private val swipeAnimationSpec: AnimationSpec<Float> = tween(500)
 
 @Composable
 fun SwipeScreen(
+    navController: NavController,
     viewModel: SwipeViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     SwipeScreenContent(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        onMovieClick = { movieId ->
+            navController.navigate(
+                NavigationRoute.MovieDetails(movieId = movieId)
+            )
+        }
     )
 }
 
 @Composable
 fun SwipeScreenContent(
     state: SwipeUdf.State,
-    onAction: (SwipeUdf.Action) -> Unit
+    onAction: (SwipeUdf.Action) -> Unit,
+    onMovieClick: (Long) -> Unit,
 ) {
     MovieScaffold(contentWindowInsets = WindowInsets.none) {
         when (state) {
@@ -96,6 +106,7 @@ fun SwipeScreenContent(
                     modifier = Modifier.fillMaxSize(),
                     state = state,
                     onAction = onAction,
+                    onMovieClick = onMovieClick,
                 )
             }
         }
@@ -139,6 +150,7 @@ private fun LoadingContent(modifier: Modifier = Modifier) {
 private fun DataContent(
     state: SwipeUdf.State.Data,
     onAction: (SwipeUdf.Action) -> Unit,
+    onMovieClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -169,6 +181,7 @@ private fun DataContent(
             new = state.movies.getOrNull(state.movies.lastIndex - 3),
             draggableState = draggableState,
             onAction = onAction,
+            onMovieClick = onMovieClick,
         )
         ColorIndicators(
             modifier = Modifier.fillMaxSize(),
@@ -185,6 +198,7 @@ private fun MovieStack(
     new: Movie?,
     draggableState: AnchoredDraggableState<MovieCardState>,
     onAction: (SwipeUdf.Action) -> Unit,
+    onMovieClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -293,7 +307,9 @@ private fun MovieStack(
                         translationY = 32 * density
                         translationX = draggableState.offset
                         alpha = topAlpha.value
-                    },
+                    }.clickable(
+                        onClick = { onMovieClick(top.id) }
+                    ),
                 movie = top,
             )
         }
@@ -355,7 +371,8 @@ private fun SwipeScreenDataPreview() {
                 Movie.mock
             }
         ),
-        onAction = {}
+        onAction = {},
+        onMovieClick = {},
     )
 }
 
@@ -364,6 +381,7 @@ private fun SwipeScreenDataPreview() {
 private fun SwipeScreenLoadingPreview() {
     SwipeScreenContent(
         state = SwipeUdf.State.Loading,
-        onAction = {}
+        onAction = {},
+        onMovieClick = {},
     )
 }
