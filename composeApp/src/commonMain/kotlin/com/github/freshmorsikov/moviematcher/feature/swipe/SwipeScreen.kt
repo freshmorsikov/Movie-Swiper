@@ -355,6 +355,7 @@ private fun MovieCard(
                 MovieInfo(
                     releaseDate = movie.releaseDate,
                     voteAverage = movie.voteAverage,
+                    voteCount = movie.voteCount,
                 )
                 MovieGenres(movie.genres)
             }

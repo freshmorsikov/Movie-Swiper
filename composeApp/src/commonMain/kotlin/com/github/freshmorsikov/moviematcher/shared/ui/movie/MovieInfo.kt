@@ -23,7 +23,7 @@ import org.jetbrains.compose.resources.painterResource
 fun MovieInfo(
     releaseDate: String,
     voteAverage: Double,
-    voteCount: Int? = null,
+    voteCount: Int,
     runtime: Int? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -55,8 +55,12 @@ fun MovieInfo(
                 withStyle(SpanStyle(color = Color(0xFFEAAF00))) {
                     append(voteAverage.toRatingFormat())
                 }
-                if (voteCount != null && voteCount > 0) {
-                    append(" ($voteCount)")
+                if (voteCount > 0) {
+                    if (voteCount > 1000) {
+                        append(" (${voteCount / 1000}K)")
+                    } else {
+                        append(" ($voteCount)")
+                    }
                 }
             }
             Text(

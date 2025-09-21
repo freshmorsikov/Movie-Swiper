@@ -158,14 +158,14 @@ class MovieRepository(
                 posterPath = movie.posterPath,
                 releaseDate = movie.releaseDate,
                 voteAverage = movie.voteAverage,
-                voteCount = 0,
+                voteCount = movie.voteCount.toInt(),
                 popularity = movie.popularity,
                 status = MovieStatus.Undefined.name,
                 genres = movieWithGenreList.map { it.genreName },
-                overview = null,
-                runtime = null,
-                budget = null,
-                revenue = null,
+                overview = movie.overview,
+                runtime = movie.runtime?.toInt(),
+                budget = movie.budget?.toInt(),
+                revenue = movie.revenue?.toInt(),
             )
         }
     }

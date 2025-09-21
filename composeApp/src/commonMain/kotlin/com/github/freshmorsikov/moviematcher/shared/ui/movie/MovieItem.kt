@@ -67,6 +67,7 @@ fun MovieItem(
                 MovieInfo(
                     releaseDate = movie.releaseDate,
                     voteAverage = movie.voteAverage,
+                    voteCount = movie.voteCount,
                 )
                 MovieGenres(genres = movie.genres)
             }
