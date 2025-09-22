@@ -27,6 +27,9 @@ val movieDetailsFeatureModule = module {
         GetActorsByMovieIdUseCase(actorRepository = get())
     }
     single {
-        ActorRepository()
+        ActorRepository(
+            apiService = get(),
+            actorEntityQueries = get(),
+        )
     }
 }

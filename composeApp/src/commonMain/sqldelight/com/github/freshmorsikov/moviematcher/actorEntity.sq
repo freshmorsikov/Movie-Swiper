@@ -1,0 +1,18 @@
+CREATE TABLE actorEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    character TEXT NOT NULL,
+    profilePath TEXT NOT NULL,
+    actorOrder INTEGER NOT NULL,
+    movieId INTEGER NOT NULL
+);
+
+insert:
+INSERT OR IGNORE
+INTO actorEntity
+VALUES ?;
+
+getActorsByMovieId:
+SELECT *
+FROM actorEntity
+WHERE movieId = :movieId;

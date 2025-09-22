@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class MovieDetailsViewModel(
+    movieId: Long,
     getMovieFlowByIdUseCase: GetMovieFlowByIdUseCase,
     loadMovieDetailsUseCase: LoadMovieDetailsUseCase,
-    private val movieId: Long,
-    private val getActorsByMovieIdUseCase: GetActorsByMovieIdUseCase,
+    getActorsByMovieIdUseCase: GetActorsByMovieIdUseCase,
 ) : UdfViewModel<MovieDetailsUdf.State, MovieDetailsUdf.Action, MovieDetailsUdf.Event>(
     initState = {
         MovieDetailsUdf.State.Loading

@@ -7,8 +7,14 @@ class GetActorsByMovieIdUseCase(
     private val actorRepository: ActorRepository
 ) {
 
-    operator fun invoke(movieId: Long): List<Actor> {
+    suspend operator fun invoke(movieId: Long): List<Actor> {
         return actorRepository.getActorsByMovieId(movieId = movieId)
+            .filter { actor ->
+                actor.profilePath.isNotEmpty()
+            }
+            .sortedBy { actor ->
+                actor.order
+            }
     }
 
 }
