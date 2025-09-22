@@ -245,7 +245,8 @@ private fun MovieDetailsScreenPreview() {
     MaterialTheme {
         MovieDetailsScreenContent(
             state = MovieDetailsUdf.State.Data(
-                movie = Movie.mock
+                movie = Movie.mock,
+                actors = emptyList()
             ),
             onAction = {},
             onBackClick = {},

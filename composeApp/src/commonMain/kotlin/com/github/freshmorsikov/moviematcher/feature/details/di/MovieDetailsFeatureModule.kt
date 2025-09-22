@@ -1,5 +1,7 @@
 package com.github.freshmorsikov.moviematcher.feature.details.di
 
+import com.github.freshmorsikov.moviematcher.feature.details.data.ActorRepository
+import com.github.freshmorsikov.moviematcher.feature.details.domain.GetActorsByMovieIdUseCase
 import com.github.freshmorsikov.moviematcher.feature.details.domain.GetMovieFlowByIdUseCase
 import com.github.freshmorsikov.moviematcher.feature.details.domain.LoadMovieDetailsUseCase
 import com.github.freshmorsikov.moviematcher.feature.details.presentation.MovieDetailsViewModel
@@ -12,6 +14,7 @@ val movieDetailsFeatureModule = module {
             movieId = params.get(),
             getMovieFlowByIdUseCase = get(),
             loadMovieDetailsUseCase = get(),
+            getActorsByMovieIdUseCase = get(),
         )
     }
     factory {
@@ -19,5 +22,11 @@ val movieDetailsFeatureModule = module {
     }
     factory {
         LoadMovieDetailsUseCase(movieRepository = get())
+    }
+    factory {
+        GetActorsByMovieIdUseCase(actorRepository = get())
+    }
+    single {
+        ActorRepository()
     }
 }
