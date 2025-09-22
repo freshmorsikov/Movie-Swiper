@@ -42,7 +42,11 @@ import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
 import com.github.freshmorsikov.moviematcher.util.toAmountFormat
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_back
+import moviematcher.composeapp.generated.resources.movie_details_budget
+import moviematcher.composeapp.generated.resources.movie_details_overview
+import moviematcher.composeapp.generated.resources.movie_details_revenue
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -165,7 +169,7 @@ private fun LoadedMovieDetailsScreenContent(
                 Column {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = "Overview",
+                        text = stringResource(Res.string.movie_details_overview),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
@@ -194,7 +198,7 @@ private fun LoadedMovieDetailsScreenContent(
             } else if (state.movie.budget > 0) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Budget",
+                        text = stringResource(Res.string.movie_details_budget),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
@@ -222,7 +226,7 @@ private fun LoadedMovieDetailsScreenContent(
             } else if (state.movie.revenue > 0) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Revenue",
+                        text = stringResource(Res.string.movie_details_revenue),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(

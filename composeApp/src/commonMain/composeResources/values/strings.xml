@@ -28,4 +28,8 @@
 
     <string name="sharing_title">Sharing</string>
 
+    <string name="movie_details_overview">Overview</string>
+    <string name="movie_details_budget">Budget</string>
+    <string name="movie_details_revenue">Revenue</string>
+
 </resources>
