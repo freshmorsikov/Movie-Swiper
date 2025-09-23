@@ -27,17 +27,20 @@ class ActorRepository(
                     actorEntityQueries.insert(actorEntity = actorEntity)
                 }
             }
-            movieCastResult.getOrNull()?.cast?.map { actorResponse ->
-                Actor(
-                    id = actorResponse.id,
-                    name = actorResponse.name,
-                    character = actorResponse.character,
-                    profilePath = actorResponse.profilePath.orEmpty(),
-                    order = actorResponse.order,
-                )
-            } ?: emptyList()
+            movieCastResult.getOrNull()
+                ?.cast
+                ?.take(10)
+                ?.map { actorResponse ->
+                    Actor(
+                        id = actorResponse.id,
+                        name = actorResponse.name,
+                        character = actorResponse.character,
+                        profilePath = actorResponse.profilePath.orEmpty(),
+                        order = actorResponse.order,
+                    )
+                } ?: emptyList()
         } else {
-            actors.map {actorResponse ->
+            actors.map { actorResponse ->
                 Actor(
                     id = actorResponse.id,
                     name = actorResponse.name,

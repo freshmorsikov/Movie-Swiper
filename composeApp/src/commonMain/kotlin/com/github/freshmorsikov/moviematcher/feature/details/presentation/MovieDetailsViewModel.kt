@@ -21,7 +21,7 @@ class MovieDetailsViewModel(
     }
 ) {
 
-    private var actors: List<Actor> = emptyList()
+    private var actors: List<Actor>? = null
 
     init {
         getMovieFlowByIdUseCase(id = movieId)
@@ -38,8 +38,9 @@ class MovieDetailsViewModel(
             loadMovieDetailsUseCase(movieId = movieId)
         }
         viewModelScope.launch {
-            actors = getActorsByMovieIdUseCase(movieId = movieId)
-            onAction(MovieDetailsUdf.Action.UpdateActors(actors = actors))
+            val receivedActors = getActorsByMovieIdUseCase(movieId = movieId)
+            actors = receivedActors
+            onAction(MovieDetailsUdf.Action.UpdateActors(actors = receivedActors))
         }
     }
 

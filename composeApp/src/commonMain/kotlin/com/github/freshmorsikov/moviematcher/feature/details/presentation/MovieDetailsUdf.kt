@@ -9,7 +9,7 @@ interface MovieDetailsUdf {
         data object Loading : State
         data class Data(
             val movie: Movie,
-            val actors: List<Actor>,
+            val actors: List<Actor>?,
             val trailer: String? = null,
         ) : State
     }
@@ -17,7 +17,7 @@ interface MovieDetailsUdf {
     sealed interface Action : Udf.Action {
         data class UpdateMovie(
             val movie: Movie,
-            val actors: List<Actor>,
+            val actors: List<Actor>?,
         ): Action
         data class UpdateActors(val actors: List<Actor>): Action
     }

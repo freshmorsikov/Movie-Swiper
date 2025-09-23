@@ -6,4 +6,15 @@ data class Actor(
     val character: String,
     val profilePath: String,
     val order: Int,
-)
+) {
+
+    companion object {
+        val mock = Actor(
+            id = 0,
+            name = "Valentin Freshmorsikov",
+            character = "Developer",
+            profilePath = "",
+            order = 0,
+        )
+    }
+}
