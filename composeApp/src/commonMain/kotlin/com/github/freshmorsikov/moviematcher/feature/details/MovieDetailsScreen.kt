@@ -132,11 +132,13 @@ private fun LoadedMovieDetailsScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(vertical = 16.dp),
             verticalArrangement = spacedBy(16.dp),
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 verticalArrangement = spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -154,18 +156,33 @@ private fun LoadedMovieDetailsScreenContent(
                 MovieGenres(state.movie.genres)
             }
 
-            OverviewBlock(overview = state.movie.overview)
+            OverviewBlock(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                overview = state.movie.overview,
+            )
             CastBlock(actors = state.actors)
-            BudgetBlock(budget = state.movie.budget)
-            RevenueBlock(revenue = state.movie.revenue)
+            BudgetBlock(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                budget = state.movie.budget,
+            )
+            RevenueBlock(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                revenue = state.movie.revenue,
+            )
         }
     }
 }
 
 @Composable
-private fun OverviewBlock(overview: String?) {
+private fun OverviewBlock(
+    modifier: Modifier = Modifier,
+    overview: String?,
+) {
     if (overview == null) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
             Shimmer(
                 modifier = Modifier
                     .width(120.dp)
@@ -178,7 +195,10 @@ private fun OverviewBlock(overview: String?) {
             )
         }
     } else {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(Res.string.movie_details_overview),
@@ -194,9 +214,15 @@ private fun OverviewBlock(overview: String?) {
 }
 
 @Composable
-private fun CastBlock(actors: List<Actor>?) {
+private fun CastBlock(
+    modifier: Modifier = Modifier,
+    actors: List<Actor>?,
+) {
     if (actors == null) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
             Shimmer(
                 modifier = Modifier
                     .width(120.dp)
@@ -229,17 +255,19 @@ private fun CastBlock(actors: List<Actor>?) {
         }
     } else if (actors.isNotEmpty()) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
+                modifier = Modifier.padding(horizontal = 16.dp),
                 text = stringResource(Res.string.movie_details_cast),
                 style = MaterialTheme.typography.titleMedium,
             )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = spacedBy(8.dp)
             ) {
                 actors.forEach { actor ->
@@ -270,10 +298,13 @@ private fun CastBlock(actors: List<Actor>?) {
 }
 
 @Composable
-private fun BudgetBlock(budget: Long?) {
+private fun BudgetBlock(
+    modifier: Modifier = Modifier,
+    budget: Long?,
+) {
     if (budget == null) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Shimmer(
@@ -289,7 +320,7 @@ private fun BudgetBlock(budget: Long?) {
         }
     } else if (budget > 0) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
@@ -305,10 +336,13 @@ private fun BudgetBlock(budget: Long?) {
 }
 
 @Composable
-private fun RevenueBlock(revenue: Long?) {
+private fun RevenueBlock(
+    modifier: Modifier = Modifier,
+    revenue: Long?,
+) {
     if (revenue == null) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Shimmer(
@@ -324,7 +358,7 @@ private fun RevenueBlock(revenue: Long?) {
         }
     } else if (revenue > 0) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
