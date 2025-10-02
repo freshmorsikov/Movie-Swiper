@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.github.freshmorsikov.moviematcher.app.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.feature.favorites.presentation.FavoritesUdf
 import com.github.freshmorsikov.moviematcher.feature.favorites.presentation.FavoritesViewModel
@@ -35,14 +37,25 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FavoriteScreen(
+    navController: NavController,
     viewModel: FavoritesViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    FavoriteScreenContent(state = state)
+    FavoriteScreenContent(
+        state = state,
+        onMovieClick = { movieId ->
+            navController.navigate(
+                NavigationRoute.MovieDetails(movieId = movieId)
+            )
+        },
+    )
 }
 
 @Composable
-fun FavoriteScreenContent(state: FavoritesUdf.State) {
+fun FavoriteScreenContent(
+    state: FavoritesUdf.State,
+    onMovieClick: (Long) -> Unit,
+) {
     MovieScaffold {
         when (state) {
             FavoritesUdf.State.Loading -> {}
@@ -79,7 +92,10 @@ fun FavoriteScreenContent(state: FavoritesUdf.State) {
                     verticalArrangement = spacedBy(8.dp)
                 ) {
                     items(state.movieList) { movie ->
-                        MovieItem(movie = movie)
+                        MovieItem(
+                            movie = movie,
+                            onClick = onMovieClick,
+                        )
                     }
                 }
             }
@@ -94,7 +110,8 @@ private fun FavoriteScreenContentPreview() {
         FavoriteScreenContent(
             state = FavoritesUdf.State.Data(
                 movieList = List(6) { Movie.mock }
-            )
+            ),
+            onMovieClick = {},
         )
     }
 }
@@ -104,7 +121,8 @@ private fun FavoriteScreenContentPreview() {
 private fun FavoriteScreenEmptyPreview() {
     MaterialTheme {
         FavoriteScreenContent(
-            state = FavoritesUdf.State.Empty
+            state = FavoritesUdf.State.Empty,
+            onMovieClick = {},
         )
     }
 }

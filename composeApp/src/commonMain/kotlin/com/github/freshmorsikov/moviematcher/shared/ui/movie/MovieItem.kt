@@ -1,6 +1,7 @@
 package com.github.freshmorsikov.moviematcher.shared.ui.movie
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -29,10 +30,15 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun MovieItem(
     movie: Movie,
+    onClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.clickable(
+            onClick = {
+                onClick(movie.id)
+            }
+        ),
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
@@ -79,6 +85,9 @@ fun MovieItem(
 @Composable
 private fun MovieItemPreview() {
     MaterialTheme {
-        MovieItem(movie = Movie.mock)
+        MovieItem(
+            movie = Movie.mock,
+            onClick = {},
+        )
     }
 }

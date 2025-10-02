@@ -112,7 +112,7 @@ fun App() {
                     SwipeScreen(navController = navController)
                 }
                 composable<NavigationRoute.Favorite> {
-                    FavoriteScreen()
+                    FavoriteScreen(navController = navController)
                 }
                 composable<NavigationRoute.Matches> {
                     MatchesScreen(navController = navController)

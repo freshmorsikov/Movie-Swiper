@@ -59,7 +59,12 @@ fun MatchesScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     MatchesContent(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        onMovieClick = { movieId ->
+            navController.navigate(
+                NavigationRoute.MovieDetails(movieId = movieId)
+            )
+        }
     )
     SubscribeOnEvents(viewModel.event) { event ->
         when (event) {
@@ -77,7 +82,8 @@ fun MatchesScreen(
 @Composable
 fun MatchesContent(
     state: MatchesUdf.State,
-    onAction: (MatchesUdf.Action) -> Unit
+    onAction: (MatchesUdf.Action) -> Unit,
+    onMovieClick: (Long) -> Unit,
 ) {
     MovieScaffold {
         when (state) {
@@ -99,7 +105,10 @@ fun MatchesContent(
             }
 
             is MatchesUdf.State.Data -> {
-                MatchesListContent(pairState = state.pairState)
+                MatchesListContent(
+                    pairState = state.pairState,
+                    onMovieClick = onMovieClick,
+                )
             }
         }
     }
@@ -169,6 +178,7 @@ private fun EmptyContent(
 @Composable
 private fun MatchesListContent(
     pairState: PairState.Paired,
+    onMovieClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -185,7 +195,10 @@ private fun MatchesListContent(
             verticalArrangement = spacedBy(8.dp)
         ) {
             items(pairState.matchedMovieList) { movie ->
-                MovieItem(movie = movie)
+                MovieItem(
+                    movie = movie,
+                    onClick = onMovieClick,
+                )
             }
         }
     }
@@ -258,7 +271,8 @@ private fun PairedPreview(
     MaterialTheme {
         MatchesContent(
             state = state,
-            onAction = {}
+            onAction = {},
+            onMovieClick = {},
         )
     }
 }
