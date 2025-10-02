@@ -270,7 +270,7 @@ private fun CastBlock(actors: List<Actor>?) {
 }
 
 @Composable
-private fun BudgetBlock(budget: Int?) {
+private fun BudgetBlock(budget: Long?) {
     if (budget == null) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -305,7 +305,7 @@ private fun BudgetBlock(budget: Int?) {
 }
 
 @Composable
-private fun RevenueBlock(revenue: Int?) {
+private fun RevenueBlock(revenue: Long?) {
     if (revenue == null) {
         Column(
             modifier = Modifier.fillMaxWidth(),

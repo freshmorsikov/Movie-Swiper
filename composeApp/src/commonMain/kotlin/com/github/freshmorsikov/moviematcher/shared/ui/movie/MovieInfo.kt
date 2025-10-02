@@ -23,8 +23,8 @@ import org.jetbrains.compose.resources.painterResource
 fun MovieInfo(
     releaseDate: String,
     voteAverage: Double,
-    voteCount: Int,
-    runtime: Int? = null,
+    voteCount: Long,
+    runtime: Long? = null,
     modifier: Modifier = Modifier,
 ) {
     Row(

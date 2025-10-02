@@ -53,12 +53,12 @@ class MovieRepository(
             .onSuccess { movieDetails ->
                 movieEntityQueries.updateMovieDetails(
                     voteAverage = movieDetails.voteAverage,
-                    voteCount = movieDetails.voteCount.toLong(),
+                    voteCount = movieDetails.voteCount,
                     popularity = movieDetails.popularity,
                     overview = movieDetails.overview,
-                    runtime = movieDetails.runtime.toLong(),
-                    budget = movieDetails.budget.toLong(),
-                    revenue = movieDetails.revenue.toLong(),
+                    runtime = movieDetails.runtime,
+                    budget = movieDetails.budget,
+                    revenue = movieDetails.revenue,
                     id = id,
                 )
             }
@@ -158,14 +158,14 @@ class MovieRepository(
                 posterPath = movie.posterPath,
                 releaseDate = movie.releaseDate,
                 voteAverage = movie.voteAverage,
-                voteCount = movie.voteCount.toInt(),
+                voteCount = movie.voteCount,
                 popularity = movie.popularity,
                 status = MovieStatus.Undefined.name,
                 genres = movieWithGenreList.map { it.genreName },
                 overview = movie.overview,
-                runtime = movie.runtime?.toInt(),
-                budget = movie.budget?.toInt(),
-                revenue = movie.revenue?.toInt(),
+                runtime = movie.runtime,
+                budget = movie.budget,
+                revenue = movie.revenue,
             )
         }
     }
@@ -179,14 +179,14 @@ class MovieRepository(
             posterPath = movie.posterPath,
             releaseDate = movie.releaseDate,
             voteAverage = movie.voteAverage,
-            voteCount = movie.voteCount.toInt(),
+            voteCount = movie.voteCount,
             popularity = movie.popularity,
             status = MovieStatus.Undefined.name,
             genres = map { it.genreName },
             overview = movie.overview,
-            runtime = movie.runtime?.toInt(),
-            budget = movie.budget?.toInt(),
-            revenue = movie.revenue?.toInt(),
+            runtime = movie.runtime,
+            budget = movie.budget,
+            revenue = movie.revenue,
         )
     }
 

@@ -7,13 +7,13 @@ data class Movie(
     val posterPath: String,
     val releaseDate: String,
     val voteAverage: Double,
-    val voteCount: Int,
+    val voteCount: Long,
     val popularity: Double,
     val status: String,
     val overview: String?,
-    val runtime: Int?,
-    val budget: Int?,
-    val revenue: Int?,
+    val runtime: Long?,
+    val budget: Long?,
+    val revenue: Long?,
     val genres: List<String>,
 ) {
 
