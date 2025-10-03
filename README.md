@@ -1,21 +1,37 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop.
+# 🍿 Movie Swiper
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-    - `commonMain` is for code that’s common for all targets.
-    - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-      For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-      `iosMain` would be the right folder for such calls.
+## Overview
+**Movie Swiper** is an Android/iOS app that lets users to discover, swipe, and match movies they’ll love.
+Just like in dating apps, swipe right to like, swipe left to skip, and when you and your friend or partner like the same film, it’s a match!
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+![Preview-min](https://github.com/user-attachments/assets/f5aee583-c244-4986-baae-195b512b6730)
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+## Features
+✅ Сreating a pair </br>
+✅ Swiping movies </br>
+✅ Finding matches </br>
+🔜 Watch lists </br>
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack
-channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+## Tech Stack
+- [Kotlin](https://kotlinlang.org/): Programming language
+- [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html): Cross-platform framework
+- [Compose Multiplatform](https://www.jetbrains.com/compose-multiplatform/): UI framework
+- [Koin](https://insert-koin.io/): Dependency injection
+- [Coroutines](https://github.com/Kotlin/kotlinx.coroutines): Multithreading
+- [Coil](https://coil-kt.github.io/coil/): Image loading
+- [Firebase Kotlin SDK](https://github.com/GitLiveApp/firebase-kotlin-sdk): Multiplatform SDK for Firebase
 
-You can open the web application by running the `:composeApp:wasmJsBrowserDevelopmentRun` Gradle task.
+## Download
+<a href="https://play.google.com/store/apps/details?id=com.github.freshmorsikov.moviematcher">
+    <img 
+        style="margin: 10px" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" 
+        alt="Google Play" 
+        height="80" 
+    />
+</a>
+
+## Contacts
+For any questions or feedback, feel free to contact:
+
+- Telegram: [@freshmorsikov](https://t.me/freshmorsikov)
+- LinkedIn: [@freshmorsikov](https://www.linkedin.com/in/freshmorsikov/)
