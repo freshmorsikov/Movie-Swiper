@@ -71,9 +71,17 @@ private val swipeAnimationSpec: AnimationSpec<Float> = tween(500)
 @Composable
 fun SwipeScreen(
     navController: NavController,
+    code: String?,
     viewModel: SwipeViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(code) {
+        viewModel.onAction(
+            SwipeUdf.Action.HandleCode(code = code)
+        )
+    }
+
     SwipeScreenContent(
         state = state,
         onAction = viewModel::onAction,
@@ -92,22 +100,52 @@ fun SwipeScreenContent(
     onMovieClick: (Long) -> Unit,
 ) {
     MovieScaffold(contentWindowInsets = WindowInsets.none) {
-        when (state) {
-            SwipeUdf.State.Loading -> {
+        Box {
+            PairBlock(
+                modifier = Modifier.padding(
+                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
+                ),
+                pairState = state.pairState
+            )
+            if (state.movies == null) {
                 LoadingContent(
                     modifier = Modifier
-                        .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding())
-                        .padding(16.dp)
+                        .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 48.dp)
+                        .padding(horizontal = 16.dp)
                 )
-            }
-
-            is SwipeUdf.State.Data -> {
+            } else {
                 DataContent(
                     modifier = Modifier.fillMaxSize(),
-                    state = state,
+                    movies = state.movies,
                     onAction = onAction,
                     onMovieClick = onMovieClick,
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PairBlock(
+    pairState: SwipeUdf.PairState?,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        when (pairState) {
+            SwipeUdf.PairState.NotLinked -> {
+                Text("NotLinked")
+            }
+
+            SwipeUdf.PairState.Linking -> {
+                Text("Linking...")
+            }
+
+            is SwipeUdf.PairState.Linked -> {
+                Text("Linked ${pairState.code}")
+            }
+
+            null -> {
+                Text("")
             }
         }
     }
@@ -148,13 +186,13 @@ private fun LoadingContent(modifier: Modifier = Modifier) {
 
 @Composable
 private fun DataContent(
-    state: SwipeUdf.State.Data,
+    movies: List<Movie>,
     onAction: (SwipeUdf.Action) -> Unit,
     onMovieClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
-        val top = state.movies.lastOrNull()
+        val top = movies.lastOrNull()
         val windowInfo = LocalWindowInfo.current
         val draggableState = remember(top) {
             val width = windowInfo.containerSize.width.toFloat()
@@ -172,13 +210,13 @@ private fun DataContent(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 16.dp)
+                .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 48.dp)
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 48.dp),
             top = top,
-            middle = state.movies.getOrNull(state.movies.lastIndex - 1),
-            bottom = state.movies.getOrNull(state.movies.lastIndex - 2),
-            new = state.movies.getOrNull(state.movies.lastIndex - 3),
+            middle = movies.getOrNull(movies.lastIndex - 1),
+            bottom = movies.getOrNull(movies.lastIndex - 2),
+            new = movies.getOrNull(movies.lastIndex - 3),
             draggableState = draggableState,
             onAction = onAction,
             onMovieClick = onMovieClick,
@@ -367,7 +405,8 @@ private fun MovieCard(
 @Composable
 private fun SwipeScreenDataPreview() {
     SwipeScreenContent(
-        state = SwipeUdf.State.Data(
+        state = SwipeUdf.State(
+            pairState = SwipeUdf.PairState.Linked(code = "A001"),
             movies = List(3) { i ->
                 Movie.mock
             }
@@ -381,7 +420,10 @@ private fun SwipeScreenDataPreview() {
 @Composable
 private fun SwipeScreenLoadingPreview() {
     SwipeScreenContent(
-        state = SwipeUdf.State.Loading,
+        state = SwipeUdf.State(
+            pairState = null,
+            movies = null
+        ),
         onAction = {},
         onMovieClick = {},
     )

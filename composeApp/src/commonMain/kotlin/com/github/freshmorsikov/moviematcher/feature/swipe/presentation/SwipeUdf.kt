@@ -5,14 +5,15 @@ import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 
 interface SwipeUdf {
 
-    sealed interface State : Udf.State {
+    data class State(
+        val pairState: PairState?,
+        val movies: List<Movie>?,
+    ) : Udf.State
 
-        data object Loading : State
-
-        data class Data(
-            val movies: List<Movie>
-        ) : State
-
+    sealed interface PairState {
+        data object NotLinked : PairState
+        data object Linking : PairState
+        data class Linked(val code: String) : PairState
     }
 
     sealed interface MovieCardState {
@@ -25,8 +26,9 @@ interface SwipeUdf {
 
     sealed interface Action : Udf.Action {
         data class UpdateMovie(val movies: List<Movie>) : Action
+        data class HandleCode(val code: String?) : Action
+        data class SetPairState(val pairState: PairState) : Action
         data class FinishSwiping(val movieCardState: MovieCardState.Swiped) : Action
-        data class MoreClick(val id: Long) : Action
     }
 
     sealed interface Event : Udf.Event

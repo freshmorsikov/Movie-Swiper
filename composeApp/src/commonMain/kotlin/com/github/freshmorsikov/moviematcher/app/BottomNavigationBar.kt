@@ -40,7 +40,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private val bottomRoutes: List<BottomNavigationRoute> = listOf(
     NavigationRoute.Favorite,
-    NavigationRoute.Swipe,
+    NavigationRoute.Swipe(),
     NavigationRoute.Matches,
 )
 
@@ -163,7 +163,7 @@ private fun BottomNavigationBarContent(
 
 private fun BottomNavigationRoute.icon(): DrawableResource {
     return when (this) {
-        NavigationRoute.Swipe -> Res.drawable.ic_swipe
+        is NavigationRoute.Swipe -> Res.drawable.ic_swipe
         NavigationRoute.Favorite -> Res.drawable.ic_heart
         NavigationRoute.Matches -> Res.drawable.ic_match
     }
@@ -171,7 +171,7 @@ private fun BottomNavigationRoute.icon(): DrawableResource {
 
 private fun BottomNavigationRoute.text(): StringResource {
     return when (this) {
-        NavigationRoute.Swipe -> Res.string.navigation_swipe
+        is NavigationRoute.Swipe -> Res.string.navigation_swipe
         NavigationRoute.Favorite -> Res.string.navigation_favorites
         NavigationRoute.Matches -> Res.string.navigation_matches
     }
@@ -203,7 +203,7 @@ private fun BottomNavigationBarPreview() {
                         badgeCount = null,
                     ),
                     BottomNavigationItem(
-                        route = NavigationRoute.Swipe,
+                        route = NavigationRoute.Swipe(),
                         isSelected = true,
                         badgeCount = null,
                     ),

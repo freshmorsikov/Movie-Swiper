@@ -3,8 +3,11 @@ package com.github.freshmorsikov.moviematcher.feature.swipe.presentation
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.analytics.AnalyticsManager
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
+import com.github.freshmorsikov.moviematcher.feature.join.domain.SaveCodeUseCase
+import com.github.freshmorsikov.moviematcher.feature.join.domain.SetPairedUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.OpenSwipeScreenEvent
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedCodeFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
@@ -18,17 +21,38 @@ class SwipeViewModel(
     private val loadGenreListUseCase: LoadGenreListUseCase,
     private val getMovieListUseCase: GetMovieListUseCase,
     private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
+    private val saveCodeUseCase: SaveCodeUseCase,
+    private val setPairedUseCase: SetPairedUseCase,
+    private val getPairedCodeFlowUseCase: GetPairedCodeFlowUseCase,
     analyticsManager: AnalyticsManager,
 ) : UdfViewModel<SwipeUdf.State, SwipeUdf.Action, SwipeUdf.Event>(
-    initState = { SwipeUdf.State.Loading }
+    initState = {
+        SwipeUdf.State(
+            pairState = null,
+            movies = null,
+        )
+    }
 ) {
 
     init {
         analyticsManager.sendEvent(event = OpenSwipeScreenEvent)
+
+        subscribeOnPair()
         viewModelScope.launch {
             loadGenreListUseCase()
         }
         subscribeOnMovieList()
+    }
+
+    private fun subscribeOnPair() {
+        getPairedCodeFlowUseCase().onEach { code ->
+            val pairState = if (code == null) {
+                SwipeUdf.PairState.NotLinked
+            } else {
+                SwipeUdf.PairState.Linked(code = code)
+            }
+            onAction(SwipeUdf.Action.SetPairState(pairState = pairState))
+        }.launchIn(viewModelScope)
     }
 
     private fun subscribeOnMovieList() {
@@ -46,7 +70,21 @@ class SwipeViewModel(
     override fun reduce(action: SwipeUdf.Action): SwipeUdf.State {
         return when (action) {
             is SwipeUdf.Action.UpdateMovie -> {
-                SwipeUdf.State.Data(movies = action.movies)
+                currentState.copy(movies = action.movies)
+            }
+
+            is SwipeUdf.Action.HandleCode -> {
+                if (action.code == null) {
+                    currentState
+                } else {
+                    currentState.copy(pairState = SwipeUdf.PairState.Linking)
+                }
+            }
+
+            is SwipeUdf.Action.SetPairState -> {
+                currentState.copy(
+                    pairState = action.pairState
+                )
             }
 
             else -> {
@@ -65,14 +103,35 @@ class SwipeViewModel(
                 updateMovieStatus(movieStatus = movieStatus)
             }
 
+            is SwipeUdf.Action.HandleCode -> {
+                val code = action.code ?: return
+
+                viewModelScope.launch {
+                    val saveCodeJob = launch {
+                        saveCodeUseCase(code = code)
+                    }
+                    val setPairedJob = launch {
+                        setPairedUseCase(code = code)
+                    }
+                    saveCodeJob.join()
+                    setPairedJob.join()
+
+                    onAction(
+                        SwipeUdf.Action.SetPairState(
+                            pairState = SwipeUdf.PairState.Linked(
+                                code = code
+                            )
+                        )
+                    )
+                }
+            }
+
             else -> {}
         }
     }
 
     private fun updateMovieStatus(movieStatus: MovieStatus) {
-        val state = (currentState as? SwipeUdf.State.Data) ?: return
-
-        state.movies.lastOrNull()?.id?.let { id ->
+        currentState.movies?.lastOrNull()?.id?.let { id ->
             viewModelScope.launch {
                 updateMovieStatusUseCase(
                     id = id,
