@@ -6,6 +6,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,6 +50,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -73,10 +76,13 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_chevron_right
+import moviematcher.composeapp.generated.resources.ic_close
 import moviematcher.composeapp.generated.resources.sharing_message
 import moviematcher.composeapp.generated.resources.sharing_title
 import moviematcher.composeapp.generated.resources.swipe_create_pair
 import moviematcher.composeapp.generated.resources.swipe_invite
+import moviematcher.composeapp.generated.resources.swipe_linking
+import moviematcher.composeapp.generated.resources.swipe_paired
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -164,10 +170,12 @@ private fun PairBlock(
     modifier: Modifier = Modifier,
 ) {
     val backgroundColor by animateColorAsState(
-        if (pairState == null) {
-            Color.Transparent
-        } else {
-            Color(0xFFFFF6E5)
+        when (pairState) {
+            null -> Color.Transparent
+            SwipeUdf.PairState.NotLinked,
+            SwipeUdf.PairState.Linking -> Color(0xFFFFF6E5)
+
+            SwipeUdf.PairState.Linked -> Color(0xFFECFEEF)
         }
     )
     Box(
@@ -186,23 +194,28 @@ private fun PairBlock(
                 top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
             )
     ) {
-        Row(
-            modifier = modifier.padding(
-                horizontal = 16.dp,
-                vertical = 8.dp,
-            ),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            when (pairState) {
-                null -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = Color(0xFFE08700),
-                        strokeWidth = 2.dp,
-                    )
-                }
+        when (pairState) {
+            null -> {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = 8.dp,
+                        ),
+                    color = Color(0xFFE08700),
+                    strokeWidth = 2.dp,
+                )
+            }
 
-                SwipeUdf.PairState.NotLinked -> {
+            SwipeUdf.PairState.NotLinked -> {
+                Row(
+                    modifier = modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 8.dp,
+                    ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         modifier = Modifier.weight(1f),
                         text = stringResource(Res.string.swipe_create_pair),
@@ -224,23 +237,96 @@ private fun PairBlock(
                         contentDescription = null
                     )
                 }
+            }
 
-                SwipeUdf.PairState.Linking -> {
-                    Text("Linking...")
+            SwipeUdf.PairState.Linking -> {
+                Row(
+                    modifier = modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 8.dp,
+                    ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = Color(0xFFE08700),
+                        strokeWidth = 2.dp,
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = stringResource(Res.string.swipe_linking),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFFE08700),
+                    )
                 }
+            }
 
-                is SwipeUdf.PairState.Linked -> {
-                    Text("Linked $code")
+            is SwipeUdf.PairState.Linked -> {
+                Row(
+                    modifier = modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 6.dp,
+                    ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(Res.string.swipe_paired),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFF00A51B),
+                    )
+                    code?.let {
+                        Text(
+                            modifier = Modifier
+                                .padding(start = 4.dp)
+                                .background(
+                                    color = Color.White,
+                                    shape = RoundedCornerShape(4.dp)
+                                ).border(
+                                    width = 0.5.dp,
+                                    color = Color.Black.copy(alpha = 0.1f),
+                                    shape = RoundedCornerShape(4.dp),
+                                ).padding(horizontal = 4.dp),
+                            text = code,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                            ),
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Icon(
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .size(16.dp)
+                            .clickable(
+                                onClick = {
+                                    onAction(SwipeUdf.Action.ClosePairedClick)
+                                },
+                                interactionSource = null,
+                                indication = null,
+                            ),
+                        painter = painterResource(Res.drawable.ic_close),
+                        tint = Color(0xFF00A51B),
+                        contentDescription = null
+                    )
                 }
             }
         }
-        if (pairState != null) {
-            HorizontalDivider(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                thickness = 0.5.dp,
-                color = Color(0xFFE08700)
-            )
-        }
+
+        val dividerColor by animateColorAsState(
+            when (pairState) {
+                null -> Color.Transparent
+                SwipeUdf.PairState.NotLinked,
+                SwipeUdf.PairState.Linking -> Color(0xFFE08700)
+
+                SwipeUdf.PairState.Linked -> Color(0xFF00A51B)
+            }
+        )
+        HorizontalDivider(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            thickness = 0.5.dp,
+            color = dividerColor
+        )
     }
 }
 

@@ -82,7 +82,11 @@ class SwipeViewModel(
             }
 
             is SwipeUdf.Action.HandleCode -> {
-                currentState.copy(pairState = SwipeUdf.PairState.Linking)
+                if (action.code == null || action.code == currentState.code) {
+                    currentState
+                } else {
+                    currentState.copy(pairState = SwipeUdf.PairState.Linking)
+                }
             }
 
             is SwipeUdf.Action.UpdatePairState -> {
@@ -114,7 +118,11 @@ class SwipeViewModel(
             }
 
             is SwipeUdf.Action.HandleCode -> {
-                val isSuccess = action.code != null && joinPairUseCase(code = action.code)
+                if (action.code == null || action.code == currentState.code) {
+                    return
+                }
+
+                val isSuccess = joinPairUseCase(code = action.code)
                 val pairState = if (isSuccess) {
                     SwipeUdf.PairState.Linked
                 } else {
@@ -131,6 +139,10 @@ class SwipeViewModel(
                 val code = currentState.code ?: return
                 val inviteLink = "https://freshmorsikov.github.io/Movie-Swiper-Landing?code=$code"
                 sendEvent(SwipeUdf.Event.ShowSharingDialog(inviteLink = inviteLink))
+            }
+
+            is SwipeUdf.Action.ClosePairedClick -> {
+                // TODO
             }
 
             else -> {}
