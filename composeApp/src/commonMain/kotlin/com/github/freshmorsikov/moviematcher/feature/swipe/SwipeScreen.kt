@@ -1,9 +1,11 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -12,12 +14,15 @@ import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -25,6 +30,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,9 +68,20 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.ui.ColorIndicators
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieGenres
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
+import com.github.freshmorsikov.moviematcher.util.SharingManager
+import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import moviematcher.composeapp.generated.resources.Res
+import moviematcher.composeapp.generated.resources.ic_chevron_right
+import moviematcher.composeapp.generated.resources.sharing_message
+import moviematcher.composeapp.generated.resources.sharing_title
+import moviematcher.composeapp.generated.resources.swipe_create_pair
+import moviematcher.composeapp.generated.resources.swipe_invite
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 private val cardShape = RoundedCornerShape(8.dp)
@@ -72,7 +91,8 @@ private val swipeAnimationSpec: AnimationSpec<Float> = tween(500)
 fun SwipeScreen(
     navController: NavController,
     code: String?,
-    viewModel: SwipeViewModel = koinViewModel()
+    viewModel: SwipeViewModel = koinViewModel(),
+    sharingManager: SharingManager = koinInject(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -91,6 +111,19 @@ fun SwipeScreen(
             )
         }
     )
+
+    val sharingTitle = stringResource(Res.string.sharing_title)
+    val sharingMessage = stringResource(Res.string.sharing_message)
+    SubscribeOnEvents(viewModel.event) { event ->
+        when (event) {
+            is SwipeUdf.Event.ShowSharingDialog -> {
+                sharingManager.share(
+                    title = sharingTitle,
+                    text = "$sharingMessage ${event.inviteLink}"
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -101,12 +134,6 @@ fun SwipeScreenContent(
 ) {
     MovieScaffold(contentWindowInsets = WindowInsets.none) {
         Box {
-            PairBlock(
-                modifier = Modifier.padding(
-                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
-                ),
-                pairState = state.pairState
-            )
             if (state.movies == null) {
                 LoadingContent(
                     modifier = Modifier
@@ -121,6 +148,11 @@ fun SwipeScreenContent(
                     onMovieClick = onMovieClick,
                 )
             }
+            PairBlock(
+                pairState = state.pairState,
+                code = state.code,
+                onAction = onAction,
+            )
         }
     }
 }
@@ -128,25 +160,88 @@ fun SwipeScreenContent(
 @Composable
 private fun PairBlock(
     pairState: SwipeUdf.PairState?,
+    code: String?,
+    onAction: (SwipeUdf.Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier) {
-        when (pairState) {
-            SwipeUdf.PairState.NotLinked -> {
-                Text("NotLinked")
-            }
+    val backgroundColor by animateColorAsState(
+        if (pairState == null) {
+            Color.Transparent
+        } else {
+            Color(0xFFFFF6E5)
+        }
+    )
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(backgroundColor)
+            .clickable(
+                onClick = {
+                    onAction(SwipeUdf.Action.InviteClick)
+                },
+                enabled = pairState == SwipeUdf.PairState.NotLinked,
+                interactionSource = null,
+                indication = null,
+            )
+            .padding(
+                top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
+            )
+    ) {
+        Row(
+            modifier = modifier.padding(
+                horizontal = 16.dp,
+                vertical = 8.dp,
+            ),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            when (pairState) {
+                null -> {
+                    Spacer(modifier = Modifier.weight(1f))
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = Color(0xFFE08700),
+                        strokeWidth = 2.dp,
+                    )
+                }
 
-            SwipeUdf.PairState.Linking -> {
-                Text("Linking...")
-            }
+                SwipeUdf.PairState.NotLinked -> {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(Res.string.swipe_create_pair),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFFE08700),
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = stringResource(Res.string.swipe_invite),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFFE08700),
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .size(16.dp),
+                        painter = painterResource(Res.drawable.ic_chevron_right),
+                        tint = Color(0xFFE08700),
+                        contentDescription = null
+                    )
+                }
 
-            is SwipeUdf.PairState.Linked -> {
-                Text("Linked ${pairState.code}")
-            }
+                SwipeUdf.PairState.Linking -> {
+                    Text("Linking...")
+                }
 
-            null -> {
-                Text("")
+                is SwipeUdf.PairState.Linked -> {
+                    Text("Linked $code")
+                }
             }
+        }
+        if (pairState != null) {
+            HorizontalDivider(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                thickness = 0.5.dp,
+                color = Color(0xFFE08700)
+            )
         }
     }
 }
@@ -406,7 +501,8 @@ private fun MovieCard(
 private fun SwipeScreenDataPreview() {
     SwipeScreenContent(
         state = SwipeUdf.State(
-            pairState = SwipeUdf.PairState.Linked(code = "A001"),
+            code = "AAAA",
+            pairState = SwipeUdf.PairState.NotLinked,
             movies = List(3) { i ->
                 Movie.mock
             }
@@ -421,6 +517,7 @@ private fun SwipeScreenDataPreview() {
 private fun SwipeScreenLoadingPreview() {
     SwipeScreenContent(
         state = SwipeUdf.State(
+            code = null,
             pairState = null,
             movies = null
         ),

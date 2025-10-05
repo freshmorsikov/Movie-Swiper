@@ -77,7 +77,7 @@ fun SuccessfulJoiningScreen(navController: NavController) {
             text = stringResource(Res.string.join_find_matches),
             containerColor = MaterialTheme.colorScheme.secondary,
             onClick = {
-                navController.navigate(NavigationRoute.Swipe) {
+                navController.navigate(NavigationRoute.Swipe()) {
                     popUpTo(NavigationRoute.Matches) {
                         inclusive = true
                     }

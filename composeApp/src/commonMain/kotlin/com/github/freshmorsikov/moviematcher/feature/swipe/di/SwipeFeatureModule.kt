@@ -18,6 +18,7 @@ val swipeFeatureModule = module {
             saveCodeUseCase = get(),
             setPairedUseCase = get(),
             getPairedCodeFlowUseCase = get(),
+            getCodeFlowCaseCase = get(),
             analyticsManager = get(),
         )
     }
