@@ -3,11 +3,10 @@ package com.github.freshmorsikov.moviematcher.feature.swipe.presentation
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.analytics.AnalyticsManager
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
-import com.github.freshmorsikov.moviematcher.feature.join.domain.SaveCodeUseCase
-import com.github.freshmorsikov.moviematcher.feature.join.domain.SetPairedUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.OpenSwipeScreenEvent
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedCodeFlowUseCase
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.JoinPairUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.GetCodeFlowCaseCase
@@ -22,8 +21,7 @@ class SwipeViewModel(
     private val loadGenreListUseCase: LoadGenreListUseCase,
     private val getMovieListUseCase: GetMovieListUseCase,
     private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
-    private val saveCodeUseCase: SaveCodeUseCase,
-    private val setPairedUseCase: SetPairedUseCase,
+    private val joinPairUseCase: JoinPairUseCase,
     private val getPairedCodeFlowUseCase: GetPairedCodeFlowUseCase,
     private val getCodeFlowCaseCase: GetCodeFlowCaseCase,
     analyticsManager: AnalyticsManager,
@@ -84,11 +82,7 @@ class SwipeViewModel(
             }
 
             is SwipeUdf.Action.HandleCode -> {
-                if (action.code == null) {
-                    currentState
-                } else {
-                    currentState.copy(pairState = SwipeUdf.PairState.Linking)
-                }
+                currentState.copy(pairState = SwipeUdf.PairState.Linking)
             }
 
             is SwipeUdf.Action.UpdatePairState -> {
@@ -120,24 +114,17 @@ class SwipeViewModel(
             }
 
             is SwipeUdf.Action.HandleCode -> {
-                val code = action.code ?: return
-
-                viewModelScope.launch {
-                    val saveCodeJob = launch {
-                        saveCodeUseCase(code = code)
-                    }
-                    val setPairedJob = launch {
-                        setPairedUseCase(code = code)
-                    }
-                    saveCodeJob.join()
-                    setPairedJob.join()
-
-                    onAction(
-                        SwipeUdf.Action.UpdatePairState(
-                            pairState = SwipeUdf.PairState.Linked
-                        )
-                    )
+                val isSuccess = action.code != null && joinPairUseCase(code = action.code)
+                val pairState = if (isSuccess) {
+                    SwipeUdf.PairState.Linked
+                } else {
+                    SwipeUdf.PairState.NotLinked
                 }
+                onAction(
+                    SwipeUdf.Action.UpdatePairState(
+                        pairState = pairState
+                    )
+                )
             }
 
             is SwipeUdf.Action.InviteClick -> {

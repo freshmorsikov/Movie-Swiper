@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -196,7 +195,6 @@ private fun PairBlock(
         ) {
             when (pairState) {
                 null -> {
-                    Spacer(modifier = Modifier.weight(1f))
                     CircularProgressIndicator(
                         modifier = Modifier.size(20.dp),
                         color = Color(0xFFE08700),
