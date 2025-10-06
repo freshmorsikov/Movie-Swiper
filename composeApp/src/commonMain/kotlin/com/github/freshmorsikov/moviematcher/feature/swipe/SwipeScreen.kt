@@ -3,6 +3,7 @@ package com.github.freshmorsikov.moviematcher.feature.swipe
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -162,17 +163,24 @@ private fun PairBlock(
 ) {
     val backgroundColor by animateColorAsState(
         when (pairState) {
-            null -> Color.Transparent
+            null,
             SwipeUdf.PairState.NotLinked,
             SwipeUdf.PairState.Linking -> Color(0xFFFFF6E5)
 
             SwipeUdf.PairState.Linked -> Color(0xFFECFEEF)
         }
     )
+    val backgroundAlpha by animateFloatAsState(
+        if (pairState == null) 0f else 1f
+    )
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(backgroundColor)
+            .background(
+                color = backgroundColor.copy(
+                    alpha = backgroundAlpha
+                )
+            )
             .clickable(
                 onClick = {
                     onAction(SwipeUdf.Action.InviteClick)
@@ -189,11 +197,10 @@ private fun PairBlock(
             null -> {
                 CircularProgressIndicator(
                     modifier = Modifier
-                        .size(20.dp)
                         .padding(
                             horizontal = 16.dp,
                             vertical = 8.dp,
-                        ),
+                        ).size(20.dp),
                     color = Color(0xFFE08700),
                     strokeWidth = 2.dp,
                 )
