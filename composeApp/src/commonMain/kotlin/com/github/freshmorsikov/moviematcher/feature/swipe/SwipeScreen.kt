@@ -138,25 +138,16 @@ fun SwipeScreenContent(
     onMovieClick: (Long) -> Unit,
 ) {
     MovieScaffold(contentWindowInsets = WindowInsets.none) {
-        Box {
-            if (state.movies == null) {
-                LoadingContent(
-                    modifier = Modifier
-                        .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 48.dp)
-                        .padding(horizontal = 16.dp)
-                )
-            } else {
-                DataContent(
-                    modifier = Modifier.fillMaxSize(),
-                    movies = state.movies,
-                    onAction = onAction,
-                    onMovieClick = onMovieClick,
-                )
-            }
+        Column {
             PairBlock(
                 pairState = state.pairState,
                 code = state.code,
                 onAction = onAction,
+            )
+            MoviesBlock(
+                movies = state.movies,
+                onAction = onAction,
+                onMovieClick = onMovieClick,
             )
         }
     }
@@ -331,6 +322,27 @@ private fun PairBlock(
 }
 
 @Composable
+private fun MoviesBlock(
+    movies: List<Movie>?,
+    onAction: (SwipeUdf.Action) -> Unit,
+    onMovieClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (movies == null) {
+        LoadingContent(
+            modifier = modifier.padding(16.dp)
+        )
+    } else {
+        DataContent(
+            modifier = modifier.fillMaxSize(),
+            movies = movies,
+            onAction = onAction,
+            onMovieClick = onMovieClick,
+        )
+    }
+}
+
+@Composable
 private fun LoadingContent(modifier: Modifier = Modifier) {
     ContainerShimmer(
         modifier = modifier
@@ -389,7 +401,7 @@ private fun DataContent(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 48.dp)
+                .padding(top = 16.dp)
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 48.dp),
             top = top,
