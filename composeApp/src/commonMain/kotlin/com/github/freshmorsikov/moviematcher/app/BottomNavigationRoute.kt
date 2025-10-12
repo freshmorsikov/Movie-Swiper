@@ -24,7 +24,9 @@ interface NavigationRoute {
     data object JoinPair : NavigationRoute
 
     @Serializable
-    data object SuccessfulJoining : NavigationRoute
+    data class Pairing(
+        val code: String? = null
+    ) : NavigationRoute
 
     @Serializable
     data class MovieDetails(val movieId: Long) : NavigationRoute

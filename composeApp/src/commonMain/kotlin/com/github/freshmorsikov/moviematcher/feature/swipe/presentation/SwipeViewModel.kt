@@ -141,10 +141,6 @@ class SwipeViewModel(
                 sendEvent(SwipeUdf.Event.ShowSharingDialog(inviteLink = inviteLink))
             }
 
-            is SwipeUdf.Action.ClosePairedClick -> {
-                // TODO
-            }
-
             else -> {}
         }
     }

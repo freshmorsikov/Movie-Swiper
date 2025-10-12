@@ -3,6 +3,7 @@ package com.github.freshmorsikov.moviematcher.core.data.local
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -40,5 +41,14 @@ class KeyValueStore(
         return dataStore.data.first()[intPreferencesKey(key)]
     }
 
+    suspend fun putBoolean(key: String, value: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[booleanPreferencesKey(key)] = value
+        }
+    }
+
+    suspend fun getBoolean(key: String): Boolean? {
+        return dataStore.data.first()[booleanPreferencesKey(key)]
+    }
 
 }

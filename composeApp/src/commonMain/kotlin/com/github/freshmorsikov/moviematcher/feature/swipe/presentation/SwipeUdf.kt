@@ -32,7 +32,6 @@ interface SwipeUdf {
         data class HandleCode(val code: String?) : Action
         data class FinishSwiping(val movieCardState: MovieCardState.Swiped) : Action
         data object InviteClick : Action
-        data object ClosePairedClick : Action
     }
 
     sealed interface Event : Udf.Event {

@@ -298,7 +298,7 @@ private fun PairBlock(
                             .size(16.dp)
                             .clickable(
                                 onClick = {
-                                    onAction(SwipeUdf.Action.ClosePairedClick)
+
                                 },
                                 interactionSource = null,
                                 indication = null,

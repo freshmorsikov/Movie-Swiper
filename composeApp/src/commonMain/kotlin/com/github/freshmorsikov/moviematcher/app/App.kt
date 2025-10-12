@@ -21,7 +21,7 @@ import com.github.freshmorsikov.moviematcher.feature.code.CodeScreen
 import com.github.freshmorsikov.moviematcher.feature.details.MovieDetailsScreen
 import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
 import com.github.freshmorsikov.moviematcher.feature.join.JoinPairScreen
-import com.github.freshmorsikov.moviematcher.feature.join.SuccessfulJoiningScreen
+import com.github.freshmorsikov.moviematcher.feature.join.PairingScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.ui.MatchesScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
@@ -98,8 +98,18 @@ fun App() {
             composable<NavigationRoute.JoinPair> {
                 JoinPairScreen(navController = navController)
             }
-            composable<NavigationRoute.SuccessfulJoining> {
-                SuccessfulJoiningScreen(navController = navController)
+            composable<NavigationRoute.Pairing>(
+                deepLinks = listOf(
+                    navDeepLink<NavigationRoute.Pairing>(
+                        basePath = "https://freshmorsikov.github.io/Movie-Swiper-Landing"
+                    )
+                )
+            ) { backStackEntry ->
+                val code = backStackEntry.toRoute<NavigationRoute.Pairing>().code
+                PairingScreen(
+                    navController = navController,
+                    code = code,
+                )
             }
             composable<NavigationRoute.MovieDetails> { backStackEntry ->
                 val route: NavigationRoute.MovieDetails = backStackEntry.toRoute()

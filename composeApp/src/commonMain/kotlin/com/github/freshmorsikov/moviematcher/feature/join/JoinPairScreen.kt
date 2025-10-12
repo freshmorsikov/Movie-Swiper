@@ -60,7 +60,7 @@ fun JoinPairScreen(
                 navController.popBackStack()
             }
             JoinPairUdf.Event.OpenSuccess -> {
-                navController.navigate(NavigationRoute.SuccessfulJoining) {
+                navController.navigate(NavigationRoute.Pairing) {
                     popUpTo(NavigationRoute.Matches)
                 }
             }
@@ -69,7 +69,7 @@ fun JoinPairScreen(
 }
 
 @Composable
-fun JoinPairContent(
+private fun JoinPairContent(
     state: JoinPairUdf.State,
     onAction: (JoinPairUdf.Action) -> Unit
 ) {
