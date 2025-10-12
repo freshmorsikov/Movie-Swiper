@@ -1,18 +1,18 @@
 package com.github.freshmorsikov.moviematcher.feature.join.presentation
 
-import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.JoinPairUseCase
 
-class PairingViewModel : UdfViewModel<PairingUdf.State, PairingUdf.Action, PairingUdf.Event>(
+class PairingViewModel(
+    private val joinPairUseCase: JoinPairUseCase,
+) : UdfViewModel<PairingUdf.State, PairingUdf.Action, PairingUdf.Event>(
     initState = { PairingUdf.State.Loading }
 ) {
 
     override fun reduce(action: PairingUdf.Action): PairingUdf.State {
         return when (action) {
-            is PairingUdf.Action.ShowSuccess -> {
-                PairingUdf.State.Success
+            is PairingUdf.Action.ShowResult -> {
+                PairingUdf.State.Result(isSuccess = action.isSuccess)
             }
 
             else -> {
@@ -24,10 +24,11 @@ class PairingViewModel : UdfViewModel<PairingUdf.State, PairingUdf.Action, Pairi
     override suspend fun handleEffects(action: PairingUdf.Action) {
         when (action) {
             is PairingUdf.Action.HandleCode -> {
-                viewModelScope.launch {
-                    delay(1_000)
-                    // TODO handle code
-                    onAction(PairingUdf.Action.ShowSuccess)
+                if (action.code == null) {
+                    onAction(PairingUdf.Action.ShowResult(isSuccess = false))
+                } else {
+                    val isSuccess = joinPairUseCase(code = action.code)
+                    onAction(PairingUdf.Action.ShowResult(isSuccess = isSuccess))
                 }
             }
 

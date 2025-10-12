@@ -32,9 +32,13 @@ import com.github.freshmorsikov.moviematcher.feature.join.presentation.PairingUd
 import com.github.freshmorsikov.moviematcher.feature.join.presentation.PairingViewModel
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_check
-import moviematcher.composeapp.generated.resources.join_find_matches
-import moviematcher.composeapp.generated.resources.join_successfully_paired
-import moviematcher.composeapp.generated.resources.join_you_can_start_finding
+import moviematcher.composeapp.generated.resources.ic_close
+import moviematcher.composeapp.generated.resources.pairing_close
+import moviematcher.composeapp.generated.resources.pairing_error_text
+import moviematcher.composeapp.generated.resources.pairing_error_title
+import moviematcher.composeapp.generated.resources.pairing_find_matches
+import moviematcher.composeapp.generated.resources.pairing_success_text
+import moviematcher.composeapp.generated.resources.pairing_success_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -71,8 +75,11 @@ private fun PairingContent(
                     LoadingContent()
                 }
 
-                PairingUdf.State.Success -> {
-                    SuccessContent(navController = navController)
+                is PairingUdf.State.Result -> {
+                    ResultContent(
+                        navController = navController,
+                        isSuccess = targetState.isSuccess
+                    )
                 }
             }
         }
@@ -93,17 +100,21 @@ private fun LoadingContent() {
         ) {
             CircularProgressIndicator(
                 modifier = Modifier
+                    .align(Alignment.Center)
                     .padding(16.dp)
-                    .size(40.dp),
+                    .size(24.dp),
                 color = MaterialTheme.colorScheme.onSecondary,
-                strokeWidth = 4.dp,
+                strokeWidth = 2.dp,
             )
         }
     }
 }
 
 @Composable
-private fun SuccessContent(navController: NavController) {
+private fun ResultContent(
+    navController: NavController,
+    isSuccess: Boolean,
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -111,53 +122,86 @@ private fun SuccessContent(navController: NavController) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Icon(
-                modifier = Modifier
-                    .background(
-                        color = Color(0xFF00BE64),
-                        shape = CircleShape,
-                    )
-                    .padding(28.dp)
-                    .size(64.dp),
-                painter = painterResource(Res.drawable.ic_check),
-                tint = MaterialTheme.colorScheme.onPrimary,
-                contentDescription = "Success check",
-            )
+            PairingIcon(isSuccess = isSuccess)
+            val titleRes = if (isSuccess) {
+                Res.string.pairing_success_title
+            } else {
+                Res.string.pairing_error_title
+            }
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 24.dp),
-                text = stringResource(Res.string.join_successfully_paired),
+                text = stringResource(resource = titleRes),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.secondary,
                 textAlign = TextAlign.Center,
             )
+            val textRes = if (isSuccess) {
+                Res.string.pairing_success_text
+            } else {
+                Res.string.pairing_error_text
+            }
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                text = stringResource(Res.string.join_you_can_start_finding),
+                text = stringResource(resource = textRes),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.secondary,
                 textAlign = TextAlign.Center,
             )
+        }
+        val buttonTextRes = if (isSuccess) {
+            Res.string.pairing_find_matches
+        } else {
+            Res.string.pairing_close
         }
         MovieButton(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(16.dp),
-            text = stringResource(Res.string.join_find_matches),
+            text = stringResource(resource = buttonTextRes),
             containerColor = MaterialTheme.colorScheme.secondary,
             onClick = {
                 navController.navigate(NavigationRoute.Swipe()) {
-                    popUpTo(NavigationRoute.Matches) {
+                    popUpTo(NavigationRoute.Pairing::class) {
                         inclusive = true
                     }
                 }
             }
         )
     }
+}
+
+@Composable
+private fun PairingIcon(
+    isSuccess: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val color = if (isSuccess) {
+        Color(0xFF00BE64)
+    } else {
+        Color(0xFFEB5757)
+    }
+    val iconRes = if (isSuccess) {
+        Res.drawable.ic_check
+    } else {
+        Res.drawable.ic_close
+    }
+    Icon(
+        modifier = modifier
+            .size(128.dp)
+            .background(
+                color = color,
+                shape = CircleShape,
+            )
+            .padding(40.dp),
+        painter = painterResource(resource = iconRes),
+        tint = MaterialTheme.colorScheme.onPrimary,
+        contentDescription = "Success check",
+    )
 }
 
 @Preview
@@ -177,7 +221,18 @@ private fun SuccessPairingContentPreview() {
     MaterialTheme {
         PairingContent(
             navController = rememberNavController(),
-            state = PairingUdf.State.Success
+            state = PairingUdf.State.Result(isSuccess = true)
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ErrorPairingContentPreview() {
+    MaterialTheme {
+        PairingContent(
+            navController = rememberNavController(),
+            state = PairingUdf.State.Result(isSuccess = false)
         )
     }
 }

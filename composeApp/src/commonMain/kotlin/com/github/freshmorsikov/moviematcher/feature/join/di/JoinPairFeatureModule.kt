@@ -15,7 +15,7 @@ val joinPairFeatureModule = module {
         )
     }
     viewModel {
-        PairingViewModel()
+        PairingViewModel(joinPairUseCase = get())
     }
     factory {
         SaveCodeUseCase(
