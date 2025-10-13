@@ -96,7 +96,7 @@ private val swipeAnimationSpec: AnimationSpec<Float> = tween(500)
 @Composable
 fun SwipeScreen(
     navController: NavController,
-    code: String?,
+    code: String? = null,
     viewModel: SwipeViewModel = koinViewModel(),
     sharingManager: SharingManager = koinInject(),
 ) {

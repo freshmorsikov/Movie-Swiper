@@ -7,9 +7,7 @@ sealed interface BottomNavigationRoute : NavigationRoute
 interface NavigationRoute {
 
     @Serializable
-    data class Swipe(
-        val code: String? = null
-    ) : BottomNavigationRoute
+    data object Swipe : BottomNavigationRoute
 
     @Serializable
     data object Favorite : BottomNavigationRoute

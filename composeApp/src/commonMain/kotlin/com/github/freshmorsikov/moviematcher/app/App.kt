@@ -70,21 +70,11 @@ fun App() {
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = NavigationRoute.Swipe(),
+            startDestination = NavigationRoute.Swipe,
             modifier = Modifier.padding(bottom = padding.calculateBottomPadding())
         ) {
-            composable<NavigationRoute.Swipe>(
-                deepLinks = listOf(
-                    navDeepLink<NavigationRoute.Swipe>(
-                        basePath = "https://freshmorsikov.github.io/Movie-Swiper-Landing"
-                    )
-                )
-            ) { backStackEntry ->
-                val code = backStackEntry.toRoute<NavigationRoute.Swipe>().code
-                SwipeScreen(
-                    navController = navController,
-                    code = code,
-                )
+            composable<NavigationRoute.Swipe> {
+                SwipeScreen(navController = navController)
             }
             composable<NavigationRoute.Favorite> {
                 FavoriteScreen(navController = navController)

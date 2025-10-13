@@ -40,7 +40,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private val bottomRoutes: List<BottomNavigationRoute> = listOf(
     NavigationRoute.Favorite,
-    NavigationRoute.Swipe(),
+    NavigationRoute.Swipe,
     NavigationRoute.Matches,
 )
 
@@ -203,7 +203,7 @@ private fun BottomNavigationBarPreview() {
                         badgeCount = null,
                     ),
                     BottomNavigationItem(
-                        route = NavigationRoute.Swipe(),
+                        route = NavigationRoute.Swipe,
                         isSelected = true,
                         badgeCount = null,
                     ),

@@ -165,8 +165,8 @@ private fun ResultContent(
             text = stringResource(resource = buttonTextRes),
             containerColor = MaterialTheme.colorScheme.secondary,
             onClick = {
-                navController.navigate(NavigationRoute.Swipe()) {
-                    popUpTo(NavigationRoute.Pairing::class) {
+                navController.navigate(NavigationRoute.Swipe) {
+                    popUpTo(navController.graph.id) {
                         inclusive = true
                     }
                 }
