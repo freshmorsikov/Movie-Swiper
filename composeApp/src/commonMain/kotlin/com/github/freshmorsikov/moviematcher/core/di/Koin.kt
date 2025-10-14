@@ -5,11 +5,10 @@ import com.github.freshmorsikov.moviematcher.core.analytics.di.analyticsModule
 import com.github.freshmorsikov.moviematcher.core.data.di.dataModule
 import com.github.freshmorsikov.moviematcher.core.data.di.dataStoreModule
 import com.github.freshmorsikov.moviematcher.core.data.di.sqlDriverModule
-import com.github.freshmorsikov.moviematcher.feature.code.di.codeFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.details.di.movieDetailsFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.favorites.di.favoritesFeatureModule
-import com.github.freshmorsikov.moviematcher.feature.join.di.joinPairFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.matches.di.matchesFeatureModule
+import com.github.freshmorsikov.moviematcher.feature.pairing.di.pairingFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.swipe.di.swipeFeatureModule
 import com.github.freshmorsikov.moviematcher.shared.di.sharedDataModule
 import com.github.freshmorsikov.moviematcher.shared.di.sharedDomainModule
@@ -33,8 +32,7 @@ fun initKoin(platformModule: Module = module {}) {
             swipeFeatureModule,
             favoritesFeatureModule,
             matchesFeatureModule,
-            codeFeatureModule,
-            joinPairFeatureModule,
+            pairingFeatureModule,
             movieDetailsFeatureModule,
         )
     }

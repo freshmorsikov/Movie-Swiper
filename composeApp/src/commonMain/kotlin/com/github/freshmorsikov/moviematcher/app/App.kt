@@ -17,11 +17,9 @@ import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.github.freshmorsikov.moviematcher.app.presentation.AppUdf
 import com.github.freshmorsikov.moviematcher.app.presentation.AppViewModel
-import com.github.freshmorsikov.moviematcher.feature.code.CodeScreen
 import com.github.freshmorsikov.moviematcher.feature.details.MovieDetailsScreen
 import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
-import com.github.freshmorsikov.moviematcher.feature.join.JoinPairScreen
-import com.github.freshmorsikov.moviematcher.feature.join.PairingScreen
+import com.github.freshmorsikov.moviematcher.feature.pairing.PairingScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.ui.MatchesScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
@@ -81,12 +79,6 @@ fun App() {
             }
             composable<NavigationRoute.Matches> {
                 MatchesScreen(navController = navController)
-            }
-            composable<NavigationRoute.Code> {
-                CodeScreen(navController = navController)
-            }
-            composable<NavigationRoute.JoinPair> {
-                JoinPairScreen(navController = navController)
             }
             composable<NavigationRoute.Pairing>(
                 deepLinks = listOf(

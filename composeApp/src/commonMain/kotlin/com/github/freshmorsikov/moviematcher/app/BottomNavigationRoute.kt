@@ -16,12 +16,6 @@ interface NavigationRoute {
     data object Matches : BottomNavigationRoute
 
     @Serializable
-    data object Code : NavigationRoute
-
-    @Serializable
-    data object JoinPair : NavigationRoute
-
-    @Serializable
     data class Pairing(
         val code: String? = null
     ) : NavigationRoute

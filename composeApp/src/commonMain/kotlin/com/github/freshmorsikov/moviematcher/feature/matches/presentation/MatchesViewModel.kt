@@ -31,25 +31,9 @@ class MatchesViewModel(
                     MatchesUdf.State.Data(movies = action.movies)
                 }
             }
-
-            else -> {
-                currentState
-            }
         }
     }
 
-    override suspend fun handleEffects(action: MatchesUdf.Action) {
-        when (action) {
-            MatchesUdf.Action.CreatePairClick -> {
-                sendEvent(MatchesUdf.Event.OpenCode)
-            }
-
-            MatchesUdf.Action.JoinPairClick -> {
-                sendEvent(MatchesUdf.Event.OpenJoinPair)
-            }
-
-            else -> {}
-        }
-    }
+    override suspend fun handleEffects(action: MatchesUdf.Action) {}
 
 }

@@ -1,4 +1,4 @@
-package com.github.freshmorsikov.moviematcher.feature.join
+package com.github.freshmorsikov.moviematcher.feature.pairing
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
@@ -28,8 +28,8 @@ import androidx.navigation.compose.rememberNavController
 import com.github.freshmorsikov.moviematcher.app.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
-import com.github.freshmorsikov.moviematcher.feature.join.presentation.PairingUdf
-import com.github.freshmorsikov.moviematcher.feature.join.presentation.PairingViewModel
+import com.github.freshmorsikov.moviematcher.feature.pairing.presentation.PairingUdf
+import com.github.freshmorsikov.moviematcher.feature.pairing.presentation.PairingViewModel
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_check
 import moviematcher.composeapp.generated.resources.ic_close

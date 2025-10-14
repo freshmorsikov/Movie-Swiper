@@ -1,4 +1,4 @@
-package com.github.freshmorsikov.moviematcher.feature.join.presentation
+package com.github.freshmorsikov.moviematcher.feature.pairing.presentation
 
 import com.github.freshmorsikov.moviematcher.core.presentation.Udf
 

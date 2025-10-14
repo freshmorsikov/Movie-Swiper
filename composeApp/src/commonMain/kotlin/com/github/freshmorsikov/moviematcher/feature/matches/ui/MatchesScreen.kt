@@ -27,7 +27,6 @@ import com.github.freshmorsikov.moviematcher.feature.matches.presentation.Matche
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesViewModel
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieItem
-import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_match
 import moviematcher.composeapp.generated.resources.matches_empty
@@ -51,17 +50,6 @@ fun MatchesScreen(
             )
         }
     )
-    SubscribeOnEvents(viewModel.event) { event ->
-        when (event) {
-            is MatchesUdf.Event.OpenCode -> {
-                navController.navigate(route = NavigationRoute.Code)
-            }
-
-            is MatchesUdf.Event.OpenJoinPair -> {
-                navController.navigate(route = NavigationRoute.JoinPair)
-            }
-        }
-    }
 }
 
 @Composable

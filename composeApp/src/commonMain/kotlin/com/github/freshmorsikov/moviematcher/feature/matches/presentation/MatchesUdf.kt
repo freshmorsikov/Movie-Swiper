@@ -13,14 +13,9 @@ interface MatchesUdf {
     }
 
     sealed interface Action : Udf.Action {
-        data object CreatePairClick : Action
-        data object JoinPairClick : Action
         data class UpdateMovies(val movies: List<Movie>) : Action
     }
 
-    sealed interface Event : Udf.Event {
-        data object OpenCode : Event
-        data object OpenJoinPair : Event
-    }
+    sealed interface Event : Udf.Event
 
 }
