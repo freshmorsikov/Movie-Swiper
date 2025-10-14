@@ -1,13 +1,14 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe
 
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,7 +32,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -51,7 +50,6 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -77,13 +75,10 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_chevron_right
-import moviematcher.composeapp.generated.resources.ic_close
 import moviematcher.composeapp.generated.resources.sharing_message
 import moviematcher.composeapp.generated.resources.sharing_title
 import moviematcher.composeapp.generated.resources.swipe_create_pair
 import moviematcher.composeapp.generated.resources.swipe_invite
-import moviematcher.composeapp.generated.resources.swipe_linking
-import moviematcher.composeapp.generated.resources.swipe_paired
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -96,17 +91,10 @@ private val swipeAnimationSpec: AnimationSpec<Float> = tween(500)
 @Composable
 fun SwipeScreen(
     navController: NavController,
-    code: String? = null,
     viewModel: SwipeViewModel = koinViewModel(),
     sharingManager: SharingManager = koinInject(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-
-    LaunchedEffect(code) {
-        viewModel.onAction(
-            SwipeUdf.Action.HandleCode(code = code)
-        )
-    }
 
     SwipeScreenContent(
         state = state,
@@ -140,9 +128,8 @@ fun SwipeScreenContent(
 ) {
     MovieScaffold(contentWindowInsets = WindowInsets.none) {
         Column {
-            PairBlock(
-                pairState = state.pairState,
-                code = state.code,
+            InviteBanner(
+                visible = state.inviteBannerVisible,
                 onAction = onAction,
             )
             MoviesBlock(
@@ -155,63 +142,54 @@ fun SwipeScreenContent(
 }
 
 @Composable
-private fun PairBlock(
-    pairState: SwipeUdf.PairState?,
-    code: String?,
+private fun InviteBanner(
+    visible: Boolean,
     onAction: (SwipeUdf.Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val backgroundColor by animateColorAsState(
-        when (pairState) {
-            null,
-            SwipeUdf.PairState.NotLinked,
-            SwipeUdf.PairState.Linking -> Color(0xFFFFF6E5)
-
-            SwipeUdf.PairState.Linked -> Color(0xFFECFEEF)
-        }
-    )
+    val backgroundColor = Color(0xFFFFF6E5)
     val backgroundAlpha by animateFloatAsState(
-        if (pairState == null) 0f else 1f
+        if (visible) 1f else 0f
     )
     Box(
         modifier = modifier
-            .fillMaxWidth()
             .background(
-                color = backgroundColor.copy(
+                backgroundColor.copy(
                     alpha = backgroundAlpha
                 )
             )
-            .clickable(
-                onClick = {
-                    onAction(SwipeUdf.Action.InviteClick)
-                },
-                enabled = pairState == SwipeUdf.PairState.NotLinked,
-                interactionSource = null,
-                indication = null,
-            )
             .padding(
                 top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
-            )
+            ),
     ) {
-        when (pairState) {
-            null -> {
-                CircularProgressIndicator(
+        AnimatedVisibility(
+            visible = visible,
+            enter = slideInVertically(
+                animationSpec = tween(500)
+            ) { fullHeight ->
+                -fullHeight
+            },
+            exit = slideOutVertically(
+                animationSpec = tween(500)
+            ) { fullHeight ->
+                -fullHeight
+            },
+        ) {
+            Column {
+                Row(
                     modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(
+                            onClick = {
+                                onAction(SwipeUdf.Action.InviteClick)
+                            },
+                            interactionSource = null,
+                            indication = null,
+                        )
                         .padding(
                             horizontal = 16.dp,
                             vertical = 8.dp,
-                        ).size(20.dp),
-                    color = Color(0xFFE08700),
-                    strokeWidth = 2.dp,
-                )
-            }
-
-            SwipeUdf.PairState.NotLinked -> {
-                Row(
-                    modifier = modifier.padding(
-                        horizontal = 16.dp,
-                        vertical = 8.dp,
-                    ),
+                        ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
@@ -235,96 +213,12 @@ private fun PairBlock(
                         contentDescription = null
                     )
                 }
-            }
-
-            SwipeUdf.PairState.Linking -> {
-                Row(
-                    modifier = modifier.padding(
-                        horizontal = 16.dp,
-                        vertical = 8.dp,
-                    ),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = Color(0xFFE08700),
-                        strokeWidth = 2.dp,
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = 8.dp),
-                        text = stringResource(Res.string.swipe_linking),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFFE08700),
-                    )
-                }
-            }
-
-            is SwipeUdf.PairState.Linked -> {
-                Row(
-                    modifier = modifier.padding(
-                        horizontal = 16.dp,
-                        vertical = 6.dp,
-                    ),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(Res.string.swipe_paired),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFF00A51B),
-                    )
-                    code?.let {
-                        Text(
-                            modifier = Modifier
-                                .padding(start = 4.dp)
-                                .background(
-                                    color = Color.White,
-                                    shape = RoundedCornerShape(4.dp)
-                                ).border(
-                                    width = 0.5.dp,
-                                    color = Color.Black.copy(alpha = 0.1f),
-                                    shape = RoundedCornerShape(4.dp),
-                                ).padding(horizontal = 4.dp),
-                            text = code,
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                fontWeight = FontWeight.Bold,
-                            ),
-                            color = MaterialTheme.colorScheme.onBackground,
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    Icon(
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .size(16.dp)
-                            .clickable(
-                                onClick = {
-
-                                },
-                                interactionSource = null,
-                                indication = null,
-                            ),
-                        painter = painterResource(Res.drawable.ic_close),
-                        tint = Color(0xFF00A51B),
-                        contentDescription = null
-                    )
-                }
+                HorizontalDivider(
+                    thickness = 0.5.dp,
+                    color = Color(0xFFE08700),
+                )
             }
         }
-
-        val dividerColor by animateColorAsState(
-            when (pairState) {
-                null -> Color.Transparent
-                SwipeUdf.PairState.NotLinked,
-                SwipeUdf.PairState.Linking -> Color(0xFFE08700)
-
-                SwipeUdf.PairState.Linked -> Color(0xFF00A51B)
-            }
-        )
-        HorizontalDivider(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            thickness = 0.5.dp,
-            color = dividerColor
-        )
     }
 }
 
@@ -605,7 +499,7 @@ private fun SwipeScreenDataPreview() {
     SwipeScreenContent(
         state = SwipeUdf.State(
             code = "AAAA",
-            pairState = SwipeUdf.PairState.NotLinked,
+            inviteBannerVisible = true,
             movies = List(3) { i ->
                 Movie.mock
             }
@@ -621,7 +515,7 @@ private fun SwipeScreenLoadingPreview() {
     SwipeScreenContent(
         state = SwipeUdf.State(
             code = null,
-            pairState = null,
+            inviteBannerVisible = false,
             movies = null
         ),
         onAction = {},

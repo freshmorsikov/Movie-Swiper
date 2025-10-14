@@ -5,19 +5,16 @@ import com.github.freshmorsikov.moviematcher.shared.domain.GetCodeFlowCaseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 
-class GetPairedCodeFlowUseCase(
+class IsPairedFlowUseCase(
     private val getCodeFlowCaseCase: GetCodeFlowCaseCase,
     private val matchRepository: MatchRepository,
 ) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke(): Flow<String?> {
+    operator fun invoke(): Flow<Boolean> {
         return getCodeFlowCaseCase().flatMapLatest { code ->
-            matchRepository.getPairedFlow(code = code).map {  isPaired ->
-                code.takeIf { isPaired }
-            }
+            matchRepository.getPairedFlow(code = code)
         }
     }
 

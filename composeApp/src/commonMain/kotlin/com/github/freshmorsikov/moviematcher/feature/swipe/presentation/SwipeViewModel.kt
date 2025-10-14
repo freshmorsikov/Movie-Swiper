@@ -5,8 +5,7 @@ import com.github.freshmorsikov.moviematcher.core.analytics.AnalyticsManager
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.OpenSwipeScreenEvent
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedCodeFlowUseCase
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.JoinPairUseCase
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.IsPairedFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.GetCodeFlowCaseCase
@@ -21,15 +20,14 @@ class SwipeViewModel(
     private val loadGenreListUseCase: LoadGenreListUseCase,
     private val getMovieListUseCase: GetMovieListUseCase,
     private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
-    private val joinPairUseCase: JoinPairUseCase,
-    private val getPairedCodeFlowUseCase: GetPairedCodeFlowUseCase,
+    private val isPairedFlowUseCase: IsPairedFlowUseCase,
     private val getCodeFlowCaseCase: GetCodeFlowCaseCase,
     analyticsManager: AnalyticsManager,
 ) : UdfViewModel<SwipeUdf.State, SwipeUdf.Action, SwipeUdf.Event>(
     initState = {
         SwipeUdf.State(
             code = null,
-            pairState = null,
+            inviteBannerVisible = false,
             movies = null,
         )
     }
@@ -38,7 +36,7 @@ class SwipeViewModel(
     init {
         analyticsManager.sendEvent(event = OpenSwipeScreenEvent)
 
-        subscribeOnPair()
+        subscribeOnIsPaired()
         subscribeOnCode()
         viewModelScope.launch {
             loadGenreListUseCase()
@@ -46,14 +44,9 @@ class SwipeViewModel(
         subscribeOnMovieList()
     }
 
-    private fun subscribeOnPair() {
-        getPairedCodeFlowUseCase().onEach { code ->
-            val pairState = if (code == null) {
-                SwipeUdf.PairState.NotLinked
-            } else {
-                SwipeUdf.PairState.Linked
-            }
-            onAction(SwipeUdf.Action.UpdatePairState(pairState = pairState))
+    private fun subscribeOnIsPaired() {
+        isPairedFlowUseCase().onEach { isPaired ->
+            onAction(SwipeUdf.Action.UpdateInviteBanner(visible = !isPaired))
         }.launchIn(viewModelScope)
     }
 
@@ -81,18 +74,8 @@ class SwipeViewModel(
                 currentState.copy(movies = action.movies)
             }
 
-            is SwipeUdf.Action.HandleCode -> {
-                if (action.code == null || action.code == currentState.code) {
-                    currentState
-                } else {
-                    currentState.copy(pairState = SwipeUdf.PairState.Linking)
-                }
-            }
-
-            is SwipeUdf.Action.UpdatePairState -> {
-                currentState.copy(
-                    pairState = action.pairState
-                )
+            is SwipeUdf.Action.UpdateInviteBanner -> {
+                currentState.copy(inviteBannerVisible = action.visible)
             }
 
             is SwipeUdf.Action.UpdateCode -> {
@@ -115,24 +98,6 @@ class SwipeViewModel(
                     SwipeUdf.MovieCardState.Swiped.Right -> MovieStatus.Liked
                 }
                 updateMovieStatus(movieStatus = movieStatus)
-            }
-
-            is SwipeUdf.Action.HandleCode -> {
-                if (action.code == null || action.code == currentState.code) {
-                    return
-                }
-
-                val isSuccess = joinPairUseCase(code = action.code)
-                val pairState = if (isSuccess) {
-                    SwipeUdf.PairState.Linked
-                } else {
-                    SwipeUdf.PairState.NotLinked
-                }
-                onAction(
-                    SwipeUdf.Action.UpdatePairState(
-                        pairState = pairState
-                    )
-                )
             }
 
             is SwipeUdf.Action.InviteClick -> {

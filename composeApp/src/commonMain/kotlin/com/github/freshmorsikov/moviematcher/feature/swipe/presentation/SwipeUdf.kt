@@ -7,15 +7,9 @@ interface SwipeUdf {
 
     data class State(
         val code: String?,
-        val pairState: PairState?,
+        val inviteBannerVisible: Boolean,
         val movies: List<Movie>?,
     ) : Udf.State
-
-    sealed interface PairState {
-        data object NotLinked : PairState
-        data object Linking : PairState
-        data object Linked : PairState
-    }
 
     sealed interface MovieCardState {
         data object Center : MovieCardState
@@ -27,9 +21,8 @@ interface SwipeUdf {
 
     sealed interface Action : Udf.Action {
         data class UpdateMovie(val movies: List<Movie>) : Action
-        data class UpdatePairState(val pairState: PairState) : Action
+        data class UpdateInviteBanner(val visible: Boolean) : Action
         data class UpdateCode(val code: String) : Action
-        data class HandleCode(val code: String?) : Action
         data class FinishSwiping(val movieCardState: MovieCardState.Swiped) : Action
         data object InviteClick : Action
     }
