@@ -1,10 +1,10 @@
-package com.github.freshmorsikov.moviematcher.app
+package com.github.freshmorsikov.moviematcher.app.navigation
 
 import kotlinx.serialization.Serializable
 
-sealed interface BottomNavigationRoute : NavigationRoute
-
 interface NavigationRoute {
+
+    sealed interface BottomNavigationRoute : NavigationRoute
 
     @Serializable
     data object Swipe : BottomNavigationRoute

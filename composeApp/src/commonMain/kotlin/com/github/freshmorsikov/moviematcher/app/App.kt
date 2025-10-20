@@ -2,30 +2,35 @@ package com.github.freshmorsikov.moviematcher.app
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
+import com.github.freshmorsikov.moviematcher.app.navigation.BottomNavigationBar
+import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
 import com.github.freshmorsikov.moviematcher.app.presentation.AppUdf
 import com.github.freshmorsikov.moviematcher.app.presentation.AppViewModel
+import com.github.freshmorsikov.moviematcher.app.snackbar.MatchSnackbarVisuals
+import com.github.freshmorsikov.moviematcher.app.snackbar.MovieSnackbarHost
 import com.github.freshmorsikov.moviematcher.feature.details.MovieDetailsScreen
 import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
-import com.github.freshmorsikov.moviematcher.feature.pairing.PairingScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.ui.MatchesScreen
+import com.github.freshmorsikov.moviematcher.feature.pairing.PairingScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import kotlinx.coroutines.launch
 import moviematcher.composeapp.generated.resources.Res
-import moviematcher.composeapp.generated.resources.app_new_match_found
+import moviematcher.composeapp.generated.resources.match_snackbar_message
+import moviematcher.composeapp.generated.resources.match_snackbar_title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -40,12 +45,18 @@ fun App() {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val snackbarMessage = stringResource(Res.string.app_new_match_found)
+    val matchSnackbarTitle = stringResource(Res.string.match_snackbar_title)
+    val matchSnackbarMessage = stringResource(Res.string.match_snackbar_message)
     SubscribeOnEvents(viewModel.event) { event ->
         when (event) {
             AppUdf.Event.NewMatchFound -> {
                 scope.launch {
-                    snackbarHostState.showSnackbar(message = snackbarMessage)
+                    snackbarHostState.showSnackbar(
+                        visuals = MatchSnackbarVisuals(
+                            title = matchSnackbarTitle,
+                            message = matchSnackbarMessage,
+                        )
+                    )
                 }
             }
         }
@@ -64,7 +75,7 @@ fun App() {
                     )
                 }
             )
-        },
+        }
     ) { padding ->
         NavHost(
             navController = navController,
@@ -102,6 +113,12 @@ fun App() {
             }
         }
 
-        SnackbarHost(hostState = snackbarHostState)
+        MovieSnackbarHost(
+            modifier = Modifier
+                .padding(top = padding.calculateTopPadding())
+                .padding(horizontal = 16.dp),
+            state = snackbarHostState,
+            navController = navController,
+        )
     }
 }

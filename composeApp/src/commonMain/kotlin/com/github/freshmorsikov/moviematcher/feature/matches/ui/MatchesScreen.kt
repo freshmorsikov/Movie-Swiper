@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.github.freshmorsikov.moviematcher.app.NavigationRoute
+import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesUdf
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesViewModel

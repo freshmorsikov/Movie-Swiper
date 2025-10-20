@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.github.freshmorsikov.moviematcher.app.NavigationRoute
+import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
 import com.github.freshmorsikov.moviematcher.core.ui.ContainerShimmer
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold

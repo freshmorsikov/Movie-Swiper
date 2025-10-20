@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.github.freshmorsikov.moviematcher.app.NavigationRoute
+import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.feature.pairing.presentation.PairingUdf
