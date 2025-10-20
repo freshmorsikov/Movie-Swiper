@@ -1,4 +1,4 @@
-package com.github.freshmorsikov.moviematcher.app
+package com.github.freshmorsikov.moviematcher.app.navigation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -38,7 +38,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-private val bottomRoutes: List<BottomNavigationRoute> = listOf(
+private val bottomRoutes: List<NavigationRoute.BottomNavigationRoute> = listOf(
     NavigationRoute.Favorite,
     NavigationRoute.Swipe,
     NavigationRoute.Matches,
@@ -53,7 +53,7 @@ data class BottomNavigationItemList(
 }
 
 data class BottomNavigationItem(
-    val route: BottomNavigationRoute,
+    val route: NavigationRoute.BottomNavigationRoute,
     val isSelected: Boolean,
     val badgeCount: Int?
 )
@@ -161,17 +161,17 @@ private fun BottomNavigationBarContent(
     }
 }
 
-private fun BottomNavigationRoute.icon(): DrawableResource {
+private fun NavigationRoute.BottomNavigationRoute.icon(): DrawableResource {
     return when (this) {
-        NavigationRoute.Swipe -> Res.drawable.ic_swipe
+        is NavigationRoute.Swipe -> Res.drawable.ic_swipe
         NavigationRoute.Favorite -> Res.drawable.ic_heart
         NavigationRoute.Matches -> Res.drawable.ic_match
     }
 }
 
-private fun BottomNavigationRoute.text(): StringResource {
+private fun NavigationRoute.BottomNavigationRoute.text(): StringResource {
     return when (this) {
-        NavigationRoute.Swipe -> Res.string.navigation_swipe
+        is NavigationRoute.Swipe -> Res.string.navigation_swipe
         NavigationRoute.Favorite -> Res.string.navigation_favorites
         NavigationRoute.Matches -> Res.string.navigation_matches
     }

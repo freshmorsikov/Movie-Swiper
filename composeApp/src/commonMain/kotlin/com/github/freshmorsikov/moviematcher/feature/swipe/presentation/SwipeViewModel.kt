@@ -5,8 +5,10 @@ import com.github.freshmorsikov.moviematcher.core.analytics.AnalyticsManager
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.OpenSwipeScreenEvent
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.IsPairedFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
+import com.github.freshmorsikov.moviematcher.shared.domain.GetCodeFlowCaseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -18,17 +20,40 @@ class SwipeViewModel(
     private val loadGenreListUseCase: LoadGenreListUseCase,
     private val getMovieListUseCase: GetMovieListUseCase,
     private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
+    private val isPairedFlowUseCase: IsPairedFlowUseCase,
+    private val getCodeFlowCaseCase: GetCodeFlowCaseCase,
     analyticsManager: AnalyticsManager,
 ) : UdfViewModel<SwipeUdf.State, SwipeUdf.Action, SwipeUdf.Event>(
-    initState = { SwipeUdf.State.Loading }
+    initState = {
+        SwipeUdf.State(
+            code = null,
+            inviteBannerVisible = false,
+            movies = null,
+        )
+    }
 ) {
 
     init {
         analyticsManager.sendEvent(event = OpenSwipeScreenEvent)
+
+        subscribeOnIsPaired()
+        subscribeOnCode()
         viewModelScope.launch {
             loadGenreListUseCase()
         }
         subscribeOnMovieList()
+    }
+
+    private fun subscribeOnIsPaired() {
+        isPairedFlowUseCase().onEach { isPaired ->
+            onAction(SwipeUdf.Action.UpdateInviteBanner(visible = !isPaired))
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeOnCode() {
+        getCodeFlowCaseCase().onEach { code ->
+            onAction(SwipeUdf.Action.UpdateCode(code = code))
+        }.launchIn(viewModelScope)
     }
 
     private fun subscribeOnMovieList() {
@@ -46,7 +71,17 @@ class SwipeViewModel(
     override fun reduce(action: SwipeUdf.Action): SwipeUdf.State {
         return when (action) {
             is SwipeUdf.Action.UpdateMovie -> {
-                SwipeUdf.State.Data(movies = action.movies)
+                currentState.copy(movies = action.movies)
+            }
+
+            is SwipeUdf.Action.UpdateInviteBanner -> {
+                currentState.copy(inviteBannerVisible = action.visible)
+            }
+
+            is SwipeUdf.Action.UpdateCode -> {
+                currentState.copy(
+                    code = action.code
+                )
             }
 
             else -> {
@@ -65,14 +100,18 @@ class SwipeViewModel(
                 updateMovieStatus(movieStatus = movieStatus)
             }
 
+            is SwipeUdf.Action.InviteClick -> {
+                val code = currentState.code ?: return
+                val inviteLink = "https://freshmorsikov.github.io/Movie-Swiper-Landing?code=$code"
+                sendEvent(SwipeUdf.Event.ShowSharingDialog(inviteLink = inviteLink))
+            }
+
             else -> {}
         }
     }
 
     private fun updateMovieStatus(movieStatus: MovieStatus) {
-        val state = (currentState as? SwipeUdf.State.Data) ?: return
-
-        state.movies.lastOrNull()?.id?.let { id ->
+        currentState.movies?.lastOrNull()?.id?.let { id ->
             viewModelScope.launch {
                 updateMovieStatusUseCase(
                     id = id,

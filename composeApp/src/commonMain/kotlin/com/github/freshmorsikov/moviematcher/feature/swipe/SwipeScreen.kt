@@ -1,9 +1,14 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -12,12 +17,14 @@ import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -25,6 +32,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,7 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.github.freshmorsikov.moviematcher.app.NavigationRoute
+import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
 import com.github.freshmorsikov.moviematcher.core.ui.ContainerShimmer
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
@@ -60,9 +69,20 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.ui.ColorIndicators
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieGenres
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
+import com.github.freshmorsikov.moviematcher.util.SharingManager
+import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import moviematcher.composeapp.generated.resources.Res
+import moviematcher.composeapp.generated.resources.ic_chevron_right
+import moviematcher.composeapp.generated.resources.sharing_message
+import moviematcher.composeapp.generated.resources.sharing_title
+import moviematcher.composeapp.generated.resources.swipe_create_pair
+import moviematcher.composeapp.generated.resources.swipe_invite
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 private val cardShape = RoundedCornerShape(8.dp)
@@ -71,9 +91,11 @@ private val swipeAnimationSpec: AnimationSpec<Float> = tween(500)
 @Composable
 fun SwipeScreen(
     navController: NavController,
-    viewModel: SwipeViewModel = koinViewModel()
+    viewModel: SwipeViewModel = koinViewModel(),
+    sharingManager: SharingManager = koinInject(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
     SwipeScreenContent(
         state = state,
         onAction = viewModel::onAction,
@@ -83,6 +105,19 @@ fun SwipeScreen(
             )
         }
     )
+
+    val sharingTitle = stringResource(Res.string.sharing_title)
+    val sharingMessage = stringResource(Res.string.sharing_message)
+    SubscribeOnEvents(viewModel.event) { event ->
+        when (event) {
+            is SwipeUdf.Event.ShowSharingDialog -> {
+                sharingManager.share(
+                    title = sharingTitle,
+                    text = "$sharingMessage ${event.inviteLink}"
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -92,24 +127,119 @@ fun SwipeScreenContent(
     onMovieClick: (Long) -> Unit,
 ) {
     MovieScaffold(contentWindowInsets = WindowInsets.none) {
-        when (state) {
-            SwipeUdf.State.Loading -> {
-                LoadingContent(
-                    modifier = Modifier
-                        .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding())
-                        .padding(16.dp)
-                )
-            }
+        Column {
+            InviteBanner(
+                visible = state.inviteBannerVisible,
+                onAction = onAction,
+            )
+            MoviesBlock(
+                movies = state.movies,
+                onAction = onAction,
+                onMovieClick = onMovieClick,
+            )
+        }
+    }
+}
 
-            is SwipeUdf.State.Data -> {
-                DataContent(
-                    modifier = Modifier.fillMaxSize(),
-                    state = state,
-                    onAction = onAction,
-                    onMovieClick = onMovieClick,
+@Composable
+private fun InviteBanner(
+    visible: Boolean,
+    onAction: (SwipeUdf.Action) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val backgroundColor = Color(0xFFFFF6E5)
+    val backgroundAlpha by animateFloatAsState(
+        if (visible) 1f else 0f
+    )
+    Box(
+        modifier = modifier
+            .background(
+                backgroundColor.copy(
+                    alpha = backgroundAlpha
+                )
+            )
+            .padding(
+                top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
+            ),
+    ) {
+        AnimatedVisibility(
+            visible = visible,
+            enter = slideInVertically(
+                animationSpec = tween(500)
+            ) { fullHeight ->
+                -fullHeight
+            },
+            exit = slideOutVertically(
+                animationSpec = tween(500)
+            ) { fullHeight ->
+                -fullHeight
+            },
+        ) {
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(
+                            onClick = {
+                                onAction(SwipeUdf.Action.InviteClick)
+                            },
+                            interactionSource = null,
+                            indication = null,
+                        )
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = 8.dp,
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(Res.string.swipe_create_pair),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFFE08700),
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = stringResource(Res.string.swipe_invite),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFFE08700),
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .size(16.dp),
+                        painter = painterResource(Res.drawable.ic_chevron_right),
+                        tint = Color(0xFFE08700),
+                        contentDescription = null
+                    )
+                }
+                HorizontalDivider(
+                    thickness = 0.5.dp,
+                    color = Color(0xFFE08700),
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun MoviesBlock(
+    movies: List<Movie>?,
+    onAction: (SwipeUdf.Action) -> Unit,
+    onMovieClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (movies == null) {
+        LoadingContent(
+            modifier = modifier.padding(16.dp)
+        )
+    } else {
+        DataContent(
+            modifier = modifier.fillMaxSize(),
+            movies = movies,
+            onAction = onAction,
+            onMovieClick = onMovieClick,
+        )
     }
 }
 
@@ -148,13 +278,13 @@ private fun LoadingContent(modifier: Modifier = Modifier) {
 
 @Composable
 private fun DataContent(
-    state: SwipeUdf.State.Data,
+    movies: List<Movie>,
     onAction: (SwipeUdf.Action) -> Unit,
     onMovieClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
-        val top = state.movies.lastOrNull()
+        val top = movies.lastOrNull()
         val windowInfo = LocalWindowInfo.current
         val draggableState = remember(top) {
             val width = windowInfo.containerSize.width.toFloat()
@@ -172,13 +302,13 @@ private fun DataContent(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 16.dp)
+                .padding(top = 16.dp)
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 48.dp),
             top = top,
-            middle = state.movies.getOrNull(state.movies.lastIndex - 1),
-            bottom = state.movies.getOrNull(state.movies.lastIndex - 2),
-            new = state.movies.getOrNull(state.movies.lastIndex - 3),
+            middle = movies.getOrNull(movies.lastIndex - 1),
+            bottom = movies.getOrNull(movies.lastIndex - 2),
+            new = movies.getOrNull(movies.lastIndex - 3),
             draggableState = draggableState,
             onAction = onAction,
             onMovieClick = onMovieClick,
@@ -367,7 +497,9 @@ private fun MovieCard(
 @Composable
 private fun SwipeScreenDataPreview() {
     SwipeScreenContent(
-        state = SwipeUdf.State.Data(
+        state = SwipeUdf.State(
+            code = "AAAA",
+            inviteBannerVisible = true,
             movies = List(3) { i ->
                 Movie.mock
             }
@@ -381,7 +513,11 @@ private fun SwipeScreenDataPreview() {
 @Composable
 private fun SwipeScreenLoadingPreview() {
     SwipeScreenContent(
-        state = SwipeUdf.State.Loading,
+        state = SwipeUdf.State(
+            code = null,
+            inviteBannerVisible = false,
+            movies = null
+        ),
         onAction = {},
         onMovieClick = {},
     )

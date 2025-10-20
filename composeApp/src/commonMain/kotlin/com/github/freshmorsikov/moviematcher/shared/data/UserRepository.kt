@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 private const val USER_UUID_KEY = "USER_UUID_KEY"
+private const val SHOW_PAIR_STATUS_KEY = "SHOW_PAIR_STATUS_KEY"
 
 class UserRepository(
     private val keyValueStore: KeyValueStore
@@ -57,6 +58,14 @@ class UserRepository(
             .child(userUuid)
             .child("code")
         reference.setValue(code)
+    }
+
+    suspend fun getShowPairStatus(): Boolean? {
+        return keyValueStore.getBoolean(SHOW_PAIR_STATUS_KEY)
+    }
+
+    suspend fun saveShowPairStatus(showPairStatus: Boolean) {
+        keyValueStore.putBoolean(SHOW_PAIR_STATUS_KEY, showPairStatus)
     }
 
 }

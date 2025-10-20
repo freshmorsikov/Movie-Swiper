@@ -22,13 +22,14 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        FirebaseApp.initializeApp(this)
-        Firebase.analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG)
         setContent {
             MaterialTheme {
                 App()
             }
         }
+
+        FirebaseApp.initializeApp(this)
+        Firebase.analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG)
     }
 
     private fun setupEdgeToEdge() {

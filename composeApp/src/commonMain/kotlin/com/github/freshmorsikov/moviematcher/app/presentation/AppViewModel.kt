@@ -2,12 +2,11 @@ package com.github.freshmorsikov.moviematcher.app.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
-import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetPairFlowUseCase
-import com.github.freshmorsikov.moviematcher.feature.matches.domain.model.PairState
+import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetMatchedListFlowUseCase
 import kotlinx.coroutines.launch
 
 class AppViewModel(
-    private val getPairFlowUseCase: GetPairFlowUseCase,
+    private val getMatchedListFlowUseCase: GetMatchedListFlowUseCase,
 ) : UdfViewModel<AppUdf.State, AppUdf.Action, AppUdf.Event>(
     initState = {
         AppUdf.State(
@@ -19,17 +18,15 @@ class AppViewModel(
 
     init {
         viewModelScope.launch {
-            var currentPairState: PairState? = null
-            getPairFlowUseCase().collect { pairState ->
-                if (currentPairState == null) {
-                    currentPairState = pairState
-                } else if (pairState is PairState.Paired) {
-                    val currentSize = (currentPairState as? PairState.Paired)?.matchedMovieList?.size ?: 0
-                    if (currentSize < pairState.matchedMovieList.size) {
+            var currentSize: Int? = null
+            getMatchedListFlowUseCase().collect { movies ->
+                currentSize?.let { size ->
+                    if (size < movies.size) {
                         onAction(AppUdf.Action.UpdateNewMatches)
                         sendEvent(AppUdf.Event.NewMatchFound)
                     }
                 }
+                currentSize = movies.size
             }
         }
     }
