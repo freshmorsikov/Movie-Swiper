@@ -2,10 +2,11 @@ package com.github.freshmorsikov.moviematcher.core.ui.theme.color
 
 val LightColorScheme = ColorScheme(
     primary = LavenderBlue,
-    background = LightGrey,
+    background = Grey500,
     surface = White,
+    icon = Grey400,
     text = TextColors(
         main = Blck,
-        variant = Grey,
+        variant = Grey300,
     ),
 )

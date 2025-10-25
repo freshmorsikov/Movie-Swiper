@@ -11,6 +11,7 @@ class ColorScheme(
     primary: Color,
     background: Color,
     surface: Color,
+    icon: Color,
     text: TextColors,
 ) {
 
@@ -23,19 +24,23 @@ class ColorScheme(
     var surface by mutableStateOf(surface)
         internal set
 
-    var text by mutableStateOf(text)
+    var icon by mutableStateOf(icon)
         internal set
 
+    var text by mutableStateOf(text)
+        internal set
 
     fun copy(
         primary: Color = this.primary,
         background: Color = this.background,
         surface: Color = this.surface,
+        icon: Color = this.icon,
         text: TextColors = this.text,
     ): ColorScheme = ColorScheme(
         primary = primary,
         background = background,
         surface = surface,
+        icon = icon,
         text = text.copy(
             main = text.main,
             variant = text.variant,
