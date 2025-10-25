@@ -27,7 +27,7 @@ data class MovieTypography(
     val title16: TextStyle = TextStyle.Default,
     val action16: TextStyle = TextStyle.Default,
     val body14: TextStyle = TextStyle.Default,
-    val label10: TextStyle = TextStyle.Default,
+    val label12: TextStyle = TextStyle.Default,
 )
 
 @Composable
@@ -35,13 +35,13 @@ fun movieTypography(): MovieTypography {
     return MovieTypography(
         title20 = TextStyle(
             fontFamily = robotoFontFamily,
-            fontWeight = FontWeight.W600,
+            fontWeight = FontWeight.W700,
             fontSize = 20.sp,
             lineHeight = 23.sp,
         ),
         title16 = TextStyle(
             fontFamily = robotoFontFamily,
-            fontWeight = FontWeight.W600,
+            fontWeight = FontWeight.W700,
             fontSize = 16.sp,
             lineHeight = 19.sp,
         ),
@@ -57,11 +57,11 @@ fun movieTypography(): MovieTypography {
             fontSize = 14.sp,
             lineHeight = 16.sp,
         ),
-        label10 = TextStyle(
+        label12 = TextStyle(
             fontFamily = robotoFontFamily,
             fontWeight = FontWeight.W500,
-            fontSize = 10.sp,
-            lineHeight = 12.sp,
+            fontSize = 12.sp,
+            lineHeight = 14.sp,
         ),
     )
 }
