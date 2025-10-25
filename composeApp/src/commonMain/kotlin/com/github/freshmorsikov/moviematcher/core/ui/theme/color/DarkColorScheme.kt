@@ -5,8 +5,10 @@ val DarkColorScheme = ColorScheme(
     background = Grey500,
     surface = White,
     icon = Grey400,
+    error = Red,
     text = TextColors(
         main = Blck,
         variant = Grey300,
+        onAccent = White,
     ),
 )
