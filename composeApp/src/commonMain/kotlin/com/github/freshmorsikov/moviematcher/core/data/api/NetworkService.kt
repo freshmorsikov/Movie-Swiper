@@ -1,11 +1,11 @@
 package com.github.freshmorsikov.moviematcher.core.data.api
 
+import androidx.compose.ui.text.intl.Locale
 import com.github.freshmorsikov.moviematcher.core.data.api.model.GenreListResponse
 import com.github.freshmorsikov.moviematcher.core.data.api.model.MovieCastResponse
 import com.github.freshmorsikov.moviematcher.core.data.api.model.MovieDetailsResponse
 import com.github.freshmorsikov.moviematcher.core.data.api.model.MovieResponse
 import com.github.freshmorsikov.moviematcher.core.data.api.model.PageResponse
-import com.github.freshmorsikov.moviematcher.util.getSystemLanguage
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
@@ -23,10 +23,10 @@ class ApiService(private val httpClient: HttpClient) {
         return safeApiCall {
             httpClient.get {
                 url {
-                    path("discover/movie")
+                    path("3/discover/movie")
                     parameter("include_adult", false)
                     parameter("include_video", false)
-                    parameter("language", getSystemLanguage())
+                    parameter("language", Locale.current.language)
                     parameter("page", page)
                     parameter("sort_by", "popularity.desc")
                     parameter("primary_release_date.lte", "2025-01-01")
@@ -41,8 +41,8 @@ class ApiService(private val httpClient: HttpClient) {
         return safeApiCall {
             httpClient.get {
                 url {
-                    path("genre/movie/list")
-                    parameter("language", getSystemLanguage())
+                    path("3/genre/movie/list")
+                    parameter("language", Locale.current.language)
                 }
             }
         }
@@ -52,8 +52,8 @@ class ApiService(private val httpClient: HttpClient) {
         return safeApiCall {
             httpClient.get {
                 url {
-                    path("movie/$movieId")
-                    parameter("language", getSystemLanguage())
+                    path("3/movie/$movieId")
+                    parameter("language", Locale.current.language)
                 }
             }
         }
@@ -63,8 +63,8 @@ class ApiService(private val httpClient: HttpClient) {
         return safeApiCall {
             httpClient.get {
                 url {
-                    path("movie/$movieId/credits")
-                    parameter("language", getSystemLanguage())
+                    path("3/movie/$movieId/credits")
+                    parameter("language",Locale.current.language)
                 }
             }
         }

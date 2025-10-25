@@ -1,8 +1,13 @@
 package com.github.freshmorsikov.moviematcher.app.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.HorizontalDivider
@@ -14,9 +19,13 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
@@ -24,6 +33,9 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.github.freshmorsikov.moviematcher.OS
+import com.github.freshmorsikov.moviematcher.core.ui.none
+import com.github.freshmorsikov.moviematcher.getPlatform
 import kotlinx.serialization.InternalSerializationApi
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_heart
@@ -63,6 +75,7 @@ fun BottomNavigationBar(
     navController: NavHostController,
     newMatches: Int,
     onChangeIsCurrentMatches: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val backStack by navController.currentBackStackEntryAsState()
     val currentDestination = backStack?.destination
@@ -71,25 +84,35 @@ fun BottomNavigationBar(
         onChangeIsCurrentMatches(currentDestination.same(NavigationRoute.Matches))
     }
 
-    if (!currentDestination.isBottomNavigation()) {
-        return
-    }
-
-    val itemList = BottomNavigationItemList(
-        items = bottomRoutes.map { route ->
-            BottomNavigationItem(
-                route = route,
-                isSelected = currentDestination.same(route),
-                badgeCount = newMatches.takeIf { count ->
-                    (route is NavigationRoute.Matches) && (count > 0)
-                }
+    Box(
+        modifier = modifier
+            .background(Color.White)
+            .windowInsetsPadding(
+                insets = WindowInsets(
+                    bottom = platformBottomInsets()
+                )
+            )
+    ) {
+        if (currentDestination.isBottomNavigation()) {
+            val itemList = remember(newMatches, currentDestination) {
+                BottomNavigationItemList(
+                    items = bottomRoutes.map { route ->
+                        BottomNavigationItem(
+                            route = route,
+                            isSelected = currentDestination.same(route),
+                            badgeCount = newMatches.takeIf { count ->
+                                (route is NavigationRoute.Matches) && (count > 0)
+                            }
+                        )
+                    }
+                )
+            }
+            BottomNavigationBarContent(
+                navController = navController,
+                itemList = itemList
             )
         }
-    )
-    BottomNavigationBarContent(
-        navController = navController,
-        itemList = itemList
-    )
+    }
 }
 
 @Composable
@@ -102,7 +125,10 @@ private fun BottomNavigationBarContent(
             thickness = 1.dp,
             color = Color.Black.copy(alpha = 0.1f)
         )
-        NavigationBar(containerColor = Color.White) {
+        NavigationBar(
+            containerColor = Color.White,
+            windowInsets = WindowInsets.none,
+        ) {
             itemList.items.forEach { item ->
                 val route = item.route
                 NavigationBarItem(
@@ -158,6 +184,18 @@ private fun BottomNavigationBarContent(
                 )
             }
         }
+    }
+}
+
+@Stable
+@Composable
+private fun platformBottomInsets(): Dp {
+    return if (getPlatform().os == OS.iOS) {
+        8.dp
+    } else {
+        val density = LocalDensity.current
+        val insets = WindowInsets.navigationBars
+        with(density) { insets.getBottom(density).toDp() }
     }
 }
 
