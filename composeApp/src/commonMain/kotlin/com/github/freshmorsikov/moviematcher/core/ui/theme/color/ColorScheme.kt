@@ -10,11 +10,11 @@ import androidx.compose.ui.graphics.Color
 class ColorScheme(
     primary: Color,
     background: Color,
-    surface: Color,
-    icon: Color,
     stroke: Color,
     warning: Color,
     error: Color,
+    surface: SurfaceColors,
+    icon: IconColors,
     shimmer: ShimmerColors,
     text: TextColors,
 ) {
@@ -23,12 +23,6 @@ class ColorScheme(
         internal set
 
     var background by mutableStateOf(background)
-        internal set
-
-    var surface by mutableStateOf(surface)
-        internal set
-
-    var icon by mutableStateOf(icon)
         internal set
 
     var stroke by mutableStateOf(stroke)
@@ -40,6 +34,12 @@ class ColorScheme(
     var warning by mutableStateOf(warning)
         internal set
 
+    var surface by mutableStateOf(surface)
+        internal set
+
+    var icon by mutableStateOf(icon)
+        internal set
+
     var shimmer by mutableStateOf(shimmer)
         internal set
 
@@ -49,21 +49,27 @@ class ColorScheme(
     fun copy(
         primary: Color = this.primary,
         background: Color = this.background,
-        surface: Color = this.surface,
-        icon: Color = this.icon,
         stroke: Color = this.stroke,
         warning: Color = this.warning,
         error: Color = this.error,
+        surface: SurfaceColors = this.surface,
+        icon: IconColors = this.icon,
         shimmer: ShimmerColors = this.shimmer,
         text: TextColors = this.text,
     ): ColorScheme = ColorScheme(
         primary = primary,
         background = background,
-        surface = surface,
-        icon = icon,
         stroke = stroke,
         warning = warning,
         error = error,
+        surface = surface.copy(
+            main = surface.main,
+            variant = surface.variant,
+        ),
+        icon = icon.copy(
+            main = icon.main,
+            variant = icon.variant,
+        ),
         shimmer = shimmer.copy(
             container = shimmer.container,
             content = shimmer.content,
@@ -71,17 +77,17 @@ class ColorScheme(
         text = text.copy(
             main = text.main,
             variant = text.variant,
+            accent = text.accent,
             onAccent = text.onAccent,
+            onWarning = text.onWarning,
         ),
     )
 }
 
 @Stable
-class TextColors(
+class SurfaceColors(
     main: Color,
     variant: Color,
-    onAccent: Color,
-    onWarning: Color,
 ) {
 
     var main by mutableStateOf(main)
@@ -90,22 +96,34 @@ class TextColors(
     var variant by mutableStateOf(variant)
         internal set
 
-    var onAccent by mutableStateOf(onAccent)
+    fun copy(
+        main: Color = this.main,
+        variant: Color = this.variant,
+    ): SurfaceColors = SurfaceColors(
+        main = main,
+        variant = variant,
+    )
+
+}
+
+@Stable
+class IconColors(
+    main: Color,
+    variant: Color,
+) {
+
+    var main by mutableStateOf(main)
         internal set
 
-    var onWarning by mutableStateOf(onWarning)
+    var variant by mutableStateOf(variant)
         internal set
 
     fun copy(
         main: Color = this.main,
         variant: Color = this.variant,
-        onAccent: Color = this.onAccent,
-        onWarning: Color = this.onWarning,
-    ): TextColors = TextColors(
+    ): IconColors = IconColors(
         main = main,
         variant = variant,
-        onAccent = onAccent,
-        onWarning = onWarning,
     )
 
 }
@@ -128,6 +146,46 @@ class ShimmerColors(
     ): ShimmerColors = ShimmerColors(
         container = container,
         content = content,
+    )
+
+}
+
+@Stable
+class TextColors(
+    main: Color,
+    variant: Color,
+    accent: Color,
+    onAccent: Color,
+    onWarning: Color,
+) {
+
+    var main by mutableStateOf(main)
+        internal set
+
+    var variant by mutableStateOf(variant)
+        internal set
+
+    var accent by mutableStateOf(accent)
+        internal set
+
+    var onAccent by mutableStateOf(onAccent)
+        internal set
+
+    var onWarning by mutableStateOf(onWarning)
+        internal set
+
+    fun copy(
+        main: Color = this.main,
+        variant: Color = this.variant,
+        accent: Color = this.accent,
+        onAccent: Color = this.onAccent,
+        onWarning: Color = this.onWarning,
+    ): TextColors = TextColors(
+        main = main,
+        variant = variant,
+        accent = accent,
+        onAccent = onAccent,
+        onWarning = onWarning,
     )
 
 }

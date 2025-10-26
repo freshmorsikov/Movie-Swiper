@@ -1,13 +1,21 @@
 package com.github.freshmorsikov.moviematcher.core.ui.theme.color
 
+import androidx.compose.ui.graphics.Color.Companion.Black
+
 val LightColorScheme = ColorScheme(
     primary = LavenderBlue,
     background = Grey500,
-    surface = White,
-    icon = Grey300,
     stroke = Grey300,
     warning = Yellow,
     error = Red,
+    surface = SurfaceColors(
+        main = White,
+        variant = Grey300,
+    ),
+    icon = IconColors(
+        main = Black,
+        variant = Grey300,
+    ),
     shimmer = ShimmerColors(
         container = White,
         content = Grey400,
@@ -15,6 +23,7 @@ val LightColorScheme = ColorScheme(
     text = TextColors(
         main = Blck,
         variant = Grey200,
+        accent = Amber,
         onAccent = White,
         onWarning = DarkYellow,
     ),

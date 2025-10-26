@@ -462,7 +462,7 @@ private fun MovieCard(
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
-            containerColor = MovieTheme.colors.surface
+            containerColor = MovieTheme.colors.surface.main
         ),
         shape = cardShape,
         border = BorderStroke(
