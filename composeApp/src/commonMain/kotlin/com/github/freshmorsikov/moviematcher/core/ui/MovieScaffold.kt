@@ -13,12 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 
 @Composable
 fun MovieScaffold(
     modifier: Modifier = Modifier,
     topBar: @Composable () -> Unit = {},
-    background: Color = Color(0xFFF8F6F7),
+    background: Color = MovieTheme.colors.background,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars,
     content: @Composable BoxScope.() -> Unit,
 ) {

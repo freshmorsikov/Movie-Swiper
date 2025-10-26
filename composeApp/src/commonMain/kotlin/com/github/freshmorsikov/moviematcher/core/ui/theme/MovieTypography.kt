@@ -59,7 +59,7 @@ fun movieTypography(): MovieTypography {
         ),
         label12 = TextStyle(
             fontFamily = robotoFontFamily,
-            fontWeight = FontWeight.W500,
+            fontWeight = FontWeight.W600,
             fontSize = 12.sp,
             lineHeight = 14.sp,
         ),
