@@ -1,5 +1,6 @@
 package com.github.freshmorsikov.moviematcher.core.ui
 
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -14,10 +15,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -38,37 +41,36 @@ fun Shimmer(modifier: Modifier) {
 
 @Composable
 private fun Modifier.contentShimmer(): Modifier {
-    val transition = rememberInfiniteTransition(label = "contentTransition")
-    val alpha by transition.animateFloat(
-        initialValue = 0.5f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(800),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "contentAnimation"
-    )
+    val alpha by shimmerAlpha(label = "content")
     return background(
-        color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = alpha),
+        color = MovieTheme.colors.shimmer.content.copy(alpha = alpha),
         shape = RoundedCornerShape(8.dp)
     )
 }
 
 @Composable
 private fun Modifier.containerShimmer(): Modifier {
-    val transition = rememberInfiniteTransition(label = "containerTransition")
-    val alpha by transition.animateFloat(
-        initialValue = 0.5f,
+    val alpha by shimmerAlpha(label = "container")
+    return background(
+        color = MovieTheme.colors.shimmer.container.copy(alpha = alpha),
+        shape = RoundedCornerShape(8.dp)
+    )
+}
+
+@Composable
+private fun shimmerAlpha(label: String): State<Float> {
+    val transition = rememberInfiniteTransition(label = "${label}ShimmerTransition")
+    return transition.animateFloat(
+        initialValue = 0.6f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(800),
+            animation = tween(
+                durationMillis = 1000,
+                easing = LinearEasing,
+            ),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "containerAnimation"
-    )
-    return background(
-        color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = alpha),
-        shape = RoundedCornerShape(8.dp)
+        label = "${label}ShimmerAnimation"
     )
 }
 
