@@ -8,8 +8,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -32,8 +32,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -46,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -72,6 +71,7 @@ import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieGenres
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
 import com.github.freshmorsikov.moviematcher.util.SharingManager
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
+import com.github.freshmorsikov.moviematcher.util.clickableWithoutIndication
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import moviematcher.composeapp.generated.resources.Res
@@ -445,7 +445,7 @@ private fun MovieStack(
                         translationY = 32 * density
                         translationX = draggableState.offset
                         alpha = topAlpha.value
-                    }.clickable(
+                    }.clickableWithoutIndication(
                         onClick = { onMovieClick(top.id) }
                     ),
                 movie = top,
@@ -459,47 +459,44 @@ private fun MovieCard(
     movie: Movie,
     modifier: Modifier = Modifier,
 ) {
-    Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = MovieTheme.colors.surface.main
-        ),
-        shape = cardShape,
-        border = BorderStroke(
-            0.5.dp,
-            MovieTheme.colors.stroke,
-        )
-    ) {
-        Column {
-            AsyncImage(
-                modifier = Modifier
-                    .height(500.dp)
-                    .width(380.dp),
-                model = "$IMAGE_BASE_URL${movie.posterPath}",
-                contentScale = ContentScale.FillBounds,
-                contentDescription = null,
+    Column(
+        modifier = modifier
+            .clip(cardShape)
+            .background(color = MovieTheme.colors.surface.main)
+            .border(
+                width = 0.5.dp,
+                color = MovieTheme.colors.stroke,
+                shape = cardShape
             )
-            Column(
-                modifier = Modifier
-                    .width(380.dp)
-                    .padding(16.dp),
-                verticalArrangement = spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = movie.title,
-                    style = MovieTheme.typography.title16,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center,
-                )
-                MovieInfo(
-                    releaseDate = movie.releaseDate,
-                    voteAverage = movie.voteAverage,
-                    voteCount = movie.voteCount,
-                )
-                MovieGenres(movie.genres)
-            }
+    ) {
+        AsyncImage(
+            modifier = Modifier
+                .height(500.dp)
+                .width(380.dp),
+            model = "$IMAGE_BASE_URL${movie.posterPath}",
+            contentScale = ContentScale.FillBounds,
+            contentDescription = null,
+        )
+        Column(
+            modifier = Modifier
+                .width(380.dp)
+                .padding(16.dp),
+            verticalArrangement = spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = movie.title,
+                style = MovieTheme.typography.title16,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+            )
+            MovieInfo(
+                releaseDate = movie.releaseDate,
+                voteAverage = movie.voteAverage,
+                voteCount = movie.voteCount,
+            )
+            MovieGenres(movie.genres)
         }
     }
 }
