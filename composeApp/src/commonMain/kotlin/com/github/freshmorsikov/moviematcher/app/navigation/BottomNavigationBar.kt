@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -87,11 +88,14 @@ fun BottomNavigationBar(
 
     Box(
         modifier = modifier
-            .background(Color.White)
+            .fillMaxWidth()
+            .background(color = MovieTheme.colors.surface.main)
             .windowInsetsPadding(
-                insets = WindowInsets(
-                    bottom = platformBottomInsets()
-                )
+                insets = if (currentDestination.isBottomNavigation()) {
+                    WindowInsets(bottom = platformBottomInsets())
+                } else {
+                    WindowInsets.none
+                }
             )
     ) {
         if (currentDestination.isBottomNavigation()) {
@@ -183,8 +187,8 @@ private fun BottomNavigationBarContent(
                         selectedIconColor = MovieTheme.colors.primary,
                         selectedTextColor = MovieTheme.colors.primary,
                         indicatorColor = MovieTheme.colors.background,
-                        unselectedIconColor = MovieTheme.colors.icon,
-                        unselectedTextColor = MovieTheme.colors.icon,
+                        unselectedIconColor = MovieTheme.colors.icon.variant,
+                        unselectedTextColor = MovieTheme.colors.icon.variant,
                     )
                 )
             }

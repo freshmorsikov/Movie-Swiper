@@ -47,11 +47,15 @@ fun MovieInfo(
             Icon(
                 modifier = Modifier.size(14.dp),
                 painter = painterResource(Res.drawable.ic_star),
-                tint = MovieTheme.colors.warning,
+                tint = MovieTheme.colors.text.accent,
                 contentDescription = null
             )
             val voteText = buildAnnotatedString {
-                withStyle(SpanStyle(color = MovieTheme.colors.warning)) {
+                withStyle(
+                    style = SpanStyle(
+                        color = MovieTheme.colors.text.accent
+                    )
+                ) {
                     append(voteAverage.toRatingFormat())
                 }
                 if (voteCount > 0) {

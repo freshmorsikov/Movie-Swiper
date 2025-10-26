@@ -1,6 +1,6 @@
 package com.github.freshmorsikov.moviematcher.shared.ui.movie
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
@@ -24,9 +24,10 @@ fun MovieGenres(
         genres.forEach { genre ->
             Text(
                 modifier = Modifier
-                    .background(
-                        color = MovieTheme.colors.background,
-                        shape = RoundedCornerShape(4.dp),
+                    .border(
+                        width = 1.dp,
+                        color = MovieTheme.colors.stroke,
+                        shape = RoundedCornerShape(4.dp)
                     )
                     .padding(
                         horizontal = 6.dp,
