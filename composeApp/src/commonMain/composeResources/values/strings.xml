@@ -12,7 +12,8 @@
     <string name="swipe_linking">Linking</string>
     <string name="swipe_paired">Paired with</string>
 
-    <string name="favorites_empty">No favorites yet</string>
+    <string name="favorites_your_favorite_movies">Your favorite movies will live here!</string>
+    <string name="favorites_do_you_have">Do you have any, nya?</string>
 
     <string name="matches_pair_up">Pair up to start matching</string>
     <string name="matches_create_or_join">Create a pair or join with a code.</string>
