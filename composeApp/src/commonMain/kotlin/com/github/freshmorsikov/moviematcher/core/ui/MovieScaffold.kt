@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,7 +19,7 @@ fun MovieScaffold(
     modifier: Modifier = Modifier,
     topBar: @Composable () -> Unit = {},
     background: Color = MovieTheme.colors.background,
-    contentWindowInsets: WindowInsets = WindowInsets.systemBars,
+    contentWindowInsets: WindowInsets = WindowInsets.none,
     content: @Composable BoxScope.() -> Unit,
 ) {
     Scaffold(
