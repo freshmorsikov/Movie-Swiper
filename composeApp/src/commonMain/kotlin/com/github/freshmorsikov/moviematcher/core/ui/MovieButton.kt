@@ -12,13 +12,15 @@ fun MovieButton(
     text: String,
     onClick: () -> Unit,
     containerColor: Color,
+    contentColor: Color,
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     Button(
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor
+            containerColor = containerColor,
+            contentColor = contentColor,
         ),
         enabled = enabled,
         onClick = onClick

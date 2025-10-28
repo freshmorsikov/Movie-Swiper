@@ -36,7 +36,6 @@ import coil3.compose.AsyncImage
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.Shimmer
-import com.github.freshmorsikov.moviematcher.core.ui.none
 import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.feature.details.domain.model.Actor
 import com.github.freshmorsikov.moviematcher.feature.details.presentation.MovieDetailsUdf
@@ -80,10 +79,7 @@ private fun MovieDetailsScreenContent(
     state: MovieDetailsUdf.State,
     onBackClick: () -> Unit,
 ) {
-    MovieScaffold(
-        background = MovieTheme.colors.surface.main,
-        contentWindowInsets = WindowInsets.none,
-    ) {
+    MovieScaffold(background = MovieTheme.colors.surface.main) {
         when (state) {
             MovieDetailsUdf.State.Loading -> {
                 LoadingMovieDetailsScreenContent()
@@ -93,7 +89,8 @@ private fun MovieDetailsScreenContent(
                 LoadedMovieDetailsScreenContent(
                     modifier = Modifier
                         .verticalScroll(
-                            state = rememberScrollState()
+                            state = rememberScrollState(),
+                            overscrollEffect = null,
                         )
                         .padding(
                             bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
