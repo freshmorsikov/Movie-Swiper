@@ -2,7 +2,6 @@ package com.github.freshmorsikov.moviematcher.feature.pairing
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -10,11 +9,8 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
+import com.github.freshmorsikov.moviematcher.core.ui.LoadingContent
 import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
@@ -74,7 +71,7 @@ private fun PairingContent(
         AnimatedContent(targetState = state) { targetState ->
             when (targetState) {
                 PairingUdf.State.Loading -> {
-                    LoadingContent()
+                    LoadingContent(modifier = Modifier.fillMaxSize())
                 }
 
                 is PairingUdf.State.Result -> {
@@ -84,30 +81,6 @@ private fun PairingContent(
                     )
                 }
             }
-        }
-    }
-}
-
-
-@Composable
-private fun LoadingContent() {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .background(
-                    color = MovieTheme.colors.primary.copy(alpha = 0.6f),
-                    shape = RoundedCornerShape(8.dp)
-                )
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(16.dp)
-                    .size(24.dp),
-                color = MovieTheme.colors.text.onAccent,
-                strokeWidth = 4.dp,
-            )
         }
     }
 }

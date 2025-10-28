@@ -20,7 +20,8 @@
     <string name="matches_create_pair">Create pair</string>
     <string name="matches_join_with_code">Join with code</string>
     <string name="matches_paired_with">Paired with</string>
-    <string name="matches_empty">No matches yet</string>
+    <string name="matches_info_title">Your matches will be here super soon!</string>
+    <string name="matches_info_text">I’m already sooo excited</string>
 
     <string name="code_send">Send the CODE to your mate</string>
     <string name="code_share">Share</string>
