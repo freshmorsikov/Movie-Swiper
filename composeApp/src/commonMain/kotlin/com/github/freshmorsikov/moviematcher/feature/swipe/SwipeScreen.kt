@@ -487,6 +487,7 @@ private fun MovieCard(
             Text(
                 text = movie.title,
                 style = MovieTheme.typography.title16,
+                color = MovieTheme.colors.text.main,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center,

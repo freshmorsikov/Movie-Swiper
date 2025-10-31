@@ -158,6 +158,7 @@ private fun LoadedMovieDetailsScreenContent(
             ) {
                 Text(
                     text = state.movie.title,
+                    color = MovieTheme.colors.text.main,
                     style = MovieTheme.typography.title20,
                     textAlign = TextAlign.Center,
                 )
@@ -215,14 +216,14 @@ private fun OverviewBlock(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(Res.string.movie_details_overview),
-                style = MovieTheme.typography.title16,
                 color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.title16,
             )
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = overview,
-                style = MovieTheme.typography.body14,
                 color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.body14,
             )
         }
     }
@@ -276,6 +277,7 @@ private fun CastBlock(
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = stringResource(Res.string.movie_details_cast),
+                color = MovieTheme.colors.text.main,
                 style = MovieTheme.typography.title16,
             )
             Row(
@@ -298,14 +300,14 @@ private fun CastBlock(
                         Text(
                             modifier = Modifier.padding(top = 4.dp),
                             text = actor.name,
-                            style = MovieTheme.typography.body14,
                             color = MovieTheme.colors.text.main,
+                            style = MovieTheme.typography.body14,
                         )
                         Text(
                             modifier = Modifier.padding(top = 2.dp),
                             text = actor.character,
-                            style = MovieTheme.typography.body12,
                             color = MovieTheme.colors.text.variant,
+                            style = MovieTheme.typography.body12,
                         )
                     }
                 }
@@ -342,13 +344,13 @@ private fun BudgetBlock(
         ) {
             Text(
                 text = stringResource(Res.string.movie_details_budget),
-                style = MovieTheme.typography.title16,
                 color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.title16,
             )
             Text(
                 text = "$${budget.toAmountFormat()}",
-                style = MovieTheme.typography.body14,
                 color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.body14,
             )
         }
     }
@@ -382,13 +384,13 @@ private fun RevenueBlock(
         ) {
             Text(
                 text = stringResource(Res.string.movie_details_revenue),
-                style = MovieTheme.typography.title16,
                 color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.title16,
             )
             Text(
                 text = "$${revenue.toAmountFormat()}",
-                style = MovieTheme.typography.body14,
                 color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.body14,
             )
         }
     }

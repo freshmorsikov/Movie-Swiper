@@ -170,7 +170,7 @@ private fun BottomNavigationBarContent(
                             }
                             Text(
                                 text = stringResource(route.text()),
-                                style = MovieTheme.typography.label12
+                                style = MovieTheme.typography.label12,
                             )
                         }
                     },
