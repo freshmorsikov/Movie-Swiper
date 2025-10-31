@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
+import com.github.freshmorsikov.moviematcher.core.ui.paddingWithSystemTopBar
 import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.feature.favorites.presentation.FavoritesUdf
 import com.github.freshmorsikov.moviematcher.feature.favorites.presentation.FavoritesViewModel
@@ -87,7 +87,7 @@ fun FavoriteScreenContent(
                             .fillMaxWidth()
                             .padding(top = 8.dp),
                         text = stringResource(Res.string.favorites_do_you_have),
-                        style = MovieTheme.typography.title16,
+                        style = MovieTheme.typography.body14,
                         color = MovieTheme.colors.text.variant,
                         textAlign = TextAlign.Center
                     )
@@ -97,7 +97,7 @@ fun FavoriteScreenContent(
             is FavoritesUdf.State.Data -> {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
+                    contentPadding = paddingWithSystemTopBar(all = 16.dp),
                     verticalArrangement = spacedBy(8.dp)
                 ) {
                     items(state.movieList) { movie ->
