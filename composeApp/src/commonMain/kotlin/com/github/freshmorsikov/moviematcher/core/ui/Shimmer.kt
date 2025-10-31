@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -77,7 +76,7 @@ private fun shimmerAlpha(label: String): State<Float> {
 @Preview
 @Composable
 private fun ShimmerPreview() {
-    MaterialTheme {
+    MovieTheme {
         ContainerShimmer(
             modifier = Modifier
                 .width(184.dp)
