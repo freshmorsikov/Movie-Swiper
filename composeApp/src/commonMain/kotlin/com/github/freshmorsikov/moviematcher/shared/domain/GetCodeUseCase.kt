@@ -1,7 +1,6 @@
 package com.github.freshmorsikov.moviematcher.shared.domain
 
 import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
-import com.github.freshmorsikov.moviematcher.util.pow
 import kotlin.uuid.ExperimentalUuidApi
 
 const val PAIR_ID_ABC = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -32,9 +31,11 @@ class GetCodeUseCase(
 
     private fun generateCode(counter: Long): String {
         var pairId = ""
-        for (i in 1..4) {
-            val letterIndex = counter / PAIR_ID_ABC.length.pow(i - 1) % PAIR_ID_ABC.length.pow(i)
+        var remainder = counter
+        repeat(4) {
+            val letterIndex = remainder % PAIR_ID_ABC.length
             pairId += PAIR_ID_ABC[letterIndex.toInt()]
+            remainder /= PAIR_ID_ABC.length
         }
 
         return pairId
