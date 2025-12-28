@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +44,9 @@ import com.github.freshmorsikov.moviematcher.feature.details.presentation.MovieD
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieGenres
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
+import com.github.freshmorsikov.moviematcher.shared.ui.player.MoviePlayerView
+import com.github.freshmorsikov.moviematcher.shared.ui.player.PlayerContent
+import com.github.freshmorsikov.moviematcher.shared.ui.player.PlayerStateController
 import com.github.freshmorsikov.moviematcher.util.toAmountFormat
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_back
@@ -53,6 +57,7 @@ import moviematcher.composeapp.generated.resources.movie_details_revenue
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -174,6 +179,26 @@ private fun LoadedMovieDetailsScreenContent(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 overview = state.movie.overview,
             )
+
+            val playerController = koinInject<PlayerStateController>()
+            LaunchedEffect(Unit) {
+                playerController.init {}
+                playerController.setContent(
+                    PlayerContent(
+                        name = state.movie.title,
+                        url = "https://youtu.be/Mzw2ttJD2qQ"
+                    )
+                )
+                playerController.play()
+            }
+            MoviePlayerView(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .padding(horizontal = 16.dp),
+                controller = playerController,
+            )
+
             CastBlock(actors = state.actors)
             BudgetBlock(
                 modifier = Modifier.padding(horizontal = 16.dp),

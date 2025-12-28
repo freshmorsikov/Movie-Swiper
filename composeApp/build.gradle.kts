@@ -48,6 +48,7 @@ kotlin {
             implementation(libs.ktor.okhttp)
             implementation(libs.sqldelight.android.driver)
             implementation(project.dependencies.platform(libs.firebase.bom))
+            implementation(libs.bundles.media3)
         }
         iosMain.dependencies {
             implementation(libs.ktor.darwin)
