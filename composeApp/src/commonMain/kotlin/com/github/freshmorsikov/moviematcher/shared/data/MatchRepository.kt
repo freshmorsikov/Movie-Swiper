@@ -1,31 +1,34 @@
 package com.github.freshmorsikov.moviematcher.shared.data
 
+import com.github.freshmorsikov.moviematcher.core.data.api.supabase.SupabaseApiService
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.database.DatabaseReference
 import dev.gitlive.firebase.database.database
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 private const val MATCHES = "matches"
-private const val PAIRED = "paired"
 private const val LIKED = "liked"
 private const val DISLIKED = "disliked"
 private const val MATCHED = "matched"
 
-class MatchRepository() {
-
-    suspend fun setPaired(code: String, paired: Boolean) {
-        val reference = getPairedReference(code = code)
-        reference.setValue(paired)
-    }
+class MatchRepository(
+    private val supabaseApiService: SupabaseApiService
+) {
 
     fun getPairedFlow(code: String): Flow<Boolean> {
-        return getPairedReference(code = code)
-            .valueEvents
-            .map { snapshot ->
-                (snapshot.value as? Boolean) == true
+        return flow {
+            val room = supabaseApiService.getRoomByCode(code = code)
+            if (room == null) {
+                emit(false)
+            } else {
+                supabaseApiService.getUsersFlowByRoomId(room.id).collect { users ->
+                    emit(users.size > 1)
+                }
             }
+        }
     }
 
     fun getMatchedListFlow(code: String): Flow<List<Long>> {
@@ -162,13 +165,6 @@ class MatchRepository() {
             .child(code)
             .child(collection)
             .child(movieId.toString())
-    }
-
-    private fun getPairedReference(code: String): DatabaseReference {
-        return Firebase.database.reference()
-            .child(MATCHES)
-            .child(code)
-            .child(PAIRED)
     }
 
 }

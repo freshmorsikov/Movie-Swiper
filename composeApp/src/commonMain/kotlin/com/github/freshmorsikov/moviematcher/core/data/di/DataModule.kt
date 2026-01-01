@@ -4,7 +4,7 @@ import com.github.freshmorsikov.moviematcher.Database
 import com.github.freshmorsikov.moviematcher.core.data.api.ApiService
 import com.github.freshmorsikov.moviematcher.core.data.api.BASE_URL
 import com.github.freshmorsikov.moviematcher.core.data.api.NetworkLogger
-import com.github.freshmorsikov.moviematcher.core.data.api.SupabaseApiService
+import com.github.freshmorsikov.moviematcher.core.data.api.supabase.SupabaseApiService
 import com.github.freshmorsikov.moviematcher.core.data.api.engine
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
 import io.github.jan.supabase.createSupabaseClient

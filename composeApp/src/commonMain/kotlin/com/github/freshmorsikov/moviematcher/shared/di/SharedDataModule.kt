@@ -6,7 +6,7 @@ import org.koin.dsl.module
 
 val sharedDataModule = module {
     single {
-        MatchRepository()
+        MatchRepository(supabaseApiService = get())
     }
     single {
         UserRepository(keyValueStore = get())
