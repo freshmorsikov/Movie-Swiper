@@ -14,7 +14,6 @@ val pairingFeatureModule = module {
             getCodeUseCase = get(),
             userRepository = get(),
             getUserUuidUseCase = get(),
-            matchRepository = get(),
         )
     }
 }

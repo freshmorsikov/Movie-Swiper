@@ -9,6 +9,9 @@ val sharedDataModule = module {
         MatchRepository(supabaseApiService = get())
     }
     single {
-        UserRepository(keyValueStore = get())
+        UserRepository(
+            supabaseApiService = get(),
+            keyValueStore = get(),
+        )
     }
 }

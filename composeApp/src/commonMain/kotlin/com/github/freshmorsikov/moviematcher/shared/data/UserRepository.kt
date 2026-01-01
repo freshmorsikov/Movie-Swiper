@@ -1,5 +1,6 @@
 package com.github.freshmorsikov.moviematcher.shared.data
 
+import com.github.freshmorsikov.moviematcher.core.data.api.supabase.SupabaseApiService
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.database.database
@@ -11,7 +12,8 @@ private const val USER_UUID_KEY = "USER_UUID_KEY"
 private const val SHOW_PAIR_STATUS_KEY = "SHOW_PAIR_STATUS_KEY"
 
 class UserRepository(
-    private val keyValueStore: KeyValueStore
+    private val supabaseApiService: SupabaseApiService,
+    private val keyValueStore: KeyValueStore,
 ) {
 
     suspend fun getUserUuid(): String? {
@@ -23,13 +25,11 @@ class UserRepository(
     }
 
     suspend fun getCodeCounter(): Long {
-        val snapshot = Firebase.database.reference("counter").valueEvents.firstOrNull()
-
-        return (snapshot?.value as? Long) ?: 0L
+        return supabaseApiService.getCounter()?.value ?: 0L
     }
 
     suspend fun updateCodeCounter(counter: Long) {
-        Firebase.database.reference("counter").setValue(counter)
+        supabaseApiService.updateCounter(value = counter)
     }
 
     suspend fun getUserCode(userUuid: String): String? {
