@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -13,14 +12,14 @@ plugins {
 }
 
 buildConfig {
-    val authToken = rootProject.file("local.properties")
-        .inputStream()
-        .use { input ->
-            Properties().apply {
-                load(input)
-            }.getProperty("AUTH_TOKEN")
-        }
-    buildConfigField("AUTH_TOKEN", authToken)
+    val openAiApiKey = project.findProperty("MOVIE_SWIPER_FB_TOKEN") as String
+    buildConfigField("FB_TOKEN", openAiApiKey)
+
+    val supabaseUrl = project.findProperty("MOVIE_SWIPER_SUPABASE_URL") as String
+    buildConfigField("SUPABASE_URL", supabaseUrl)
+
+    val supabaseApiKey = project.findProperty("MOVIE_SWIPER_SUPABASE_API_KEY") as String
+    buildConfigField("SUPABASE_API_KEY", supabaseApiKey)
 }
 
 kotlin {
@@ -71,6 +70,10 @@ kotlin {
             implementation(libs.bundles.datastore)
             implementation(libs.firebase.database)
             implementation(libs.firebase.analytics)
+
+            implementation(project.dependencies.platform(libs.supabase.bom))
+            implementation(libs.supabase.realtime)
+            implementation(libs.supabase.postgrest)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
