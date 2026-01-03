@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.map
 private const val MATCHES = "matches"
 private const val LIKED = "liked"
 private const val DISLIKED = "disliked"
-private const val MATCHED = "matched"
 
 class MatchRepository(
     private val supabaseApiService: SupabaseApiService
@@ -23,17 +22,12 @@ class MatchRepository(
         }
     }
 
-    fun getMatchedListFlow(code: String): Flow<List<Long>> {
-        return Firebase.database.reference()
-            .child(MATCHES)
-            .child(code)
-            .child(MATCHED)
-            .valueEvents
-            .map { snapshot ->
-                snapshot.children.mapNotNull { child ->
-                    child.key?.toLongOrNull()
-                }
+    fun getMatchedListFlow(roomId: String): Flow<List<Long>> {
+        return supabaseApiService.getMatchedListFlowByRoomId(roomId = roomId).map { matchedList ->
+            matchedList.map { matched ->
+                matched.movie
             }
+        }
     }
 
     suspend fun isMovieLiked(code: String, movieId: Long): Boolean {
@@ -75,12 +69,11 @@ class MatchRepository(
     }
 
     suspend fun addToMatched(
-        code: String,
+        roomId: String,
         movieId: Long,
     ) {
-        addToCollection(
-            code = code,
-            collection = MATCHED,
+        supabaseApiService.createMatched(
+            roomId = roomId,
             movieId = movieId,
         )
     }

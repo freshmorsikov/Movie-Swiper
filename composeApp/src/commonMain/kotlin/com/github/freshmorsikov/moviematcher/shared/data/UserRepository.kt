@@ -20,13 +20,22 @@ class UserRepository(
         return keyValueStore.getStringFlow(USER_ID_KEY)
             .filterNotNull()
             .map { userId ->
-                val user = supabaseApiService.getUserById(userId = userId) ?: return@map null
-                val room = supabaseApiService.getRoomById(roomId = user.room) ?: return@map null
-                Room(
-                    id = room.id,
-                    code = room.code,
-                )
+                getRoomByUserId(userId = userId)
             }
+    }
+
+    suspend fun getRoom(): Room? {
+        val userId = getUserId()
+        return getRoomByUserId(userId = userId)
+    }
+
+    private suspend fun getRoomByUserId(userId: String): Room? {
+        val user = supabaseApiService.getUserById(userId = userId) ?: return null
+        val room = supabaseApiService.getRoomById(roomId = user.room) ?: return null
+        return Room(
+            id = room.id,
+            code = room.code,
+        )
     }
 
     suspend fun getUserIdOrNull(): String? {

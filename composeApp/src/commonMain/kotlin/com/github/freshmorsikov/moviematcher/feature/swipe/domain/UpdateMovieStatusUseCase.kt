@@ -1,13 +1,14 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe.domain
 
-import com.github.freshmorsikov.moviematcher.shared.data.MovieRepository
-import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 import com.github.freshmorsikov.moviematcher.shared.data.MatchRepository
+import com.github.freshmorsikov.moviematcher.shared.data.MovieRepository
 import com.github.freshmorsikov.moviematcher.shared.domain.GetCodeUseCase
+import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 
 class UpdateMovieStatusUseCase(
     private val movieRepository: MovieRepository,
     private val getCodeUseCase: GetCodeUseCase,
+    private val getRoomUseCase: GetRoomUseCase,
     private val matchRepository: MatchRepository,
 ) {
 
@@ -42,10 +43,12 @@ class UpdateMovieStatusUseCase(
                             code = code,
                             movieId = id,
                         )
-                        matchRepository.addToMatched(
-                            code = code,
-                            movieId = id,
-                        )
+                        getRoomUseCase()?.let { room ->
+                            matchRepository.addToMatched(
+                                roomId = room.id,
+                                movieId = id,
+                            )
+                        }
                     } else {
                         matchRepository.addToLiked(
                             code = code,

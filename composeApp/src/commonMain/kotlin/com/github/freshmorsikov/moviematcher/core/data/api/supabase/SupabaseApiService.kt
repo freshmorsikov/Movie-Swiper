@@ -1,8 +1,10 @@
 package com.github.freshmorsikov.moviematcher.core.data.api.supabase
 
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.CounterEntity
+import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertMatched
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertRoom
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertUser
+import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.MatchedEntity
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.RoomEntity
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.UserEntity
 import io.github.jan.supabase.SupabaseClient
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 private const val COUNTER_TABLE = "counter"
 private const val ROOM_TABLE = "room"
 private const val USER_TABLE = "user"
+private const val MATCHED_TABLE = "matched"
 
 private const val ROOM_COLUMN = "room"
 
@@ -112,5 +115,34 @@ class SupabaseApiService(
                 )
             )
     }
+
+    // MATCHED
+
+    @OptIn(SupabaseExperimental::class)
+    fun getMatchedListFlowByRoomId(roomId: String): Flow<List<MatchedEntity>> {
+        return supabaseClient.from(table = MATCHED_TABLE)
+            .selectAsFlow(
+                primaryKey = MatchedEntity::id,
+                filter = FilterOperation(
+                    column = ROOM_COLUMN,
+                    operator = FilterOperator.EQ,
+                    value = roomId,
+                )
+            )
+    }
+
+    suspend fun createMatched(
+        roomId: String,
+        movieId: Long,
+    ) {
+        supabaseClient.from(table = MATCHED_TABLE)
+            .insert(
+                InsertMatched(
+                    room = roomId,
+                    movie = movieId,
+                )
+            )
+    }
+
 
 }

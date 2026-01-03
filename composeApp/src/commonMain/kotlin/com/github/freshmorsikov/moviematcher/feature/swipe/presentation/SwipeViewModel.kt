@@ -9,7 +9,7 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUs
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
-import com.github.freshmorsikov.moviematcher.shared.domain.GetCodeFlowCaseCase
+import com.github.freshmorsikov.moviematcher.shared.domain.GetRoomFlowCaseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -23,7 +23,7 @@ class SwipeViewModel(
     private val getMovieListUseCase: GetMovieListUseCase,
     private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
     private val getPairedFlowUseCase: GetPairedFlowUseCase,
-    private val getCodeFlowCaseCase: GetCodeFlowCaseCase,
+    private val getRoomFlowCaseCase: GetRoomFlowCaseCase,
     analyticsManager: AnalyticsManager,
 ) : UdfViewModel<SwipeUdf.State, SwipeUdf.Action, SwipeUdf.Event>(
     initState = {
@@ -56,8 +56,8 @@ class SwipeViewModel(
     }
 
     private fun subscribeOnCode() {
-        getCodeFlowCaseCase().onEach { code ->
-            onAction(SwipeUdf.Action.UpdateCode(code = code))
+        getRoomFlowCaseCase().onEach { room ->
+            onAction(SwipeUdf.Action.UpdateCode(code = room.code))
         }.launchIn(viewModelScope)
     }
 
