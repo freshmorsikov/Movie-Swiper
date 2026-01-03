@@ -6,7 +6,6 @@ import dev.gitlive.firebase.database.DatabaseReference
 import dev.gitlive.firebase.database.database
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 private const val MATCHES = "matches"
@@ -18,16 +17,9 @@ class MatchRepository(
     private val supabaseApiService: SupabaseApiService
 ) {
 
-    fun getPairedFlow(code: String): Flow<Boolean> {
-        return flow {
-            val room = supabaseApiService.getRoomByCode(code = code)
-            if (room == null) {
-                emit(false)
-            } else {
-                supabaseApiService.getUsersFlowByRoomId(room.id).collect { users ->
-                    emit(users.size > 1)
-                }
-            }
+    fun getPairedFlow(roomId: String): Flow<Boolean> {
+        return supabaseApiService.getUsersFlowByRoomId(roomId = roomId).map { users ->
+            users.size > 1
         }
     }
 

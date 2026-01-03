@@ -1,7 +1,8 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe.di
 
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.CheckUserUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.IsPairedFlowUseCase
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeViewModel
@@ -12,13 +13,17 @@ import org.koin.dsl.module
 val swipeFeatureModule = module {
     viewModel {
         SwipeViewModel(
+            checkUserUseCase = get(),
             loadGenreListUseCase = get(),
             getMovieListUseCase = get(),
             updateMovieStatusUseCase = get(),
-            isPairedFlowUseCase = get(),
+            getPairedFlowUseCase = get(),
             getCodeFlowCaseCase = get(),
             analyticsManager = get(),
         )
+    }
+    factory {
+        CheckUserUseCase(userRepository = get())
     }
     factory {
         LoadGenreListUseCase(movieRepository = get())
@@ -34,8 +39,8 @@ val swipeFeatureModule = module {
         )
     }
     factory {
-        IsPairedFlowUseCase(
-            getCodeFlowCaseCase = get(),
+        GetPairedFlowUseCase(
+            userRepository = get(),
             matchRepository = get(),
         )
     }

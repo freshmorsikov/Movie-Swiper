@@ -1,6 +1,8 @@
 package com.github.freshmorsikov.moviematcher.core.data.api.supabase
 
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.CounterEntity
+import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertRoom
+import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertUser
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.RoomEntity
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.UserEntity
 import io.github.jan.supabase.SupabaseClient
@@ -42,14 +44,43 @@ class SupabaseApiService(
 
     // ROOM
 
-    suspend fun getRoomByCode(code: String): RoomEntity? {
+    suspend fun getRoomById(roomId: String): RoomEntity? {
         return supabaseClient.from(table = ROOM_TABLE)
             .select {
-                filter { RoomEntity::code eq code }
+                filter { RoomEntity::id eq roomId }
             }.decodeSingleOrNull<RoomEntity>()
     }
 
+    suspend fun createRoom(code: String): RoomEntity {
+        return supabaseClient.from(table = ROOM_TABLE)
+            .insert(
+                value = InsertRoom(
+                    code = code
+                )
+            ) {
+                select()
+            }.decodeSingle<RoomEntity>()
+    }
+
     // USER
+
+    suspend fun getUserById(userId: String): UserEntity? {
+        return supabaseClient.from(table = USER_TABLE)
+            .select {
+                filter { UserEntity::id eq userId }
+            }.decodeSingleOrNull<UserEntity>()
+    }
+
+    suspend fun createUser(roomId: String): UserEntity {
+        return supabaseClient.from(table = USER_TABLE)
+            .insert(
+                value = InsertUser(
+                    room = roomId
+                )
+            ) {
+                select()
+            }.decodeSingle<UserEntity>()
+    }
 
     @OptIn(SupabaseExperimental::class)
     fun getUsersFlowByRoomId(roomId: String): Flow<List<UserEntity>> {

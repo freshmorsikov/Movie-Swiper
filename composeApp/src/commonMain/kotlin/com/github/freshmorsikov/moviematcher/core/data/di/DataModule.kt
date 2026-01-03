@@ -58,7 +58,10 @@ val dataModule = module {
             ) {
                 install(Postgrest)
                 install(Realtime)
-                defaultSerializer = KotlinXSerializer(Json {})
+                val json = Json {
+                    ignoreUnknownKeys = true
+                }
+                defaultSerializer = KotlinXSerializer(json = json)
             }
         )
     }

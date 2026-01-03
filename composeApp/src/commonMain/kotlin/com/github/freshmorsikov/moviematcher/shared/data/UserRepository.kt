@@ -2,13 +2,14 @@ package com.github.freshmorsikov.moviematcher.shared.data
 
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.SupabaseApiService
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
+import com.github.freshmorsikov.moviematcher.shared.domain.model.Room
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.database.database
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 
-private const val USER_UUID_KEY = "USER_UUID_KEY"
+private const val USER_ID_KEY = "USER_ID_KEY"
 private const val SHOW_PAIR_STATUS_KEY = "SHOW_PAIR_STATUS_KEY"
 
 class UserRepository(
@@ -16,12 +17,27 @@ class UserRepository(
     private val keyValueStore: KeyValueStore,
 ) {
 
-    suspend fun getUserUuid(): String? {
-        return keyValueStore.getString(USER_UUID_KEY)
+    fun getRoomFlow(): Flow<Room?> {
+        return keyValueStore.getStringFlow(USER_ID_KEY)
+            .filterNotNull()
+            .map { userId ->
+                val user = supabaseApiService.getUserById(userId = userId) ?: return@map null
+                val room = supabaseApiService.getRoomById(roomId = user.room) ?: return@map null
+                Room(
+                    id = room.id,
+                    code = room.code,
+                )
+            }
     }
 
-    suspend fun saveUserUuid(uuid: String) {
-        keyValueStore.putString(USER_UUID_KEY, uuid)
+    suspend fun getUserId(): String? {
+        return keyValueStore.getString(USER_ID_KEY)
+    }
+
+    suspend fun createUser(code: String) {
+        val roomId = supabaseApiService.createRoom(code = code).id
+        val userId = supabaseApiService.createUser(roomId).id
+        keyValueStore.putString(USER_ID_KEY, userId)
     }
 
     suspend fun getCodeCounter(): Long {
@@ -30,26 +46,6 @@ class UserRepository(
 
     suspend fun updateCodeCounter(counter: Long) {
         supabaseApiService.updateCounter(value = counter)
-    }
-
-    suspend fun getUserCode(userUuid: String): String? {
-        val snapshot = Firebase.database.reference()
-            .child("users")
-            .child(userUuid)
-            .child("code")
-            .valueEvents
-            .firstOrNull()
-        return snapshot?.value as? String
-    }
-
-    fun getUserCodeFlow(userUuid: String): Flow<String?> {
-        val reference = Firebase.database.reference()
-            .child("users")
-            .child(userUuid)
-            .child("code")
-        return reference.valueEvents.map { snapshot ->
-            snapshot.value as? String
-        }
     }
 
     suspend fun saveUserCode(userUuid: String, code: String) {

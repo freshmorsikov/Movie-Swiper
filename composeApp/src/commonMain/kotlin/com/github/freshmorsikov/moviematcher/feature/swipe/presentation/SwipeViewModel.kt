@@ -4,8 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.analytics.AnalyticsManager
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.OpenSwipeScreenEvent
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.CheckUserUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.IsPairedFlowUseCase
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.GetCodeFlowCaseCase
@@ -17,10 +18,11 @@ import kotlinx.coroutines.launch
 private const val MOVIE_COUNT = 3
 
 class SwipeViewModel(
+    private val checkUserUseCase: CheckUserUseCase,
     private val loadGenreListUseCase: LoadGenreListUseCase,
     private val getMovieListUseCase: GetMovieListUseCase,
     private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
-    private val isPairedFlowUseCase: IsPairedFlowUseCase,
+    private val getPairedFlowUseCase: GetPairedFlowUseCase,
     private val getCodeFlowCaseCase: GetCodeFlowCaseCase,
     analyticsManager: AnalyticsManager,
 ) : UdfViewModel<SwipeUdf.State, SwipeUdf.Action, SwipeUdf.Event>(
@@ -36,16 +38,19 @@ class SwipeViewModel(
     init {
         analyticsManager.sendEvent(event = OpenSwipeScreenEvent)
 
-        subscribeOnIsPaired()
+        subscribeOnPaired()
         subscribeOnCode()
+        subscribeOnMovieList()
+        viewModelScope.launch {
+            checkUserUseCase()
+        }
         viewModelScope.launch {
             loadGenreListUseCase()
         }
-        subscribeOnMovieList()
     }
 
-    private fun subscribeOnIsPaired() {
-        isPairedFlowUseCase().onEach { isPaired ->
+    private fun subscribeOnPaired() {
+        getPairedFlowUseCase().onEach { isPaired ->
             onAction(SwipeUdf.Action.UpdateInviteBanner(visible = !isPaired))
         }.launchIn(viewModelScope)
     }

@@ -20,6 +20,7 @@ class JoinPairUseCase(
         return true
     }
 
+    // TODO refactor
     private suspend fun saveUserCode(code: String) {
         val userUuid = getUserUuidUseCase()
         userRepository.saveUserCode(

@@ -8,14 +8,11 @@ import org.koin.dsl.module
 val sharedDomainModule = module {
     factory {
         GetCodeFlowCaseCase(
-            getUserUuidUseCase = get(),
-            getCodeUseCase = get(),
             userRepository = get(),
         )
     }
     single {
         GetCodeUseCase(
-            getUserUuidUseCase = get(),
             userRepository = get(),
         )
     }
