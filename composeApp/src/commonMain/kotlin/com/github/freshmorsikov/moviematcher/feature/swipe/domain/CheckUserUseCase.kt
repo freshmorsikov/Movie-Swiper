@@ -9,7 +9,7 @@ class CheckUserUseCase(
 ) {
 
     suspend operator fun invoke() {
-        val userId = userRepository.getUserId()
+        val userId = userRepository.getUserIdOrNull()
         if (userId == null) {
             val counter = userRepository.getCodeCounter()
             userRepository.updateCodeCounter(counter = counter + 1)

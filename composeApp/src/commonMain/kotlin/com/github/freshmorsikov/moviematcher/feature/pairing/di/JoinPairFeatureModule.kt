@@ -13,7 +13,6 @@ val pairingFeatureModule = module {
         JoinPairUseCase(
             getCodeUseCase = get(),
             userRepository = get(),
-            getUserUuidUseCase = get(),
         )
     }
 }

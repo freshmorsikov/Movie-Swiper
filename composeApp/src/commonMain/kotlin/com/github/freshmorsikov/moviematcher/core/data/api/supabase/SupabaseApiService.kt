@@ -51,6 +51,13 @@ class SupabaseApiService(
             }.decodeSingleOrNull<RoomEntity>()
     }
 
+    suspend fun getRoomByCode(code: String): RoomEntity? {
+        return supabaseClient.from(table = ROOM_TABLE)
+            .select {
+                filter { RoomEntity::code eq code }
+            }.decodeSingleOrNull<RoomEntity>()
+    }
+
     suspend fun createRoom(code: String): RoomEntity {
         return supabaseClient.from(table = ROOM_TABLE)
             .insert(
@@ -69,6 +76,17 @@ class SupabaseApiService(
             .select {
                 filter { UserEntity::id eq userId }
             }.decodeSingleOrNull<UserEntity>()
+    }
+
+    suspend fun updateUserRoom(
+        userId: String,
+        roomId: String
+    ) {
+        supabaseClient.from(USER_TABLE).update(
+            update = { UserEntity::room setTo roomId }
+        ) {
+            filter { UserEntity::id eq userId }
+        }
     }
 
     suspend fun createUser(roomId: String): UserEntity {

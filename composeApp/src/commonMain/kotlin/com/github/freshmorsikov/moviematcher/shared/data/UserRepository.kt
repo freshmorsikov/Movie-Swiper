@@ -3,10 +3,9 @@ package com.github.freshmorsikov.moviematcher.shared.data
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.SupabaseApiService
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Room
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.database.database
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private const val USER_ID_KEY = "USER_ID_KEY"
@@ -30,14 +29,14 @@ class UserRepository(
             }
     }
 
-    suspend fun getUserId(): String? {
+    suspend fun getUserIdOrNull(): String? {
         return keyValueStore.getString(USER_ID_KEY)
     }
 
-    suspend fun createUser(code: String) {
-        val roomId = supabaseApiService.createRoom(code = code).id
-        val userId = supabaseApiService.createUser(roomId).id
-        keyValueStore.putString(USER_ID_KEY, userId)
+    suspend fun getUserId(): String {
+        return keyValueStore.getStringFlow(USER_ID_KEY)
+            .filterNotNull()
+            .first()
     }
 
     suspend fun getCodeCounter(): Long {
@@ -48,12 +47,23 @@ class UserRepository(
         supabaseApiService.updateCounter(value = counter)
     }
 
-    suspend fun saveUserCode(userUuid: String, code: String) {
-        val reference = Firebase.database.reference()
-            .child("users")
-            .child(userUuid)
-            .child("code")
-        reference.setValue(code)
+    suspend fun createUser(code: String) {
+        val roomId = supabaseApiService.createRoom(code = code).id
+        val userId = supabaseApiService.createUser(roomId).id
+        keyValueStore.putString(USER_ID_KEY, userId)
+    }
+
+    suspend fun updateUserCode(
+        userId: String,
+        code: String
+    ): Boolean {
+        val room = supabaseApiService.getRoomByCode(code = code) ?: return false
+
+        supabaseApiService.updateUserRoom(
+            userId = userId,
+            roomId = room.id,
+        )
+        return true
     }
 
     suspend fun getShowPairStatus(): Boolean? {
