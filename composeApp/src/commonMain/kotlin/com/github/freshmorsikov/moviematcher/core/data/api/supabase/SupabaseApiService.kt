@@ -2,9 +2,11 @@ package com.github.freshmorsikov.moviematcher.core.data.api.supabase
 
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.CounterEntity
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertMatched
+import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertReaction
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertRoom
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertUser
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.MatchedEntity
+import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.ReactionEntity
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.RoomEntity
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.UserEntity
 import io.github.jan.supabase.SupabaseClient
@@ -19,6 +21,7 @@ private const val COUNTER_TABLE = "counter"
 private const val ROOM_TABLE = "room"
 private const val USER_TABLE = "user"
 private const val MATCHED_TABLE = "matched"
+private const val REACTION_TABLE = "reaction"
 
 private const val ROOM_COLUMN = "room"
 
@@ -112,6 +115,50 @@ class SupabaseApiService(
                     column = ROOM_COLUMN,
                     operator = FilterOperator.EQ,
                     value = roomId,
+                )
+            )
+    }
+
+    @OptIn(SupabaseExperimental::class)
+    suspend fun getUsersByRoomId(roomId: String): List<UserEntity> {
+        return supabaseClient.from(table = USER_TABLE)
+            .select {
+                filter {
+                UserEntity::room eq roomId
+                }
+            }.decodeList<UserEntity>()
+    }
+
+    // REACTION
+
+    suspend fun getReaction(
+        userId: String,
+        movieId: Long,
+        action: ReactionEntity.Action,
+    ): ReactionEntity? {
+        return supabaseClient.from(table = REACTION_TABLE)
+            .select {
+                filter {
+                    and {
+                        ReactionEntity::user eq userId
+                        ReactionEntity::movie eq movieId
+                        ReactionEntity::action eq action
+                    }
+                }
+            }.decodeSingleOrNull<ReactionEntity>()
+    }
+
+    suspend fun createReaction(
+        userId: String,
+        movieId: Long,
+        action: ReactionEntity.Action,
+    ) {
+        supabaseClient.from(table = REACTION_TABLE)
+            .insert(
+                InsertReaction(
+                    user = userId,
+                    movie = movieId,
+                    action = action,
                 )
             )
     }

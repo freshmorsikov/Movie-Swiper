@@ -3,9 +3,11 @@ package com.github.freshmorsikov.moviematcher.shared.data
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.SupabaseApiService
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Room
+import com.github.freshmorsikov.moviematcher.shared.domain.model.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
 private const val USER_ID_KEY = "USER_ID_KEY"
@@ -15,6 +17,16 @@ class UserRepository(
     private val supabaseApiService: SupabaseApiService,
     private val keyValueStore: KeyValueStore,
 ) {
+
+    fun getPairedFlow(): Flow<Boolean> {
+        return getRoomFlow()
+            .filterNotNull()
+            .flatMapLatest { room ->
+                supabaseApiService.getUsersFlowByRoomId(roomId = room.id).map { users ->
+                    users.size > 1
+                }
+            }
+    }
 
     fun getRoomFlow(): Flow<Room?> {
         return keyValueStore.getStringFlow(USER_ID_KEY)
@@ -50,6 +62,21 @@ class UserRepository(
 
     suspend fun getCodeCounter(): Long {
         return supabaseApiService.getCounter()?.value ?: 0L
+    }
+
+    suspend fun getPairedUser(): User? {
+        val userId = getUserId()
+        val room = getRoom() ?: return null
+        val users = supabaseApiService.getUsersByRoomId(roomId = room.id)
+
+        return users.find { user ->
+            user.id != userId
+        }?.let { user ->
+            User(
+                id = user.id,
+                room = user.room,
+            )
+        }
     }
 
     suspend fun updateCodeCounter(counter: Long) {
