@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 private const val USER_ID_KEY = "USER_ID_KEY"
 private const val SHOW_PAIR_STATUS_KEY = "SHOW_PAIR_STATUS_KEY"
@@ -28,17 +29,12 @@ class UserRepository(
             }
     }
 
-    fun getRoomFlow(): Flow<Room?> {
+    fun getRoomFlow(): Flow<Room> {
         return keyValueStore.getStringFlow(USER_ID_KEY)
             .filterNotNull()
-            .map { userId ->
-                getRoomByUserId(userId = userId)
+            .flatMapLatest { userId ->
+                getRoomFlowByUserId(userId = userId)
             }
-    }
-
-    suspend fun getRoom(): Room? {
-        val userId = getUserId()
-        return getRoomByUserId(userId = userId)
     }
 
     private suspend fun getRoomByUserId(userId: String): Room? {
@@ -48,6 +44,18 @@ class UserRepository(
             id = room.id,
             code = room.code,
         )
+    }
+
+    private suspend fun getRoomFlowByUserId(userId: String): Flow<Room> {
+        return supabaseApiService.getUserFlowById(userId = userId)
+            .filterNotNull()
+            .mapNotNull { user ->
+                val room = supabaseApiService.getRoomById(roomId = user.room) ?: return@mapNotNull null
+                Room(
+                    id = room.id,
+                    code = room.code,
+                )
+            }
     }
 
     suspend fun getUserIdOrNull(): String? {
@@ -66,7 +74,7 @@ class UserRepository(
 
     suspend fun getPairedUser(): User? {
         val userId = getUserId()
-        val room = getRoom() ?: return null
+        val room = getRoomByUserId(userId = userId) ?: return null
         val users = supabaseApiService.getUsersByRoomId(roomId = room.id)
 
         return users.find { user ->
@@ -89,7 +97,7 @@ class UserRepository(
         keyValueStore.putString(USER_ID_KEY, userId)
     }
 
-    suspend fun updateUserCode(
+    suspend fun updateRoom(
         userId: String,
         code: String
     ): Boolean {

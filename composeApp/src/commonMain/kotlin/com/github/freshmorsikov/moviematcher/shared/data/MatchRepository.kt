@@ -9,11 +9,12 @@ class MatchRepository(
 ) {
 
     fun getMatchedListFlow(roomId: String): Flow<List<Long>> {
-        return supabaseApiService.getMatchedListFlowByRoomId(roomId = roomId).map { matchedList ->
-            matchedList.map { matched ->
-                matched.movie
+        return supabaseApiService.getMatchedListFlowByRoomId(roomId = roomId)
+            .map { matchedList ->
+                matchedList.map { matched ->
+                    matched.movie
+                }
             }
-        }
     }
 
     suspend fun addToMatched(

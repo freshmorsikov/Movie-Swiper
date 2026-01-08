@@ -11,7 +11,7 @@ val pairingFeatureModule = module {
     }
     factory {
         JoinPairUseCase(
-            getCodeUseCase = get(),
+            getRoomFlowCaseCase = get(),
             userRepository = get(),
         )
     }

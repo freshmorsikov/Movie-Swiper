@@ -3,7 +3,6 @@ package com.github.freshmorsikov.moviematcher.feature.swipe.di
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.CheckUserUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedFlowUseCase
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetRoomUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeViewModel
@@ -31,9 +30,6 @@ val swipeFeatureModule = module {
     }
     factory {
         GetMovieListUseCase(movieRepository = get())
-    }
-    factory {
-        GetRoomUseCase(userRepository = get())
     }
     factory {
         UpdateMovieStatusUseCase(

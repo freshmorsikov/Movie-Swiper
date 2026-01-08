@@ -15,6 +15,7 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.filter.FilterOperation
 import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.selectAsFlow
+import io.github.jan.supabase.realtime.selectSingleValueAsFlow
 import kotlinx.coroutines.flow.Flow
 
 private const val COUNTER_TABLE = "counter"
@@ -82,6 +83,14 @@ class SupabaseApiService(
             .select {
                 filter { UserEntity::id eq userId }
             }.decodeSingleOrNull<UserEntity>()
+    }
+
+    @OptIn(SupabaseExperimental::class)
+    fun getUserFlowById(userId: String): Flow<UserEntity?> {
+        return supabaseClient.from(table = USER_TABLE)
+            .selectSingleValueAsFlow(UserEntity::id) {
+                UserEntity::id eq userId
+            }
     }
 
     suspend fun updateUserRoom(
