@@ -68,7 +68,6 @@ kotlin {
             implementation(libs.bundles.coil)
             implementation(libs.bundles.koin)
             implementation(libs.bundles.datastore)
-            implementation(libs.firebase.database)
             implementation(libs.firebase.analytics)
 
             implementation(project.dependencies.platform(libs.supabase.bom))
