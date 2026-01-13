@@ -94,7 +94,7 @@ fun App() {
             composable<NavigationRoute.Pairing>(
                 deepLinks = listOf(
                     navDeepLink<NavigationRoute.Pairing>(
-                        basePath = "https://freshmorsikov.github.io/Movie-Swiper-Landing"
+                        basePath = "https://movieswiper.freshmorsikov.com/"
                     )
                 )
             ) { backStackEntry ->

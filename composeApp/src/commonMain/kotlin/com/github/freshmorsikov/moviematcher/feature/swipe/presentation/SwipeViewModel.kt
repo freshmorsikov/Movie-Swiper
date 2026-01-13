@@ -107,7 +107,7 @@ class SwipeViewModel(
 
             is SwipeUdf.Action.InviteClick -> {
                 val code = currentState.code ?: return
-                val inviteLink = "https://freshmorsikov.github.io/Movie-Swiper-Landing?code=$code"
+                val inviteLink = "https://movieswiper.freshmorsikov.com/?code=$code"
                 sendEvent(SwipeUdf.Event.ShowSharingDialog(inviteLink = inviteLink))
             }
 
