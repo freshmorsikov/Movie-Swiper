@@ -24,7 +24,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct iOSApp: App {
     
     init() {
-        KoinKt.doInitKoinIos()
+        InitKt.doInitKoinIos()
+        InitKt.startAppIos()
     }
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate

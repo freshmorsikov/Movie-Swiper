@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.analytics.AnalyticsManager
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.OpenSwipeScreenEvent
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.CheckUserUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
@@ -18,7 +17,6 @@ import kotlinx.coroutines.launch
 private const val MOVIE_COUNT = 3
 
 class SwipeViewModel(
-    private val checkUserUseCase: CheckUserUseCase,
     private val loadGenreListUseCase: LoadGenreListUseCase,
     private val getMovieListUseCase: GetMovieListUseCase,
     private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
@@ -41,9 +39,6 @@ class SwipeViewModel(
         subscribeOnPaired()
         subscribeOnCode()
         subscribeOnMovieList()
-        viewModelScope.launch {
-            checkUserUseCase()
-        }
         viewModelScope.launch {
             loadGenreListUseCase()
         }

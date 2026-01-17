@@ -13,7 +13,6 @@ import org.koin.dsl.module
 val swipeFeatureModule = module {
     viewModel {
         SwipeViewModel(
-            checkUserUseCase = get(),
             loadGenreListUseCase = get(),
             getMovieListUseCase = get(),
             updateMovieStatusUseCase = get(),
