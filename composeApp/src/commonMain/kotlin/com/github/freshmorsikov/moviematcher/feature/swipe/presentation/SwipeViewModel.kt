@@ -10,6 +10,7 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListU
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.GetRoomFlowCaseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
+import com.github.freshmorsikov.moviematcher.util.Constants.LINK_BASE_PATH
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -102,7 +103,7 @@ class SwipeViewModel(
 
             is SwipeUdf.Action.InviteClick -> {
                 val code = currentState.code ?: return
-                val inviteLink = "https://movieswiper.freshmorsikov.com/?code=$code"
+                val inviteLink = "$LINK_BASE_PATH?code=$code"
                 sendEvent(SwipeUdf.Event.ShowSharingDialog(inviteLink = inviteLink))
             }
 

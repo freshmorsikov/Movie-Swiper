@@ -2,7 +2,6 @@ package com.github.freshmorsikov.moviematcher
 
 import android.app.Application
 import android.content.Context
-import com.github.freshmorsikov.moviematcher.app.Start
 import com.github.freshmorsikov.moviematcher.core.di.initKoin
 import org.koin.dsl.module
 
