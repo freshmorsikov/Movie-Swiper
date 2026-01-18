@@ -25,7 +25,7 @@ struct iOSApp: App {
     
     init() {
         InitKt.doInitKoinIos()
-        InitKt.startAppIos()
+        Start.shared.startApp()
     }
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
