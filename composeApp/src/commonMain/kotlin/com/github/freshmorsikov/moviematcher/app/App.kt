@@ -1,5 +1,8 @@
 package com.github.freshmorsikov.moviematcher.app
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
@@ -94,6 +97,8 @@ fun App() {
         NavHost(
             navController = navController,
             startDestination = NavigationRoute.Swipe,
+            enterTransition = { fadeIn(animationSpec = tween(300)) },
+            exitTransition = { fadeOut(animationSpec = tween(300)) },
             modifier = Modifier.padding(bottom = padding.calculateBottomPadding())
         ) {
             composable<NavigationRoute.Swipe> {
