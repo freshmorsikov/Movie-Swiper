@@ -12,8 +12,8 @@ plugins {
 }
 
 buildConfig {
-    val openAiApiKey = project.findProperty("MOVIE_SWIPER_FB_TOKEN") as String
-    buildConfigField("FB_TOKEN", openAiApiKey)
+    val themoviedbToken = project.findProperty("MOVIE_SWIPER_THEMOVIEDB_TOKEN") as String
+    buildConfigField("THEMOVIEDB_TOKEN", themoviedbToken)
 
     val supabaseUrl = project.findProperty("MOVIE_SWIPER_SUPABASE_URL") as String
     buildConfigField("SUPABASE_URL", supabaseUrl)
@@ -88,8 +88,8 @@ android {
         applicationId = "com.github.freshmorsikov.moviematcher"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 20
-        versionName = "0.2.0"
+        versionCode = 30
+        versionName = "0.3.0"
     }
     packaging {
         resources {

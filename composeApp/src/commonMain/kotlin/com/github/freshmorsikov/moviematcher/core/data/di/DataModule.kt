@@ -73,7 +73,7 @@ val dataModule = module {
         HttpClient(engine) {
             install(DefaultRequest) {
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
-                bearerAuth(BuildConfig.FB_TOKEN)
+                bearerAuth(BuildConfig.THEMOVIEDB_TOKEN)
                 url {
                     protocol = URLProtocol.HTTPS
                     host = BASE_URL
