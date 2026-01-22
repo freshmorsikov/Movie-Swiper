@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		3D1420C22EA6918700B6C08B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3D1420C12EA6918700B6C08B /* FirebaseAnalytics */; };
 		3D1420C42EA6918700B6C08B /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3D1420C32EA6918700B6C08B /* FirebaseCrashlytics */; };
-		3D1420C62EA6918700B6C08B /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 3D1420C52EA6918700B6C08B /* FirebaseDatabase */; };
 		3D3FF74E2F12810500BCDAD0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3D3FF74D2F12810500BCDAD0 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -49,7 +48,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D1420C62EA6918700B6C08B /* FirebaseDatabase in Frameworks */,
 				3D1420C22EA6918700B6C08B /* FirebaseAnalytics in Frameworks */,
 				3D1420C42EA6918700B6C08B /* FirebaseCrashlytics in Frameworks */,
 			);
@@ -99,7 +97,6 @@
 			packageProductDependencies = (
 				3D1420C12EA6918700B6C08B /* FirebaseAnalytics */,
 				3D1420C32EA6918700B6C08B /* FirebaseCrashlytics */,
-				3D1420C52EA6918700B6C08B /* FirebaseDatabase */,
 			);
 			productName = iosApp;
 			productReference = B9DA97B12DC1472C00A4DA20 /* moviematcher.app */;
@@ -333,13 +330,17 @@
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.2.0;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -374,13 +375,17 @@
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.2.0;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -431,11 +436,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3D1420C02EA6912400B6C08B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
-		};
-		3D1420C52EA6918700B6C08B /* FirebaseDatabase */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 3D1420C02EA6912400B6C08B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseDatabase;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
