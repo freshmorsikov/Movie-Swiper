@@ -1,7 +1,8 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe.di
 
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.CheckUserUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.IsPairedFlowUseCase
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeViewModel
@@ -15,10 +16,13 @@ val swipeFeatureModule = module {
             loadGenreListUseCase = get(),
             getMovieListUseCase = get(),
             updateMovieStatusUseCase = get(),
-            isPairedFlowUseCase = get(),
-            getCodeFlowCaseCase = get(),
+            getPairedFlowUseCase = get(),
+            getRoomFlowCaseCase = get(),
             analyticsManager = get(),
         )
+    }
+    factory {
+        CheckUserUseCase(userRepository = get())
     }
     factory {
         LoadGenreListUseCase(movieRepository = get())
@@ -29,14 +33,14 @@ val swipeFeatureModule = module {
     factory {
         UpdateMovieStatusUseCase(
             movieRepository = get(),
-            getCodeUseCase = get(),
+            userRepository = get(),
+            reactionRepository = get(),
             matchRepository = get(),
         )
     }
     factory {
-        IsPairedFlowUseCase(
-            getCodeFlowCaseCase = get(),
-            matchRepository = get(),
+        GetPairedFlowUseCase(
+            userRepository = get(),
         )
     }
     single {

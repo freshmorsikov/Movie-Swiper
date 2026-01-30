@@ -27,8 +27,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="freshmorsikov.github.io"
-                    android:pathPrefix="/Movie-Swiper-Landing"
+                    android:host="movieswiper.freshmorsikov.com"
                     android:scheme="https" />
             </intent-filter>
         </activity>

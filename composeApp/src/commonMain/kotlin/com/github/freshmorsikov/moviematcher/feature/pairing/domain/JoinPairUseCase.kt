@@ -1,46 +1,23 @@
 package com.github.freshmorsikov.moviematcher.feature.pairing.domain
 
-import com.github.freshmorsikov.moviematcher.shared.data.MatchRepository
 import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
-import com.github.freshmorsikov.moviematcher.shared.domain.GetCodeUseCase
-import com.github.freshmorsikov.moviematcher.shared.domain.GetUserUuidUseCase
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import com.github.freshmorsikov.moviematcher.shared.domain.GetRoomFlowCaseCase
+import kotlinx.coroutines.flow.first
 
 class JoinPairUseCase(
-    private val getCodeUseCase: GetCodeUseCase,
+    private val getRoomFlowCaseCase: GetRoomFlowCaseCase,
     private val userRepository: UserRepository,
-    private val getUserUuidUseCase: GetUserUuidUseCase,
-    private val matchRepository: MatchRepository,
 ) {
 
     suspend operator fun invoke(code: String): Boolean {
-        val currentCode = getCodeUseCase()
-        if (currentCode == code) {
+        val currentRoom = getRoomFlowCaseCase().first()
+        if (currentRoom.code == code) {
             return false
         }
 
-        return coroutineScope {
-            val savingJob = launch {
-                saveUserCode(code = code)
-            }
-            val pairingJob = launch {
-                matchRepository.setPaired(
-                    code = code,
-                    paired = true
-                )
-            }
-            savingJob.join()
-            pairingJob.join()
-
-            true
-        }
-    }
-
-    private suspend fun saveUserCode(code: String) {
-        val userUuid = getUserUuidUseCase()
-        userRepository.saveUserCode(
-            userUuid = userUuid,
+        val userId = userRepository.getUserId()
+        return userRepository.updateRoom(
+            userId = userId,
             code = code
         )
     }

@@ -11,7 +11,7 @@ val matchesFeatureModule = module {
     }
     factory {
         GetMatchedListFlowUseCase(
-            getCodeFlowCaseCase = get(),
+            getRoomFlowCaseCase = get(),
             matchRepository = get(),
             movieRepository = get(),
         )
