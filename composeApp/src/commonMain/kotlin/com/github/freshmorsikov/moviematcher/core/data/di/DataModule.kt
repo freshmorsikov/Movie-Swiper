@@ -4,8 +4,13 @@ import com.github.freshmorsikov.moviematcher.Database
 import com.github.freshmorsikov.moviematcher.core.data.api.ApiService
 import com.github.freshmorsikov.moviematcher.core.data.api.BASE_URL
 import com.github.freshmorsikov.moviematcher.core.data.api.NetworkLogger
+import com.github.freshmorsikov.moviematcher.core.data.api.supabase.SupabaseApiService
 import com.github.freshmorsikov.moviematcher.core.data.api.engine
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.realtime.Realtime
+import io.github.jan.supabase.serializer.KotlinXSerializer
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -46,13 +51,29 @@ val dataModule = module {
     }
 
     single {
+        SupabaseApiService(
+            supabaseClient = createSupabaseClient(
+                supabaseUrl = BuildConfig.SUPABASE_URL,
+                supabaseKey = BuildConfig.SUPABASE_API_KEY,
+            ) {
+                install(Postgrest)
+                install(Realtime)
+                val json = Json {
+                    ignoreUnknownKeys = true
+                }
+                defaultSerializer = KotlinXSerializer(json = json)
+            }
+        )
+    }
+
+    single {
         ApiService(httpClient = get())
     }
     single {
         HttpClient(engine) {
             install(DefaultRequest) {
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
-                bearerAuth(BuildConfig.AUTH_TOKEN)
+                bearerAuth(BuildConfig.THEMOVIEDB_TOKEN)
                 url {
                     protocol = URLProtocol.HTTPS
                     host = BASE_URL

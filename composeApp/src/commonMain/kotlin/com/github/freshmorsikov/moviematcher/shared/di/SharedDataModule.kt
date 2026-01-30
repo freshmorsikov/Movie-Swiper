@@ -1,14 +1,23 @@
 package com.github.freshmorsikov.moviematcher.shared.di
 
 import com.github.freshmorsikov.moviematcher.shared.data.MatchRepository
+import com.github.freshmorsikov.moviematcher.shared.data.ReactionRepository
 import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
 import org.koin.dsl.module
 
 val sharedDataModule = module {
     single {
-        MatchRepository()
+        MatchRepository(supabaseApiService = get())
     }
     single {
-        UserRepository(keyValueStore = get())
+        UserRepository(
+            supabaseApiService = get(),
+            keyValueStore = get(),
+        )
+    }
+    single {
+        ReactionRepository(
+            supabaseApiService = get(),
+        )
     }
 }

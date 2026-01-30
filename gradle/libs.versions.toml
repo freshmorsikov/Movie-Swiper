@@ -1,23 +1,24 @@
 [versions]
-agp = "8.10.1"
+agp = "8.13.2"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
-androidx-activity = "1.10.1"
-androidx-lifecycle = "2.9.3"
-composeMultiplatform = "1.8.2"
-kotlin = "2.2.10"
-ktor = "3.2.1"
-serialization = "1.6.3"
-coil = "3.2.0"
-buildConfig = "5.6.7"
-sqldelight = "2.1.0"
-koin = "4.1.0"
-datastore = "1.1.7"
-navigationCompose = "2.9.0-beta05"
-googleServices = "4.4.3"
-firebaseBom = "34.2.0"
-gitlive = "2.3.0"
+androidx-activity = "1.12.2"
+androidx-lifecycle = "2.9.6"
+composeMultiplatform = "1.9.3"
+kotlin = "2.3.0"
+ktor = "3.3.3"
+serialization = "1.9.0"
+coil = "3.3.0"
+buildConfig = "6.0.7"
+sqldelight = "2.2.1"
+koin = "4.1.1"
+datastore = "1.2.0"
+navigationCompose = "2.9.1"
+googleServices = "4.4.4"
+firebaseBom = "34.7.0"
+gitlive = "2.4.0"
+supabase = "3.3.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -50,8 +51,11 @@ datastore = { group = "androidx.datastore", name = "datastore", version.ref = "d
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
-firebase-database = { group = "dev.gitlive", name = "firebase-database", version.ref = "gitlive" }
 firebase-analytics = { group = "dev.gitlive", name = "firebase-analytics", version.ref = "gitlive" }
+
+supabase-bom = { group = "io.github.jan-tennert.supabase", name = "bom", version.ref = "supabase" }
+supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt" }
+supabase-realtime = { group = "io.github.jan-tennert.supabase", name = "realtime-kt" }
 
 [bundles]
 ktor = [

@@ -1,20 +1,17 @@
 package com.github.freshmorsikov.moviematcher.shared.domain
 
 import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
+import com.github.freshmorsikov.moviematcher.shared.domain.model.Room
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
-import kotlin.uuid.ExperimentalUuidApi
 
-@OptIn(ExperimentalUuidApi::class)
-class GetCodeUseCase(
+class GetRoomFlowCaseCase(
     private val userRepository: UserRepository,
 ) {
 
-    suspend operator fun invoke(): String {
+    operator fun invoke(): Flow<Room> {
         return userRepository.getRoomFlow()
             .filterNotNull()
-            .first()
-            .code
     }
 
 }
