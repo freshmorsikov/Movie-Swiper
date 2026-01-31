@@ -2,6 +2,10 @@ package com.github.freshmorsikov.moviematcher.app.snackbar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.DraggableAnchors
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,9 +19,11 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -37,14 +43,43 @@ class MatchSnackbarVisuals(
     override val actionLabel: String? = null,
 ) : SnackbarVisuals
 
+enum class SnackbarSwipeState {
+    Visible,
+    Swiped
+}
+
 @Composable
 fun MatchSnackbar(
     visuals: MatchSnackbarVisuals,
     navController: NavController,
     onDismiss: () -> Unit,
 ) {
+    val draggableState = remember {
+        AnchoredDraggableState(
+            initialValue = SnackbarSwipeState.Visible,
+            anchors = DraggableAnchors {
+                SnackbarSwipeState.Visible at 0f
+                SnackbarSwipeState.Swiped at -100f
+            }
+        )
+    }
+    LaunchedEffect(draggableState.currentValue) {
+        if (draggableState.currentValue == SnackbarSwipeState.Swiped) {
+            onDismiss()
+        }
+    }
     Row(
         modifier = Modifier
+            .graphicsLayer {
+                translationY = draggableState.offset * density
+                scaleX = (draggableState.offset + 100) * 0.01f
+                scaleX = draggableState.offset * 0.005f + 1  // 1 - 0.5
+                scaleY = draggableState.offset * 0.005f + 1  // 1 - 0.5
+            }
+            .anchoredDraggable(
+                state = draggableState,
+                orientation = Orientation.Vertical,
+            )
             .clickableWithoutIndication {
                 navController.navigate(route = NavigationRoute.Matches) {
                     popUpTo(navController.graph.id) {
