@@ -6,43 +6,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun MovieButton(
     text: String,
     onClick: () -> Unit,
     containerColor: Color,
-    contentColor: Color,
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     Button(
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = contentColor,
+            containerColor = containerColor
         ),
         enabled = enabled,
         onClick = onClick
     ) {
-        Text(
-            text = text,
-            style = MovieTheme.typography.body14,
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun MovieButtonPreview() {
-    MovieTheme {
-        MovieButton(
-            text = "This is button",
-            onClick = {},
-            containerColor = MovieTheme.colors.primary,
-            contentColor = MovieTheme.colors.text.onAccent,
-        )
+        Text(text = text)
     }
 }

@@ -1,15 +1,14 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,8 +30,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,7 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -61,7 +62,6 @@ import com.github.freshmorsikov.moviematcher.core.ui.ContainerShimmer
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.Shimmer
 import com.github.freshmorsikov.moviematcher.core.ui.none
-import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeUdf.MovieCardState
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeViewModel
@@ -71,7 +71,6 @@ import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieGenres
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
 import com.github.freshmorsikov.moviematcher.util.SharingManager
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
-import com.github.freshmorsikov.moviematcher.util.clickableWithoutIndication
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import moviematcher.composeapp.generated.resources.Res
@@ -148,23 +147,22 @@ private fun InviteBanner(
     onAction: (SwipeUdf.Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.animateContentSize()) {
-        val backgroundAlpha by animateFloatAsState(
-            if (visible) 1f else 0f
-        )
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    MovieTheme.colors.warning.copy(
-                        alpha = backgroundAlpha
-                    )
-                ).padding(
-                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
+    val backgroundColor = Color(0xFFFFF6E5)
+    val backgroundAlpha by animateFloatAsState(
+        if (visible) 1f else 0f
+    )
+    Box(
+        modifier = modifier
+            .background(
+                backgroundColor.copy(
+                    alpha = backgroundAlpha
                 )
-        )
+            )
+            .padding(
+                top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
+            ),
+    ) {
         AnimatedVisibility(
-            modifier = modifier,
             visible = visible,
             enter = slideInVertically(
                 animationSpec = tween(500)
@@ -177,13 +175,7 @@ private fun InviteBanner(
                 -fullHeight
             },
         ) {
-            Column(
-                modifier = Modifier.background(
-                    color = MovieTheme.colors.warning.copy(
-                        alpha = backgroundAlpha
-                    )
-                )
-            ) {
+            Column {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -203,27 +195,27 @@ private fun InviteBanner(
                     Text(
                         modifier = Modifier.weight(1f),
                         text = stringResource(Res.string.swipe_create_pair),
-                        style = MovieTheme.typography.body14,
-                        color = MovieTheme.colors.text.onWarning,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFFE08700),
                     )
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
                         text = stringResource(Res.string.swipe_invite),
-                        style = MovieTheme.typography.label12,
-                        color = MovieTheme.colors.text.onWarning,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFFE08700),
                     )
                     Icon(
                         modifier = Modifier
                             .padding(start = 4.dp)
                             .size(16.dp),
                         painter = painterResource(Res.drawable.ic_chevron_right),
-                        tint = MovieTheme.colors.text.onWarning,
+                        tint = Color(0xFFE08700),
                         contentDescription = null
                     )
                 }
                 HorizontalDivider(
                     thickness = 0.5.dp,
-                    color = MovieTheme.colors.stroke,
+                    color = Color(0xFFE08700),
                 )
             }
         }
@@ -445,7 +437,7 @@ private fun MovieStack(
                         translationY = 32 * density
                         translationX = draggableState.offset
                         alpha = topAlpha.value
-                    }.clickableWithoutIndication(
+                    }.clickable(
                         onClick = { onMovieClick(top.id) }
                     ),
                 movie = top,
@@ -459,45 +451,44 @@ private fun MovieCard(
     movie: Movie,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .clip(cardShape)
-            .background(color = MovieTheme.colors.surface.main)
-            .border(
-                width = 0.5.dp,
-                color = MovieTheme.colors.stroke,
-                shape = cardShape
-            )
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        shape = cardShape,
+        border = BorderStroke(1.dp, Color.Black.copy(alpha = 0.1f))
     ) {
-        AsyncImage(
-            modifier = Modifier
-                .height(500.dp)
-                .width(380.dp),
-            model = "$IMAGE_BASE_URL${movie.posterPath}",
-            contentScale = ContentScale.FillBounds,
-            contentDescription = null,
-        )
-        Column(
-            modifier = Modifier
-                .width(380.dp)
-                .padding(16.dp),
-            verticalArrangement = spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = movie.title,
-                style = MovieTheme.typography.title16,
-                color = MovieTheme.colors.text.main,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
+        Column {
+            AsyncImage(
+                modifier = Modifier
+                    .height(500.dp)
+                    .width(380.dp),
+                model = "$IMAGE_BASE_URL${movie.posterPath}",
+                contentScale = ContentScale.FillBounds,
+                contentDescription = null,
             )
-            MovieInfo(
-                releaseDate = movie.releaseDate,
-                voteAverage = movie.voteAverage,
-                voteCount = movie.voteCount,
-            )
-            MovieGenres(movie.genres)
+            Column(
+                modifier = Modifier
+                    .width(380.dp)
+                    .padding(16.dp),
+                verticalArrangement = spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = movie.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                )
+                MovieInfo(
+                    releaseDate = movie.releaseDate,
+                    voteAverage = movie.voteAverage,
+                    voteCount = movie.voteCount,
+                )
+                MovieGenres(movie.genres)
+            }
         }
     }
 }
@@ -505,33 +496,29 @@ private fun MovieCard(
 @Preview
 @Composable
 private fun SwipeScreenDataPreview() {
-    MovieTheme {
-        SwipeScreenContent(
-            state = SwipeUdf.State(
-                code = "AAAA",
-                inviteBannerVisible = true,
-                movies = List(3) { i ->
-                    Movie.mock
-                }
-            ),
-            onAction = {},
-            onMovieClick = {},
-        )
-    }
+    SwipeScreenContent(
+        state = SwipeUdf.State(
+            code = "AAAA",
+            inviteBannerVisible = true,
+            movies = List(3) { i ->
+                Movie.mock
+            }
+        ),
+        onAction = {},
+        onMovieClick = {},
+    )
 }
 
 @Preview
 @Composable
 private fun SwipeScreenLoadingPreview() {
-    MovieTheme {
-        SwipeScreenContent(
-            state = SwipeUdf.State(
-                code = null,
-                inviteBannerVisible = false,
-                movies = null
-            ),
-            onAction = {},
-            onMovieClick = {},
-        )
-    }
+    SwipeScreenContent(
+        state = SwipeUdf.State(
+            code = null,
+            inviteBannerVisible = false,
+            movies = null
+        ),
+        onAction = {},
+        onMovieClick = {},
+    )
 }

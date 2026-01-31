@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,7 +24,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
-import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -66,8 +66,7 @@ fun MovieItem(
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = movie.title,
-                    style = MovieTheme.typography.title16,
-                    color = MovieTheme.colors.text.main,
+                    style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -85,7 +84,7 @@ fun MovieItem(
 @Preview
 @Composable
 private fun MovieItemPreview() {
-    MovieTheme {
+    MaterialTheme {
         MovieItem(
             movie = Movie.mock,
             onClick = {},
