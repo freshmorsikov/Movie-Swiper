@@ -4,15 +4,16 @@ import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.util.toRatingFormat
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_star
@@ -32,13 +33,13 @@ fun MovieInfo(
     ) {
         Text(
             text = releaseDate.take(4),
-            style = MovieTheme.typography.body14,
-            color = MovieTheme.colors.text.variant,
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray,
         )
         Text(
             text = "|",
-            style = MovieTheme.typography.body14,
-            color = MovieTheme.colors.text.variant,
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray,
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -47,15 +48,11 @@ fun MovieInfo(
             Icon(
                 modifier = Modifier.size(14.dp),
                 painter = painterResource(Res.drawable.ic_star),
-                tint = MovieTheme.colors.text.accent,
+                tint = Color(0xFFEAAF00),
                 contentDescription = null
             )
             val voteText = buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(
-                        color = MovieTheme.colors.text.accent
-                    )
-                ) {
+                withStyle(SpanStyle(color = Color(0xFFEAAF00))) {
                     append(voteAverage.toRatingFormat())
                 }
                 if (voteCount > 0) {
@@ -68,15 +65,15 @@ fun MovieInfo(
             }
             Text(
                 text = voteText,
-                style = MovieTheme.typography.body14,
-                color = MovieTheme.colors.text.variant,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray,
             )
         }
         if (runtime != null) {
             Text(
                 text = "|",
-                style = MovieTheme.typography.body14,
-                color = MovieTheme.colors.text.variant,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray,
             )
             val runtimeText = buildString {
                 val hours = runtime / 60
@@ -91,8 +88,8 @@ fun MovieInfo(
             }
             Text(
                 text = runtimeText,
-                style = MovieTheme.typography.body14,
-                color = MovieTheme.colors.text.variant,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray,
             )
         }
     }

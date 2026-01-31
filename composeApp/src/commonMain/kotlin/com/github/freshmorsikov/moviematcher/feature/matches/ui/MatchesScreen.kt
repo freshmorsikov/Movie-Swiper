@@ -1,15 +1,17 @@
 package com.github.freshmorsikov.moviematcher.feature.matches.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,18 +22,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
-import com.github.freshmorsikov.moviematcher.core.ui.LoadingContent
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
-import com.github.freshmorsikov.moviematcher.core.ui.paddingWithSystemTopBar
-import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesUdf
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesViewModel
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieItem
 import moviematcher.composeapp.generated.resources.Res
-import moviematcher.composeapp.generated.resources.matches_info_text
-import moviematcher.composeapp.generated.resources.matches_info_title
-import moviematcher.composeapp.generated.resources.popcorny_like
+import moviematcher.composeapp.generated.resources.ic_match
+import moviematcher.composeapp.generated.resources.matches_empty
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -62,11 +60,19 @@ private fun MatchesContent(
     MovieScaffold {
         when (state) {
             MatchesUdf.State.Loading -> {
-                LoadingContent(modifier = Modifier.fillMaxSize())
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(40.dp),
+                    color = MaterialTheme.colorScheme.secondary
+                )
             }
 
             is MatchesUdf.State.Empty -> {
-                MatchesInfo()
+                MatchesInfo(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = stringResource(Res.string.matches_empty)
+                )
             }
 
             is MatchesUdf.State.Data -> {
@@ -85,52 +91,49 @@ private fun MatchesListContent(
     onMovieClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = paddingWithSystemTopBar(all = 16.dp),
-        verticalArrangement = spacedBy(8.dp),
-        overscrollEffect = null,
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        items(movies) { movie ->
-            MovieItem(
-                movie = movie,
-                onClick = onMovieClick,
-            )
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = spacedBy(8.dp)
+        ) {
+            items(movies) { movie ->
+                MovieItem(
+                    movie = movie,
+                    onClick = onMovieClick,
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun MatchesInfo(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
+private fun MatchesInfo(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                modifier = Modifier.width(width = 360.dp),
-                painter = painterResource(Res.drawable.popcorny_like),
-                contentDescription = null,
-            )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp),
-                text = stringResource(Res.string.matches_info_title),
-                style = MovieTheme.typography.title16,
-                color = MovieTheme.colors.text.variant,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                text = stringResource(Res.string.matches_info_text),
-                style = MovieTheme.typography.body14,
-                color = MovieTheme.colors.text.variant,
-                textAlign = TextAlign.Center,
-            )
-        }
+        Icon(
+            modifier = Modifier.size(120.dp),
+            painter = painterResource(Res.drawable.ic_match),
+            tint = MaterialTheme.colorScheme.secondary,
+            contentDescription = null
+        )
+        Text(
+            modifier = Modifier
+                .padding(top = 24.dp)
+                .fillMaxWidth(),
+            text = text,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.secondary,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
@@ -139,7 +142,7 @@ private fun MatchesInfo(modifier: Modifier = Modifier) {
 private fun PairedPreview(
     @PreviewParameter(MatchesStateProvider::class) state: MatchesUdf.State
 ) {
-    MovieTheme {
+    MaterialTheme {
         MatchesContent(
             state = state,
             onMovieClick = {},

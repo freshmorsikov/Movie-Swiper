@@ -1,43 +1,44 @@
 package com.github.freshmorsikov.moviematcher.feature.pairing
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
-import com.github.freshmorsikov.moviematcher.core.ui.LoadingContent
 import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
-import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.feature.pairing.presentation.PairingUdf
 import com.github.freshmorsikov.moviematcher.feature.pairing.presentation.PairingViewModel
 import moviematcher.composeapp.generated.resources.Res
+import moviematcher.composeapp.generated.resources.ic_check
+import moviematcher.composeapp.generated.resources.ic_close
 import moviematcher.composeapp.generated.resources.pairing_close
 import moviematcher.composeapp.generated.resources.pairing_error_text
 import moviematcher.composeapp.generated.resources.pairing_error_title
 import moviematcher.composeapp.generated.resources.pairing_find_matches
 import moviematcher.composeapp.generated.resources.pairing_success_text
 import moviematcher.composeapp.generated.resources.pairing_success_title
-import moviematcher.composeapp.generated.resources.popcorny_failed
-import moviematcher.composeapp.generated.resources.popcorny_success
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -71,7 +72,7 @@ private fun PairingContent(
         AnimatedContent(targetState = state) { targetState ->
             when (targetState) {
                 PairingUdf.State.Loading -> {
-                    LoadingContent(modifier = Modifier.fillMaxSize())
+                    LoadingContent()
                 }
 
                 is PairingUdf.State.Result -> {
@@ -81,6 +82,30 @@ private fun PairingContent(
                     )
                 }
             }
+        }
+    }
+}
+
+
+@Composable
+private fun LoadingContent() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .background(
+                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.6f),
+                    shape = RoundedCornerShape(8.dp)
+                )
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(16.dp)
+                    .size(24.dp),
+                color = MaterialTheme.colorScheme.onSecondary,
+                strokeWidth = 2.dp,
+            )
         }
     }
 }
@@ -108,8 +133,8 @@ private fun ResultContent(
                     .fillMaxWidth()
                     .padding(top = 24.dp),
                 text = stringResource(resource = titleRes),
-                style = MovieTheme.typography.title16,
-                color = MovieTheme.colors.text.variant,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.secondary,
                 textAlign = TextAlign.Center,
             )
             val textRes = if (isSuccess) {
@@ -122,8 +147,8 @@ private fun ResultContent(
                     .fillMaxWidth()
                     .padding(top = 8.dp),
                 text = stringResource(resource = textRes),
-                style = MovieTheme.typography.body14,
-                color = MovieTheme.colors.text.variant,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.secondary,
                 textAlign = TextAlign.Center,
             )
         }
@@ -136,13 +161,9 @@ private fun ResultContent(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(16.dp)
-                .padding(
-                    bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
-                ),
+                .padding(16.dp),
             text = stringResource(resource = buttonTextRes),
-            containerColor = MovieTheme.colors.primary,
-            contentColor = MovieTheme.colors.text.onAccent,
+            containerColor = MaterialTheme.colorScheme.secondary,
             onClick = {
                 navController.navigate(NavigationRoute.Swipe) {
                     popUpTo(navController.graph.id) {
@@ -159,22 +180,34 @@ private fun PairingIcon(
     isSuccess: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val resource = if (isSuccess) {
-        Res.drawable.popcorny_success
+    val color = if (isSuccess) {
+        Color(0xFF00BE64)
     } else {
-        Res.drawable.popcorny_failed
+        Color(0xFFEB5757)
     }
-    Image(
-        modifier = modifier.width(width = 360.dp),
-        painter = painterResource(resource),
-        contentDescription = null,
+    val iconRes = if (isSuccess) {
+        Res.drawable.ic_check
+    } else {
+        Res.drawable.ic_close
+    }
+    Icon(
+        modifier = modifier
+            .size(128.dp)
+            .background(
+                color = color,
+                shape = CircleShape,
+            )
+            .padding(40.dp),
+        painter = painterResource(resource = iconRes),
+        tint = MaterialTheme.colorScheme.onPrimary,
+        contentDescription = "Success check",
     )
 }
 
 @Preview
 @Composable
 private fun LoadingPairingContentPreview() {
-    MovieTheme {
+    MaterialTheme {
         PairingContent(
             navController = rememberNavController(),
             state = PairingUdf.State.Loading
@@ -185,7 +218,7 @@ private fun LoadingPairingContentPreview() {
 @Preview
 @Composable
 private fun SuccessPairingContentPreview() {
-    MovieTheme {
+    MaterialTheme {
         PairingContent(
             navController = rememberNavController(),
             state = PairingUdf.State.Result(isSuccess = true)
@@ -196,7 +229,7 @@ private fun SuccessPairingContentPreview() {
 @Preview
 @Composable
 private fun ErrorPairingContentPreview() {
-    MovieTheme {
+    MaterialTheme {
         PairingContent(
             navController = rememberNavController(),
             state = PairingUdf.State.Result(isSuccess = false)

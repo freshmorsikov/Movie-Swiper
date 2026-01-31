@@ -7,8 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun OutlinedMovieButton(
@@ -30,19 +28,6 @@ fun OutlinedMovieButton(
         Text(
             text = text,
             color = color,
-            style = MovieTheme.typography.body14,
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun OutlinedMovieButtonPreview() {
-    MovieTheme {
-        OutlinedMovieButton(
-            text = "This is button",
-            onClick = {},
-            color = MovieTheme.colors.primary,
         )
     }
 }

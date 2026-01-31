@@ -1,15 +1,16 @@
 package com.github.freshmorsikov.moviematcher.shared.ui.movie
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 
 @Composable
 fun MovieGenres(
@@ -24,18 +25,11 @@ fun MovieGenres(
         genres.forEach { genre ->
             Text(
                 modifier = Modifier
-                    .border(
-                        width = 1.dp,
-                        color = MovieTheme.colors.stroke,
-                        shape = RoundedCornerShape(4.dp)
-                    )
-                    .padding(
-                        horizontal = 6.dp,
-                        vertical = 2.dp
-                    ),
+                    .background(Color.LightGray, RoundedCornerShape(4.dp))
+                    .padding(horizontal = 6.dp, vertical = 2.dp),
                 text = genre,
-                style = MovieTheme.typography.body14,
-                color = MovieTheme.colors.text.variant,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.DarkGray,
             )
         }
     }
