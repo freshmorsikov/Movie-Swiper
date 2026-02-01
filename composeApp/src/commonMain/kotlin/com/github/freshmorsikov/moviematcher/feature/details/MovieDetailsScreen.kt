@@ -1,5 +1,6 @@
 package com.github.freshmorsikov.moviematcher.feature.details
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
@@ -14,19 +15,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,7 +36,7 @@ import coil3.compose.AsyncImage
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.Shimmer
-import com.github.freshmorsikov.moviematcher.core.ui.none
+import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.feature.details.domain.model.Actor
 import com.github.freshmorsikov.moviematcher.feature.details.presentation.MovieDetailsUdf
 import com.github.freshmorsikov.moviematcher.feature.details.presentation.MovieDetailsViewModel
@@ -79,30 +79,47 @@ private fun MovieDetailsScreenContent(
     state: MovieDetailsUdf.State,
     onBackClick: () -> Unit,
 ) {
-    MovieScaffold(contentWindowInsets = WindowInsets.none) {
+    MovieScaffold(background = MovieTheme.colors.surface.main) {
         when (state) {
             MovieDetailsUdf.State.Loading -> {
                 LoadingMovieDetailsScreenContent()
             }
 
             is MovieDetailsUdf.State.Data -> {
-                LoadedMovieDetailsScreenContent(state = state)
+                LoadedMovieDetailsScreenContent(
+                    modifier = Modifier
+                        .verticalScroll(
+                            state = rememberScrollState(),
+                            overscrollEffect = null,
+                        )
+                        .padding(
+                            bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+                        ),
+                    state = state,
+                )
             }
         }
         FilledIconButton(
             modifier = Modifier
                 .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 8.dp)
                 .padding(start = 16.dp)
-                .size(48.dp),
+                .size(48.dp)
+                .border(
+                    width = 1.dp,
+                    color = MovieTheme.colors.surface.main.copy(alpha = 0.8f),
+                    shape = CircleShape
+                ),
             colors = IconButtonDefaults.iconButtonColors(
-                containerColor = Color.White.copy(alpha = 0.3f)
+                containerColor = MovieTheme.colors.surface.main.copy(
+                    alpha = 0.6f
+                )
             ),
             onClick = onBackClick
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),
                 painter = painterResource(Res.drawable.ic_back),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = MovieTheme.colors.icon.main,
                 contentDescription = null
             )
         }
@@ -116,13 +133,10 @@ private fun LoadingMovieDetailsScreenContent() {
 
 @Composable
 private fun LoadedMovieDetailsScreenContent(
-    state: MovieDetailsUdf.State.Data
+    state: MovieDetailsUdf.State.Data,
+    modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = Modifier.verticalScroll(
-            state = rememberScrollState()
-        )
-    ) {
+    Column(modifier = modifier) {
         AsyncImage(
             modifier = Modifier.fillMaxWidth(),
             model = "$IMAGE_BASE_URL${state.movie.posterPath}",
@@ -144,7 +158,8 @@ private fun LoadedMovieDetailsScreenContent(
             ) {
                 Text(
                     text = state.movie.title,
-                    style = MaterialTheme.typography.titleLarge,
+                    color = MovieTheme.colors.text.main,
+                    style = MovieTheme.typography.title20,
                     textAlign = TextAlign.Center,
                 )
                 MovieInfo(
@@ -155,7 +170,6 @@ private fun LoadedMovieDetailsScreenContent(
                 )
                 MovieGenres(state.movie.genres)
             }
-
             OverviewBlock(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 overview = state.movie.overview,
@@ -202,12 +216,14 @@ private fun OverviewBlock(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(Res.string.movie_details_overview),
-                style = MaterialTheme.typography.titleMedium,
+                color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.title16,
             )
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = overview,
-                style = MaterialTheme.typography.bodyMedium,
+                color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.body14,
             )
         }
     }
@@ -261,7 +277,8 @@ private fun CastBlock(
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = stringResource(Res.string.movie_details_cast),
-                style = MaterialTheme.typography.titleMedium,
+                color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.title16,
             )
             Row(
                 modifier = Modifier
@@ -271,10 +288,10 @@ private fun CastBlock(
                 horizontalArrangement = spacedBy(8.dp)
             ) {
                 actors.forEach { actor ->
-                    Column(modifier = Modifier.width(96.dp)) {
+                    Column(modifier = Modifier.width(120.dp)) {
                         AsyncImage(
                             modifier = Modifier
-                                .size(96.dp)
+                                .size(120.dp)
                                 .clip(shape = RoundedCornerShape(8.dp)),
                             model = "$IMAGE_BASE_URL${actor.profilePath}",
                             contentScale = ContentScale.FillWidth,
@@ -283,12 +300,14 @@ private fun CastBlock(
                         Text(
                             modifier = Modifier.padding(top = 4.dp),
                             text = actor.name,
-                            style = MaterialTheme.typography.bodyMedium,
+                            color = MovieTheme.colors.text.main,
+                            style = MovieTheme.typography.body14,
                         )
                         Text(
+                            modifier = Modifier.padding(top = 2.dp),
                             text = actor.character,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray,
+                            color = MovieTheme.colors.text.variant,
+                            style = MovieTheme.typography.body12,
                         )
                     }
                 }
@@ -325,11 +344,13 @@ private fun BudgetBlock(
         ) {
             Text(
                 text = stringResource(Res.string.movie_details_budget),
-                style = MaterialTheme.typography.titleMedium,
+                color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.title16,
             )
             Text(
                 text = "$${budget.toAmountFormat()}",
-                style = MaterialTheme.typography.bodyMedium,
+                color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.body14,
             )
         }
     }
@@ -363,11 +384,13 @@ private fun RevenueBlock(
         ) {
             Text(
                 text = stringResource(Res.string.movie_details_revenue),
-                style = MaterialTheme.typography.titleMedium,
+                color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.title16,
             )
             Text(
                 text = "$${revenue.toAmountFormat()}",
-                style = MaterialTheme.typography.bodyMedium,
+                color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.body14,
             )
         }
     }
@@ -376,7 +399,7 @@ private fun RevenueBlock(
 @Preview
 @Composable
 private fun MovieDetailsScreenPreview() {
-    MaterialTheme {
+    MovieTheme {
         MovieDetailsScreenContent(
             state = MovieDetailsUdf.State.Data(
                 movie = Movie.mock,

@@ -1,9 +1,11 @@
 package com.github.freshmorsikov.moviematcher.app.navigation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -12,7 +14,6 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -22,12 +23,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
@@ -35,6 +36,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.github.freshmorsikov.moviematcher.OS
 import com.github.freshmorsikov.moviematcher.core.ui.none
+import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.getPlatform
 import kotlinx.serialization.InternalSerializationApi
 import moviematcher.composeapp.generated.resources.Res
@@ -86,11 +88,14 @@ fun BottomNavigationBar(
 
     Box(
         modifier = modifier
-            .background(Color.White)
+            .fillMaxWidth()
+            .background(color = MovieTheme.colors.surface.main)
             .windowInsetsPadding(
-                insets = WindowInsets(
-                    bottom = platformBottomInsets()
-                )
+                insets = if (currentDestination.isBottomNavigation()) {
+                    WindowInsets(bottom = platformBottomInsets())
+                } else {
+                    WindowInsets.none
+                }
             )
     ) {
         if (currentDestination.isBottomNavigation()) {
@@ -134,36 +139,40 @@ private fun BottomNavigationBarContent(
                 NavigationBarItem(
                     selected = item.isSelected,
                     icon = {
-                        BadgedBox(
-                            badge = {
-                                item.badgeCount?.let { count ->
-                                    Badge(containerColor = MaterialTheme.colorScheme.error) {
-                                        Text(
-                                            text = count.toString(),
-                                            style = MaterialTheme.typography.labelMedium.copy(
-                                                fontSize = 12.sp,
-                                                lineHeight = 16.sp,
-                                            ),
-                                            color = MaterialTheme.colorScheme.onError,
-                                        )
+                        Column(
+                            modifier = Modifier.padding(
+                                vertical = 2.dp,
+                                horizontal = 8.dp
+                            ),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            BadgedBox(
+                                badge = {
+                                    item.badgeCount?.let { count ->
+                                        Badge(containerColor = MovieTheme.colors.error) {
+                                            Text(
+                                                text = count.toString(),
+                                                style = MovieTheme.typography.label12,
+                                                color = MovieTheme.colors.text.onAccent,
+                                            )
+                                        }
                                     }
                                 }
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(4.dp)
+                                        .size(24.dp),
+                                    painter = painterResource(route.icon()),
+                                    contentDescription = null
+                                )
                             }
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .padding(4.dp)
-                                    .size(24.dp),
-                                painter = painterResource(route.icon()),
-                                contentDescription = null
+                            Text(
+                                text = stringResource(route.text()),
+                                style = MovieTheme.typography.label12,
                             )
                         }
-                    },
-                    label = {
-                        Text(
-                            text = stringResource(route.text()),
-                            style = MaterialTheme.typography.labelMedium
-                        )
                     },
                     onClick = {
                         if (!item.isSelected) {
@@ -175,11 +184,11 @@ private fun BottomNavigationBarContent(
                         }
                     },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                        selectedTextColor = MaterialTheme.colorScheme.primary,
-                        indicatorColor = Color.Transparent,
-                        unselectedIconColor = MaterialTheme.colorScheme.outlineVariant,
-                        unselectedTextColor = MaterialTheme.colorScheme.outlineVariant,
+                        selectedIconColor = MovieTheme.colors.primary,
+                        selectedTextColor = MovieTheme.colors.primary,
+                        indicatorColor = MovieTheme.colors.background,
+                        unselectedIconColor = MovieTheme.colors.icon.variant,
+                        unselectedTextColor = MovieTheme.colors.icon.variant,
                     )
                 )
             }
@@ -230,7 +239,7 @@ private fun NavDestination?.isBottomNavigation(): Boolean {
 @Preview
 @Composable
 private fun BottomNavigationBarPreview() {
-    MaterialTheme {
+    MovieTheme {
         BottomNavigationBarContent(
             navController = rememberNavController(),
             itemList = BottomNavigationItemList(

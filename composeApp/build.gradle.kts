@@ -88,8 +88,8 @@ android {
         applicationId = "com.github.freshmorsikov.moviematcher"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 31
-        versionName = "0.3.1"
+        versionCode = 40
+        versionName = "0.4.0"
     }
     packaging {
         resources {
