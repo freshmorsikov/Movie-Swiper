@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.buildConfig)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.googleServices)
+    alias(libs.plugins.crashlytics)
 }
 
 buildConfig {
@@ -68,7 +69,9 @@ kotlin {
             implementation(libs.bundles.coil)
             implementation(libs.bundles.koin)
             implementation(libs.bundles.datastore)
-            implementation(libs.firebase.analytics)
+
+            api(libs.gitlive.firebase.crashlytics)
+            api(libs.gitlive.firebase.analytics)
 
             implementation(project.dependencies.platform(libs.supabase.bom))
             implementation(libs.supabase.realtime)
