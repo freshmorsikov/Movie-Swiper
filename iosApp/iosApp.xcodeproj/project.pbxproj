@@ -7,13 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3D001E152F2E54CF00A303F3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3D001E142F2E54CF00A303F3 /* GoogleService-Info.plist */; };
 		3D1420C22EA6918700B6C08B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3D1420C12EA6918700B6C08B /* FirebaseAnalytics */; };
 		3D1420C42EA6918700B6C08B /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3D1420C32EA6918700B6C08B /* FirebaseCrashlytics */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3D001E142F2E54CF00A303F3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B9DA97B12DC1472C00A4DA20 /* moviematcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = moviematcher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -59,7 +57,6 @@
 		B9DA97A82DC1472C00A4DA20 = {
 			isa = PBXGroup;
 			children = (
-				3D001E142F2E54CF00A303F3 /* GoogleService-Info.plist */,
 				B9DA98002DC14AA900A4DA20 /* Configuration */,
 				B9DA97B32DC1472C00A4DA20 /* iosApp */,
 				B9DA97B22DC1472C00A4DA20 /* Products */,
@@ -145,7 +142,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D001E152F2E54CF00A303F3 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,7 +164,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -euo pipefail\n\n# 1) Path to GoogleService-Info.plist (adjust if yours lives elsewhere)\nGSP_PATH=\"${SRCROOT}/GoogleService-Info.plist\"\nif [ ! -f \"$GSP_PATH\" ]; then\n  echo \"❌ GoogleService-Info.plist not found at: $GSP_PATH\"\n  exit 1\nfi\n\n# 2) Find Crashlytics 'run' script in SPM checkouts\nSPM_ROOT=\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts\"\nRUN_SCRIPT=\"$(find \"$SPM_ROOT\" -type f -path \"*Crashlytics/run\" | head -n 1)\"\n\nif [ -z \"${RUN_SCRIPT:-}\" ]; then\n  echo \"❌ Crashlytics run script not found under: $SPM_ROOT\"\n  echo \"Check that FirebaseCrashlytics is added via SPM to this target.\"\n  exit 1\nfi\n\necho \"✅ Using Crashlytics run script: $RUN_SCRIPT\"\necho \"✅ Using GoogleService-Info.plist: $GSP_PATH\"\n\n# 3) Upload dSYMs\n\"$RUN_SCRIPT\" -gsp \"$GSP_PATH\"\n";
+			shellScript = "
+";
 		};
 		B9DA97F42DC1497100A4DA20 /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;

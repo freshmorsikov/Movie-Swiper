@@ -10,7 +10,7 @@ class SwiperApp : Application() {
     override fun onCreate() {
         super.onCreate()
         initKoin(platformModule = androidModule())
-        Start.startApp()
+        Start.startApp(appContext = this)
     }
 
     private fun androidModule() = module {
