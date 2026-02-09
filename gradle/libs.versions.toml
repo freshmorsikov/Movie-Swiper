@@ -6,7 +6,7 @@ android-targetSdk = "36"
 androidx-activity = "1.12.2"
 androidx-lifecycle = "2.9.6"
 composeMultiplatform = "1.9.3"
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 ktor = "3.3.3"
 serialization = "1.9.0"
 coil = "3.3.0"
@@ -16,7 +16,8 @@ koin = "4.1.1"
 datastore = "1.2.0"
 navigationCompose = "2.9.1"
 googleServices = "4.4.4"
-firebaseBom = "34.7.0"
+crashlyticsPlugin = "3.0.6"
+firebaseBom = "34.9.0"
 gitlive = "2.4.0"
 supabase = "3.3.0"
 
@@ -50,8 +51,10 @@ koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmo
 datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
+#Firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
-firebase-analytics = { group = "dev.gitlive", name = "firebase-analytics", version.ref = "gitlive" }
+gitlive-firebase-crashlytics = { group = "dev.gitlive", name = "firebase-crashlytics", version.ref = "gitlive" }
+gitlive-firebase-analytics = { group = "dev.gitlive", name = "firebase-analytics", version.ref = "gitlive" }
 
 supabase-bom = { group = "io.github.jan-tennert.supabase", name = "bom", version.ref = "supabase" }
 supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt" }
@@ -91,3 +94,4 @@ kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", versio
 buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyticsPlugin" }

@@ -11,9 +11,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowInsetsControllerCompat
 import com.github.freshmorsikov.moviematcher.app.App
 import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
-import com.google.firebase.Firebase
-import com.google.firebase.FirebaseApp
-import com.google.firebase.analytics.analytics
 
 class MainActivity : ComponentActivity() {
 
@@ -27,9 +24,6 @@ class MainActivity : ComponentActivity() {
                 App()
             }
         }
-
-        FirebaseApp.initializeApp(this)
-        Firebase.analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG)
     }
 
     private fun setupEdgeToEdge() {

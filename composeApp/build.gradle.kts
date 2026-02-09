@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.buildConfig)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.googleServices)
+    alias(libs.plugins.crashlytics)
 }
 
 buildConfig {
@@ -68,7 +69,9 @@ kotlin {
             implementation(libs.bundles.coil)
             implementation(libs.bundles.koin)
             implementation(libs.bundles.datastore)
-            implementation(libs.firebase.analytics)
+
+            api(libs.gitlive.firebase.crashlytics)
+            api(libs.gitlive.firebase.analytics)
 
             implementation(project.dependencies.platform(libs.supabase.bom))
             implementation(libs.supabase.realtime)
@@ -88,8 +91,8 @@ android {
         applicationId = "com.github.freshmorsikov.moviematcher"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 40
-        versionName = "0.4.0"
+        versionCode = 50
+        versionName = "0.5.0"
     }
     packaging {
         resources {

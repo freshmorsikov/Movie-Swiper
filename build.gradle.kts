@@ -10,4 +10,5 @@ plugins {
     alias(libs.plugins.buildConfig) apply false
     alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.googleServices) apply false
+    alias(libs.plugins.crashlytics) apply false
 }
