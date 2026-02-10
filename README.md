@@ -4,7 +4,8 @@
 **Movie Swiper** is an Android/iOS app that lets users to discover, swipe, and match movies they’ll love.
 Just like in dating apps, swipe right to like, swipe left to skip, and when you and your friend or partner like the same film, it’s a match!
 
-![Preview-min](https://github.com/user-attachments/assets/f5aee583-c244-4986-baae-195b512b6730)
+![Moview Swiper Preview](https://github.com/user-attachments/assets/689a354a-5e52-4cf7-b388-ae6ea805cfd2)
+
 
 ## Features
 ✅ Сreating a pair </br>
@@ -24,8 +25,16 @@ Just like in dating apps, swipe right to like, swipe left to skip, and when you 
 ## Download
 <a href="https://play.google.com/store/apps/details?id=com.github.freshmorsikov.moviematcher">
     <img 
-        style="margin: 10px" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" 
+        style="margin: 10px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/330px-Google_Play_Store_badge_EN.svg.png" 
         alt="Google Play" 
+        height="80" 
+    />
+</a>
+</br>
+<a href="https://apps.apple.com/app/movie-finder-swipe-to-match/id6758023469">
+    <img 
+        style="margin: 10px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/330px-Download_on_the_App_Store_Badge.svg.png" 
+        alt="App Store" 
         height="80" 
     />
 </a>
