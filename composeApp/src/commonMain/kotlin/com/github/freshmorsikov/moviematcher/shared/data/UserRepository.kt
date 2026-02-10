@@ -92,8 +92,8 @@ class UserRepository(
     }
 
     suspend fun createUser(code: String) {
-        val roomId = supabaseApiService.createRoom(code = code).id
-        val userId = supabaseApiService.createUser(roomId).id
+        val roomId = supabaseApiService.createRoom(code = code)?.id ?: return
+        val userId = supabaseApiService.createUser(roomId)?.id ?: return
         keyValueStore.putString(USER_ID_KEY, userId)
     }
 
