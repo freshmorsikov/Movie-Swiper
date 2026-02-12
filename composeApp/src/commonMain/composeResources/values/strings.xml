@@ -7,6 +7,12 @@
     <string name="navigation_favorites">Favorites</string>
     <string name="navigation_matches">Matches</string>
 
+    <string name="name">Popi</string>
+    <string name="name_hi_i_am">Hi, I'm %1$s 👋</string>
+    <string name="name_what_is_your_name">What's your name?</string>
+    <string name="name_your_name">Your name</string>
+    <string name="name_hi">Nice to meet you</string>
+
     <string name="swipe_create_pair">Create a pair to find a match</string>
     <string name="swipe_invite">Invite</string>
     <string name="swipe_linking">Linking</string>

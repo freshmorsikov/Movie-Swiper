@@ -7,6 +7,9 @@ interface NavigationRoute {
     sealed interface BottomNavigationRoute : NavigationRoute
 
     @Serializable
+    data object Name : NavigationRoute
+
+    @Serializable
     data object Swipe : BottomNavigationRoute
 
     @Serializable

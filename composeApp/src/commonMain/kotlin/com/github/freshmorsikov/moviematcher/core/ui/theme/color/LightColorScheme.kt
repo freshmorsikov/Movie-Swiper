@@ -3,7 +3,7 @@ package com.github.freshmorsikov.moviematcher.core.ui.theme.color
 import androidx.compose.ui.graphics.Color.Companion.Black
 
 val LightColorScheme = ColorScheme(
-    primary = LavenderBlue,
+    primary = Lavender,
     background = Grey500,
     stroke = Grey400,
     warning = Yellow,

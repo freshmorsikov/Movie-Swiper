@@ -29,6 +29,7 @@ import com.github.freshmorsikov.moviematcher.app.snackbar.MatchSnackbarVisuals
 import com.github.freshmorsikov.moviematcher.app.snackbar.MovieSnackbarHost
 import com.github.freshmorsikov.moviematcher.feature.details.MovieDetailsScreen
 import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
+import com.github.freshmorsikov.moviematcher.feature.favorites.NameScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.ui.MatchesScreen
 import com.github.freshmorsikov.moviematcher.feature.pairing.PairingScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
@@ -96,11 +97,14 @@ fun App() {
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = NavigationRoute.Swipe,
+            startDestination = NavigationRoute.Name,
             enterTransition = { fadeIn(animationSpec = tween(300)) },
             exitTransition = { fadeOut(animationSpec = tween(300)) },
             modifier = Modifier.padding(bottom = padding.calculateBottomPadding())
         ) {
+            composable<NavigationRoute.Name> {
+                NameScreen(navController = navController)
+            }
             composable<NavigationRoute.Swipe> {
                 SwipeScreen(navController = navController)
             }
