@@ -29,8 +29,8 @@ import com.github.freshmorsikov.moviematcher.app.snackbar.MatchSnackbarVisuals
 import com.github.freshmorsikov.moviematcher.app.snackbar.MovieSnackbarHost
 import com.github.freshmorsikov.moviematcher.feature.details.MovieDetailsScreen
 import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
-import com.github.freshmorsikov.moviematcher.feature.favorites.NameScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.ui.MatchesScreen
+import com.github.freshmorsikov.moviematcher.feature.name.NameScreen
 import com.github.freshmorsikov.moviematcher.feature.pairing.PairingScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.util.Constants.LINK_BASE_PATH

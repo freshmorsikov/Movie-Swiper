@@ -1,4 +1,4 @@
-package com.github.freshmorsikov.moviematcher.feature.favorites
+package com.github.freshmorsikov.moviematcher.feature.name
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -16,19 +16,19 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.MovieTextField
 import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
+import com.github.freshmorsikov.moviematcher.feature.name.presentation.NameUdf
+import com.github.freshmorsikov.moviematcher.feature.name.presentation.NameViewModel
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.name
 import moviematcher.composeapp.generated.resources.name_hi
@@ -39,10 +39,18 @@ import moviematcher.composeapp.generated.resources.popcorny_hello
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun NameScreen(navController: NavController) {
-    FavoriteScreenContent(
+fun NameScreen(
+    navController: NavController,
+    viewModel: NameViewModel = koinViewModel(),
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    NameScreenContent(
+        state = state,
+        onAction = viewModel::onAction,
         onClick = {
             navController.navigate(route = NavigationRoute.Swipe) {
                 popUpTo(NavigationRoute.Name) {
@@ -54,7 +62,9 @@ fun NameScreen(navController: NavController) {
 }
 
 @Composable
-private fun FavoriteScreenContent(
+private fun NameScreenContent(
+    state: NameUdf.State,
+    onAction: (NameUdf.Action) -> Unit,
     onClick: () -> Unit
 ) {
     MovieScaffold {
@@ -94,16 +104,13 @@ private fun FavoriteScreenContent(
                 textAlign = TextAlign.Center
             )
 
-            var name by remember {
-                mutableStateOf("")
-            }
             MovieTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 32.dp),
-                value = name,
-                onValueChange = {
-                    name = it
+                value = state.name,
+                onValueChange = { name ->
+                    onAction(NameUdf.Action.UpdateName(value = name))
                 },
                 placeholder = stringResource(Res.string.name_your_name),
             )
@@ -119,7 +126,7 @@ private fun FavoriteScreenContent(
                 containerColor = MovieTheme.colors.primary,
                 contentColor = MovieTheme.colors.text.onAccent,
                 onClick = onClick,
-                enabled = name.isNotBlank(),
+                enabled = state.name.isNotBlank(),
             )
         }
 
@@ -130,6 +137,10 @@ private fun FavoriteScreenContent(
 @Composable
 private fun NameScreenPreview() {
     MovieTheme {
-        FavoriteScreenContent(onClick = {})
+        NameScreenContent(
+            state = NameUdf.State(name = ""),
+            onAction = {},
+            onClick = {},
+        )
     }
 }
