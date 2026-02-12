@@ -6,6 +6,6 @@ import org.koin.dsl.module
 
 val nameFeatureModule = module {
     viewModel {
-        NameViewModel()
+        NameViewModel(userRepository = get())
     }
 }

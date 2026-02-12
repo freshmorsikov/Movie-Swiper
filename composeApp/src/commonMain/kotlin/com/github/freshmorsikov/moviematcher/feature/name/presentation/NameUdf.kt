@@ -10,7 +10,10 @@ interface NameUdf {
 
     sealed interface Action : Udf.Action {
         data class UpdateName(val value: String) : Action
+        data object Submit : Action
     }
 
-    sealed interface Event : Udf.Event
+    sealed interface Event : Udf.Event {
+        data object NavigateToSwipe : Event
+    }
 }

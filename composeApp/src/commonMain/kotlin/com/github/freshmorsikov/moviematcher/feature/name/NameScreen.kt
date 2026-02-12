@@ -29,6 +29,7 @@ import com.github.freshmorsikov.moviematcher.core.ui.MovieTextField
 import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.feature.name.presentation.NameUdf
 import com.github.freshmorsikov.moviematcher.feature.name.presentation.NameViewModel
+import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.name
 import moviematcher.composeapp.generated.resources.name_hi
@@ -47,17 +48,22 @@ fun NameScreen(
     viewModel: NameViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    SubscribeOnEvents(viewModel.event) { event ->
+        when (event) {
+            NameUdf.Event.NavigateToSwipe -> {
+                navController.navigate(route = NavigationRoute.Swipe) {
+                    popUpTo(NavigationRoute.Name) {
+                        inclusive = true
+                    }
+                }
+            }
+        }
+    }
 
     NameScreenContent(
         state = state,
         onAction = viewModel::onAction,
-        onClick = {
-            navController.navigate(route = NavigationRoute.Swipe) {
-                popUpTo(NavigationRoute.Name) {
-                    inclusive = true
-                }
-            }
-        }
+        onClick = { viewModel.onAction(NameUdf.Action.Submit) }
     )
 }
 

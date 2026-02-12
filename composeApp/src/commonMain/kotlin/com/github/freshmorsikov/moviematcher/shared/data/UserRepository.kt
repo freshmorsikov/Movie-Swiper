@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 
 private const val USER_ID_KEY = "USER_ID_KEY"
+private const val USER_NAME_KEY = "USER_NAME_KEY"
 private const val SHOW_PAIR_STATUS_KEY = "SHOW_PAIR_STATUS_KEY"
 
 class UserRepository(
@@ -68,6 +69,14 @@ class UserRepository(
             .first()
     }
 
+    suspend fun getUserNameOrNull(): String? {
+        return keyValueStore.getString(USER_NAME_KEY)
+    }
+
+    suspend fun saveUserName(name: String) {
+        keyValueStore.putString(USER_NAME_KEY, name)
+    }
+
     suspend fun getCodeCounter(): Long {
         return supabaseApiService.getCounter()?.value ?: 0L
     }
@@ -83,6 +92,7 @@ class UserRepository(
             User(
                 id = user.id,
                 room = user.room,
+                name = user.name,
             )
         }
     }
@@ -93,7 +103,7 @@ class UserRepository(
 
     suspend fun createUser(code: String) {
         val roomId = supabaseApiService.createRoom(code = code)?.id ?: return
-        val userId = supabaseApiService.createUser(roomId)?.id ?: return
+        val userId = supabaseApiService.createUser(roomId = roomId)?.id ?: return
         keyValueStore.putString(USER_ID_KEY, userId)
     }
 

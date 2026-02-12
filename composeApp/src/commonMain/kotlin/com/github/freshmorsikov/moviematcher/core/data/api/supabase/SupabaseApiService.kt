@@ -126,7 +126,8 @@ class SupabaseApiService(
             supabaseClient.from(table = USER_TABLE)
                 .insert(
                     value = InsertUser(
-                        room = roomId
+                        room = roomId,
+                        name = null,
                     )
                 ) {
                     select()
