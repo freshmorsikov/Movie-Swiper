@@ -2,11 +2,13 @@ package com.github.freshmorsikov.moviematcher.feature.name.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
-import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
+import com.github.freshmorsikov.moviematcher.feature.name.domain.GetUserNameUseCase
+import com.github.freshmorsikov.moviematcher.feature.name.domain.SaveUserNameUseCase
 import kotlinx.coroutines.launch
 
 class NameViewModel(
-    private val userRepository: UserRepository,
+    private val getUserNameUseCase: GetUserNameUseCase,
+    private val saveUserNameUseCase: SaveUserNameUseCase,
 ) : UdfViewModel<NameUdf.State, NameUdf.Action, NameUdf.Event>(
     initState = {
         NameUdf.State(name = "")
@@ -15,7 +17,7 @@ class NameViewModel(
 
     init {
         viewModelScope.launch {
-            val name = userRepository.getUserNameOrNull()
+            val name = getUserNameUseCase()
             if (!name.isNullOrBlank()) {
                 sendEvent(NameUdf.Event.NavigateToSwipe)
             }
@@ -41,7 +43,7 @@ class NameViewModel(
                 val name = currentState.name.trim()
                 if (name.isBlank()) return
 
-                userRepository.saveUserName(name = name)
+                saveUserNameUseCase(name = name)
                 sendEvent(NameUdf.Event.NavigateToSwipe)
             }
         }
