@@ -121,13 +121,16 @@ class SupabaseApiService(
         }
     }
 
-    suspend fun createUser(roomId: String): UserEntity? {
+    suspend fun createUser(
+        roomId: String,
+        name: String,
+    ): UserEntity? {
         return safeCall {
             supabaseClient.from(table = USER_TABLE)
                 .insert(
                     value = InsertUser(
                         room = roomId,
-                        name = null,
+                        name = name,
                     )
                 ) {
                     select()

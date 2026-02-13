@@ -1,12 +1,15 @@
 package com.github.freshmorsikov.moviematcher.feature.name.domain
 
-import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
+import com.github.freshmorsikov.moviematcher.shared.domain.CreateUserIfMissingUseCase
 
 class SaveUserNameUseCase(
-    private val userRepository: UserRepository,
+    private val createUserIfMissingUseCase: CreateUserIfMissingUseCase,
 ) {
 
     suspend operator fun invoke(name: String) {
-        userRepository.saveUserName(name = name)
+        // TODO check
+        //   if have user
+        //   then just update
+        createUserIfMissingUseCase(name = name)
     }
 }

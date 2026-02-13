@@ -73,10 +73,6 @@ class UserRepository(
         return keyValueStore.getString(USER_NAME_KEY)
     }
 
-    suspend fun saveUserName(name: String) {
-        keyValueStore.putString(USER_NAME_KEY, name)
-    }
-
     suspend fun getCodeCounter(): Long {
         return supabaseApiService.getCounter()?.value ?: 0L
     }
@@ -101,10 +97,18 @@ class UserRepository(
         supabaseApiService.updateCounter(value = counter)
     }
 
-    suspend fun createUser(code: String) {
+    suspend fun createUser(
+        code: String,
+        name: String,
+    ) {
         val roomId = supabaseApiService.createRoom(code = code)?.id ?: return
-        val userId = supabaseApiService.createUser(roomId = roomId)?.id ?: return
+        val userId = supabaseApiService.createUser(
+            roomId = roomId,
+            name = name
+        )?.id ?: return
+
         keyValueStore.putString(USER_ID_KEY, userId)
+        keyValueStore.putString(USER_NAME_KEY, name)
     }
 
     suspend fun updateRoom(
