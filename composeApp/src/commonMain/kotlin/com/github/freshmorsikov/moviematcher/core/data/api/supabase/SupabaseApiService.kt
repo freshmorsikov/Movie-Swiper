@@ -122,6 +122,19 @@ class SupabaseApiService(
         }
     }
 
+    suspend fun updateUserName(
+        userId: String,
+        name: String,
+    ) {
+        safeCall {
+            supabaseClient.from(USER_TABLE).update(
+                update = { UserEntity::name setTo name }
+            ) {
+                filter { UserEntity::id eq userId }
+            }
+        }
+    }
+
     suspend fun createUser(
         roomId: String,
         name: String,

@@ -4,14 +4,11 @@ import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
 
 private const val PAIR_ID_ABC = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-class CreateUserIfMissingUseCase(
+class CreateUserUseCase(
     private val userRepository: UserRepository,
 ) {
 
     suspend operator fun invoke(name: String) {
-        val userId = userRepository.getUserIdOrNull()
-        if (userId != null) return
-
         val counter = userRepository.getCodeCounter()
         userRepository.updateCodeCounter(counter = counter + 1)
 

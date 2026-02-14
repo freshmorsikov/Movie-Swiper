@@ -18,7 +18,8 @@ val nameFeatureModule = module {
     }
     factory {
         SaveUserNameUseCase(
-            createUserIfMissingUseCase = get(),
+            createUserUseCase = get(),
+            userRepository = get(),
         )
     }
 }

@@ -111,6 +111,17 @@ class UserRepository(
         keyValueStore.putString(USER_NAME_KEY, name)
     }
 
+    suspend fun updateUserName(
+        userId: String,
+        name: String,
+    ) {
+        supabaseApiService.updateUserName(
+            userId = userId,
+            name = name,
+        )
+        keyValueStore.putString(USER_NAME_KEY, name)
+    }
+
     suspend fun updateRoom(
         userId: String,
         code: String
