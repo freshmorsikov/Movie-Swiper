@@ -17,6 +17,7 @@ import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.selectAsFlow
 import io.github.jan.supabase.realtime.selectSingleValueAsFlow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emptyFlow
 
 private const val COUNTER_TABLE = "counter"
@@ -247,7 +248,9 @@ class SupabaseApiService(
         block: () -> Flow<T>
     ): Flow<T> {
         return runCatching {
-            block()
+            block().catch {
+                // TODO add proper handling
+            }
         }.getOrElse {
             emptyFlow()
         }
