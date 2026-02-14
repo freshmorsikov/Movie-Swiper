@@ -11,7 +11,10 @@ class NameViewModel(
     private val saveUserNameUseCase: SaveUserNameUseCase,
 ) : UdfViewModel<NameUdf.State, NameUdf.Action, NameUdf.Event>(
     initState = {
-        NameUdf.State(name = "")
+        NameUdf.State(
+            name = "",
+            isLoading = false,
+        )
     }
 ) {
 
@@ -31,7 +34,7 @@ class NameViewModel(
             }
 
             NameUdf.Action.Submit -> {
-                currentState
+                currentState.copy(isLoading = true)
             }
         }
     }
@@ -41,7 +44,6 @@ class NameViewModel(
             is NameUdf.Action.UpdateName -> Unit
             NameUdf.Action.Submit -> {
                 val name = currentState.name.trim()
-                if (name.isBlank()) return
 
                 saveUserNameUseCase(name = name)
                 sendEvent(NameUdf.Event.NavigateToSwipe)

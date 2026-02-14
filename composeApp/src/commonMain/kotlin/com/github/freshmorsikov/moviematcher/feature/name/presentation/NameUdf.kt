@@ -6,6 +6,7 @@ interface NameUdf {
 
     data class State(
         val name: String,
+        val isLoading: Boolean,
     ) : Udf.State
 
     sealed interface Action : Udf.Action {

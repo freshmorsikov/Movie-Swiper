@@ -10,6 +10,7 @@ val Grey500 = Color(0xFFECECF1)
 val White = Color(0xFFFFFFFF)
 
 val Lavender = Color(0xFFA482D9)
+val LavenderGray = Color(0xFFC8BCDB)
 val Red = Color(0xFFFF4848)
 val Yellow = Color(0xFFFFC064)
 val DarkYellow = Color(0xFFC97801)

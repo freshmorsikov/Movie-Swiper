@@ -23,9 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
-import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.MovieTextField
+import com.github.freshmorsikov.moviematcher.core.ui.PrimaryMovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.feature.name.presentation.NameUdf
 import com.github.freshmorsikov.moviematcher.feature.name.presentation.NameViewModel
@@ -122,17 +122,16 @@ private fun NameScreenContent(
             )
             Spacer(Modifier.weight(1f))
 
-            MovieButton(
+            PrimaryMovieButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
                         bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
                     ),
                 text = stringResource(resource = Res.string.name_hi),
-                containerColor = MovieTheme.colors.primary,
-                contentColor = MovieTheme.colors.text.onAccent,
                 onClick = onClick,
                 enabled = state.name.isNotBlank(),
+                isLoading = state.isLoading,
             )
         }
 
@@ -144,7 +143,10 @@ private fun NameScreenContent(
 private fun NameScreenPreview() {
     MovieTheme {
         NameScreenContent(
-            state = NameUdf.State(name = ""),
+            state = NameUdf.State(
+                name = "",
+                isLoading = false,
+            ),
             onAction = {},
             onClick = {},
         )

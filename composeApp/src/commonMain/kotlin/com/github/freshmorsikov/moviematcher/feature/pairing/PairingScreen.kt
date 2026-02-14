@@ -24,8 +24,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.ui.LoadingContent
-import com.github.freshmorsikov.moviematcher.core.ui.MovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
+import com.github.freshmorsikov.moviematcher.core.ui.PrimaryMovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.feature.pairing.presentation.PairingUdf
 import com.github.freshmorsikov.moviematcher.feature.pairing.presentation.PairingViewModel
@@ -132,7 +132,7 @@ private fun ResultContent(
         } else {
             Res.string.pairing_close
         }
-        MovieButton(
+        PrimaryMovieButton(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
@@ -141,8 +141,6 @@ private fun ResultContent(
                     bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
                 ),
             text = stringResource(resource = buttonTextRes),
-            containerColor = MovieTheme.colors.primary,
-            contentColor = MovieTheme.colors.text.onAccent,
             onClick = {
                 navController.navigate(NavigationRoute.Swipe) {
                     popUpTo(navController.graph.id) {

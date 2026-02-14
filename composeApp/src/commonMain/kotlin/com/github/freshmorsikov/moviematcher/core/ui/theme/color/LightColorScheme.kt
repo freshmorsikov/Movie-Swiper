@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color.Companion.Black
 
 val LightColorScheme = ColorScheme(
     primary = Lavender,
+    primaryDisabled = LavenderGray,
     background = Grey500,
     stroke = Grey400,
     warning = Yellow,
