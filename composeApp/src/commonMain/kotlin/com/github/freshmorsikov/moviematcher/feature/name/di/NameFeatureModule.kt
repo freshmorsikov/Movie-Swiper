@@ -9,7 +9,6 @@ import org.koin.dsl.module
 val nameFeatureModule = module {
     viewModel {
         NameViewModel(
-            getUserNameUseCase = get(),
             saveUserNameUseCase = get(),
         )
     }

@@ -1,13 +1,9 @@
 package com.github.freshmorsikov.moviematcher.feature.name.presentation
 
-import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
-import com.github.freshmorsikov.moviematcher.feature.name.domain.GetUserNameUseCase
 import com.github.freshmorsikov.moviematcher.feature.name.domain.SaveUserNameUseCase
-import kotlinx.coroutines.launch
 
 class NameViewModel(
-    private val getUserNameUseCase: GetUserNameUseCase,
     private val saveUserNameUseCase: SaveUserNameUseCase,
 ) : UdfViewModel<NameUdf.State, NameUdf.Action, NameUdf.Event>(
     initState = {
@@ -17,15 +13,6 @@ class NameViewModel(
         )
     }
 ) {
-
-    init {
-        viewModelScope.launch {
-            val name = getUserNameUseCase()
-            if (!name.isNullOrBlank()) {
-                sendEvent(NameUdf.Event.NavigateToSwipe)
-            }
-        }
-    }
 
     override fun reduce(action: NameUdf.Action): NameUdf.State {
         return when (action) {

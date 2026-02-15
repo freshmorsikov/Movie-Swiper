@@ -10,6 +10,9 @@ val appModule = module {
         StartupManager()
     }
     viewModel {
-        AppViewModel(getMatchedListFlowUseCase = get())
+        AppViewModel(
+            getMatchedListFlowUseCase = get(),
+            userRepository = get(),
+        )
     }
 }
