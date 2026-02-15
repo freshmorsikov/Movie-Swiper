@@ -42,7 +42,7 @@ fun MovieItem(
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, Color.Black.copy(alpha = 0.1f))
     ) {
         Row(modifier = Modifier.height(IntrinsicSize.Min)) {

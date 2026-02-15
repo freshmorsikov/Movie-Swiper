@@ -27,6 +27,7 @@ import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesUdf
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesViewModel
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
+import com.github.freshmorsikov.moviematcher.shared.ui.UserPairCard
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieItem
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.matches_info_text
@@ -91,6 +92,13 @@ private fun MatchesListContent(
         verticalArrangement = spacedBy(8.dp),
         overscrollEffect = null,
     ) {
+        item {
+            PairUserCardItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+        }
         items(movies) { movie ->
             MovieItem(
                 movie = movie,
@@ -102,11 +110,21 @@ private fun MatchesListContent(
 
 @Composable
 private fun MatchesInfo(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(paddingWithSystemTopBar(all = 16.dp)),
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        PairUserCardItem(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        )
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 modifier = Modifier.width(width = 360.dp),
                 painter = painterResource(Res.drawable.popcorny_like),
@@ -131,7 +149,19 @@ private fun MatchesInfo(modifier: Modifier = Modifier) {
                 textAlign = TextAlign.Center,
             )
         }
+        }
     }
+}
+
+@Composable
+private fun PairUserCardItem(modifier: Modifier = Modifier) {
+    UserPairCard(
+        modifier = modifier,
+        leftName = "Alan",
+        rightName = "Kate",
+        leftEmoji = "\uD83D\uDC35",
+        rightEmoji = "\uD83D\uDC36",
+    )
 }
 
 @Preview
