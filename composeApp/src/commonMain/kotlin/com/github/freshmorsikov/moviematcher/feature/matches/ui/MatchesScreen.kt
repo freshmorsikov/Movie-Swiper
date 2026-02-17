@@ -28,6 +28,7 @@ import com.github.freshmorsikov.moviematcher.feature.matches.presentation.Matche
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesViewModel
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.UserPairCard
+import com.github.freshmorsikov.moviematcher.shared.ui.UserPairState
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieItem
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.matches_info_text
@@ -157,10 +158,13 @@ private fun MatchesInfo(modifier: Modifier = Modifier) {
 private fun PairUserCardItem(modifier: Modifier = Modifier) {
     UserPairCard(
         modifier = modifier,
-        leftName = "Alan",
-        rightName = "Kate",
-        leftEmoji = "\uD83D\uDC35",
-        rightEmoji = "\uD83D\uDC36",
+        onInviteClick = {},
+        state = UserPairState.Paired(
+            userName = "Alan",
+            friendName = "Kate",
+            userEmoji = "\uD83D\uDC35",
+            friendEmoji = "\uD83D\uDC36",
+        ),
     )
 }
 

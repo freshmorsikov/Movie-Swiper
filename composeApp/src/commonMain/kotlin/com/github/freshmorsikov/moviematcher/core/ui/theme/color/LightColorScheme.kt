@@ -11,11 +11,11 @@ val LightColorScheme = ColorScheme(
     error = Red,
     surface = SurfaceColors(
         main = White,
-        variant = Grey300,
+        variant = Grey400,
     ),
     icon = IconColors(
         main = Black,
-        variant = Grey300,
+        variant = Grey200,
     ),
     shimmer = ShimmerColors(
         container = White,
