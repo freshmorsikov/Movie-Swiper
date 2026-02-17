@@ -1,9 +1,11 @@
 package com.github.freshmorsikov.moviematcher.shared.data
 
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.SupabaseApiService
+import com.github.freshmorsikov.moviematcher.core.data.mapper.toUser
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Room
 import com.github.freshmorsikov.moviematcher.shared.domain.model.User
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -15,6 +17,7 @@ private const val USER_ID_KEY = "USER_ID_KEY"
 private const val USER_NAME_KEY = "USER_NAME_KEY"
 private const val SHOW_PAIR_STATUS_KEY = "SHOW_PAIR_STATUS_KEY"
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class UserRepository(
     private val supabaseApiService: SupabaseApiService,
     private val keyValueStore: KeyValueStore,
@@ -35,6 +38,20 @@ class UserRepository(
             .filterNotNull()
             .flatMapLatest { userId ->
                 getRoomFlowByUserId(userId = userId)
+            }
+    }
+
+    fun getPairedUserFlow(): Flow<User?> {
+        return keyValueStore.getStringFlow(USER_ID_KEY)
+            .filterNotNull()
+            .flatMapLatest { userId ->
+                getRoomFlowByUserId(userId = userId)
+                    .flatMapLatest { room ->
+                        supabaseApiService.getUsersFlowByRoomId(roomId = room.id)
+                            .map { users ->
+                                users.firstOrNull { user -> user.id != userId }?.toUser()
+                            }
+                    }
             }
     }
 
@@ -84,13 +101,7 @@ class UserRepository(
 
         return users.find { user ->
             user.id != userId
-        }?.let { user ->
-            User(
-                id = user.id,
-                room = user.room,
-                name = user.name,
-            )
-        }
+        }?.toUser()
     }
 
     suspend fun updateCodeCounter(counter: Long) {

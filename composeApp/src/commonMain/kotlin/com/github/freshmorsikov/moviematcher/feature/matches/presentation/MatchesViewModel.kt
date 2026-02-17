@@ -3,13 +3,17 @@ package com.github.freshmorsikov.moviematcher.feature.matches.presentation
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetMatchedListFlowUseCase
+import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetPairedUserFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.name.domain.GetUserNameUseCase
 import com.github.freshmorsikov.moviematcher.shared.ui.UserPairState
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 
 class MatchesViewModel(
     getMatchedListFlowUseCase: GetMatchedListFlowUseCase,
     getUserNameUseCase: GetUserNameUseCase,
+    getPairedUserFlowUseCase: GetPairedUserFlowUseCase,
 ) : UdfViewModel<MatchesUdf.State, MatchesUdf.Action, MatchesUdf.Event>(
     initState = {
         MatchesUdf.State.Loading
@@ -19,21 +23,31 @@ class MatchesViewModel(
     init {
         viewModelScope.launch {
             val userName = getUserNameUseCase() ?: "You"
-            val friendName = "Kate"
-            getMatchedListFlowUseCase().collect { movies ->
-                val userPairState = UserPairState.Paired(
-                    userName = userName,
-                    friendName = friendName,
-                    userEmoji = getEmojiByName(userName),
-                    friendEmoji = getEmojiByName(friendName),
-                )
+            combine(
+                getMatchedListFlowUseCase(),
+                getPairedUserFlowUseCase(),
+            ) { movies, pairedUser ->
+                val userPair = if (pairedUser == null) {
+                    UserPairState.Invite(
+                        userName = userName,
+                        userEmoji = getEmojiByName(userName),
+                    )
+                } else {
+                    val friendName = pairedUser.name ?: "Friend"
+                    UserPairState.Paired(
+                        userName = userName,
+                        friendName = friendName,
+                        userEmoji = getEmojiByName(userName),
+                        friendEmoji = getEmojiByName(friendName),
+                    )
+                }
                 onAction(
                     MatchesUdf.Action.UpdateContent(
                         movies = movies,
-                        userPair = userPairState,
+                        userPair = userPair,
                     )
                 )
-            }
+            }.launchIn(viewModelScope)
         }
     }
 

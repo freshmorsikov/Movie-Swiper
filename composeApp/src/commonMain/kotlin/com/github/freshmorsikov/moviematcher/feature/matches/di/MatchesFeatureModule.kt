@@ -1,6 +1,7 @@
 package com.github.freshmorsikov.moviematcher.feature.matches.di
 
 import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetMatchedListFlowUseCase
+import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetPairedUserFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.name.domain.GetUserNameUseCase
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesViewModel
 import org.koin.core.module.dsl.viewModel
@@ -11,6 +12,7 @@ val matchesFeatureModule = module {
         MatchesViewModel(
             getMatchedListFlowUseCase = get(),
             getUserNameUseCase = get(),
+            getPairedUserFlowUseCase = get(),
         )
     }
     factory {
@@ -21,4 +23,5 @@ val matchesFeatureModule = module {
         )
     }
     factory { GetUserNameUseCase(userRepository = get()) }
+    factory { GetPairedUserFlowUseCase(userRepository = get()) }
 }
