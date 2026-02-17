@@ -68,12 +68,13 @@ private fun MatchesContent(
             }
 
             is MatchesUdf.State.Empty -> {
-                MatchesInfo()
+                MatchesInfo(userPair = state.userPair)
             }
 
             is MatchesUdf.State.Data -> {
                 MatchesListContent(
                     movies = state.movies,
+                    userPair = state.userPair,
                     onMovieClick = onMovieClick,
                 )
             }
@@ -84,6 +85,7 @@ private fun MatchesContent(
 @Composable
 private fun MatchesListContent(
     movies: List<Movie>,
+    userPair: UserPairState,
     onMovieClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -94,10 +96,12 @@ private fun MatchesListContent(
         overscrollEffect = null,
     ) {
         item {
-            PairUserCardItem(
+            UserPairCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 16.dp),
+                onInviteClick = {},
+                userPair = userPair,
             )
         }
         items(movies) { movie ->
@@ -110,62 +114,53 @@ private fun MatchesListContent(
 }
 
 @Composable
-private fun MatchesInfo(modifier: Modifier = Modifier) {
+private fun MatchesInfo(
+    userPair: UserPairState,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(paddingWithSystemTopBar(all = 16.dp)),
     ) {
-        PairUserCardItem(
+        UserPairCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = 16.dp),
+            onInviteClick = {},
+            userPair = userPair,
         )
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                modifier = Modifier.width(width = 360.dp),
-                painter = painterResource(Res.drawable.popcorny_like),
-                contentDescription = null,
-            )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp),
-                text = stringResource(Res.string.matches_info_title),
-                style = MovieTheme.typography.title16,
-                color = MovieTheme.colors.text.variant,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                text = stringResource(Res.string.matches_info_text),
-                style = MovieTheme.typography.body14,
-                color = MovieTheme.colors.text.variant,
-                textAlign = TextAlign.Center,
-            )
-        }
+                Image(
+                    modifier = Modifier.width(width = 360.dp),
+                    painter = painterResource(Res.drawable.popcorny_like),
+                    contentDescription = null,
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
+                    text = stringResource(Res.string.matches_info_title),
+                    style = MovieTheme.typography.title16,
+                    color = MovieTheme.colors.text.variant,
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    text = stringResource(Res.string.matches_info_text),
+                    style = MovieTheme.typography.body14,
+                    color = MovieTheme.colors.text.variant,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
-}
-
-@Composable
-private fun PairUserCardItem(modifier: Modifier = Modifier) {
-    UserPairCard(
-        modifier = modifier,
-        onInviteClick = {},
-        state = UserPairState.Paired(
-            userName = "Alan",
-            friendName = "Kate",
-            userEmoji = "\uD83D\uDC35",
-            friendEmoji = "\uD83D\uDC36",
-        ),
-    )
 }
 
 @Preview

@@ -51,7 +51,7 @@ sealed interface UserPairState {
 
 @Composable
 fun UserPairCard(
-    state: UserPairState,
+    userPair: UserPairState,
     onInviteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -69,8 +69,8 @@ fun UserPairCard(
         ) {
             Spacer(modifier = Modifier.weight(1f))
             EmojiProfileItem(
-                name = state.userName,
-                emoji = state.userEmoji,
+                name = userPair.userName,
+                emoji = userPair.userEmoji,
                 backgroundColor = MovieTheme.colors.primary,
             )
             HorizontalDivider(
@@ -84,11 +84,11 @@ fun UserPairCard(
                 thickness = 2.dp,
                 color = MovieTheme.colors.stroke
             )
-            when (state) {
+            when (userPair) {
                 is UserPairState.Paired -> {
                     EmojiProfileItem(
-                        name = state.friendName,
-                        emoji = state.friendEmoji,
+                        name = userPair.friendName,
+                        emoji = userPair.friendEmoji,
                         backgroundColor = MovieTheme.colors.warning,
                     )
                 }
@@ -172,7 +172,7 @@ private fun PairingUsersCardPreview() {
     MovieTheme {
         UserPairCard(
             modifier = Modifier.fillMaxWidth(),
-            state = UserPairState.Paired(
+            userPair = UserPairState.Paired(
                 userName = "Alan",
                 friendName = "Kate",
                 userEmoji = "\uD83D\uDC35",
@@ -189,7 +189,7 @@ private fun PairingInviteCardPreview() {
     MovieTheme {
         UserPairCard(
             modifier = Modifier.fillMaxWidth(),
-            state = UserPairState.Invite(
+            userPair = UserPairState.Invite(
                 userName = "Alan",
                 userEmoji = "\uD83D\uDC35",
             ),
