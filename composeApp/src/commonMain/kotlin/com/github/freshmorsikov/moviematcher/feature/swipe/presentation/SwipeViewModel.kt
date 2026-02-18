@@ -103,7 +103,7 @@ class SwipeViewModel(
             }
 
             is SwipeUdf.Action.InviteClick -> {
-                val inviteLink = getInviteLinkUseCase()
+                val inviteLink = getInviteLinkUseCase() ?: return
                 sendEvent(SwipeUdf.Event.ShowSharingDialog(inviteLink = inviteLink))
             }
 

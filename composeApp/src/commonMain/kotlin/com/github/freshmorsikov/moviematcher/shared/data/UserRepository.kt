@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.mapNotNull
 
 private const val USER_ID_KEY = "USER_ID_KEY"
 private const val USER_NAME_KEY = "USER_NAME_KEY"
+private const val ROOM_CODE_KEY = "ROOM_CODE_KEY"
 private const val SHOW_PAIR_STATUS_KEY = "SHOW_PAIR_STATUS_KEY"
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -90,6 +91,10 @@ class UserRepository(
         return keyValueStore.getString(USER_NAME_KEY)
     }
 
+    suspend fun getRoomCodeOrNull(): String? {
+        return keyValueStore.getString(ROOM_CODE_KEY)
+    }
+
     suspend fun getCodeCounter(): Long {
         return supabaseApiService.getCounter()?.value ?: 0L
     }
@@ -120,6 +125,7 @@ class UserRepository(
 
         keyValueStore.putString(USER_ID_KEY, userId)
         keyValueStore.putString(USER_NAME_KEY, name)
+        keyValueStore.putString(ROOM_CODE_KEY, code)
     }
 
     suspend fun updateUserName(
@@ -143,6 +149,7 @@ class UserRepository(
             userId = userId,
             roomId = room.id,
         )
+        keyValueStore.putString(ROOM_CODE_KEY, code)
         return true
     }
 

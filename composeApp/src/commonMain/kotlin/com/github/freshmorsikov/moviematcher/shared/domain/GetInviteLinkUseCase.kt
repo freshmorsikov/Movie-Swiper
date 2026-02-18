@@ -1,14 +1,16 @@
 package com.github.freshmorsikov.moviematcher.shared.domain
 
+import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
 import com.github.freshmorsikov.moviematcher.util.Constants.LINK_BASE_PATH
 
 class GetInviteLinkUseCase(
-    private val getCodeUseCase: GetCodeUseCase,
+    private val userRepository: UserRepository,
 ) {
 
-    suspend operator fun invoke(): String {
-        val code = getCodeUseCase()
-        return "$LINK_BASE_PATH?code=$code"
+    suspend operator fun invoke(): String? {
+        return userRepository.getRoomCodeOrNull()?.let { code ->
+            "$LINK_BASE_PATH?code=$code"
+        }
     }
 
 }

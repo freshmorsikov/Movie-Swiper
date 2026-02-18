@@ -75,7 +75,7 @@ class MatchesViewModel(
     override suspend fun handleEffects(action: MatchesUdf.Action) {
         when (action) {
             MatchesUdf.Action.InviteClick -> {
-                val inviteLink = getInviteLinkUseCase()
+                val inviteLink = getInviteLinkUseCase() ?: return
                 sendEvent(MatchesUdf.Event.ShowSharingDialog(inviteLink = inviteLink))
             }
 
