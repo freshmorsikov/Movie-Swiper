@@ -17,6 +17,7 @@ val swipeFeatureModule = module {
             updateMovieStatusUseCase = get(),
             getPairedFlowUseCase = get(),
             getRoomFlowCaseCase = get(),
+            getInviteLinkUseCase = get(),
             analyticsManager = get(),
         )
     }

@@ -13,6 +13,7 @@ val matchesFeatureModule = module {
             getMatchedListFlowUseCase = get(),
             getUserNameUseCase = get(),
             getPairedUserFlowUseCase = get(),
+            getInviteLinkUseCase = get(),
         )
     }
     factory {

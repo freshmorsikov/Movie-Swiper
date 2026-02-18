@@ -21,8 +21,11 @@ interface MatchesUdf {
             val movies: List<Movie>,
             val userPair: UserPairState,
         ) : Action
+        data object InviteClick : Action
     }
 
-    sealed interface Event : Udf.Event
+    sealed interface Event : Udf.Event {
+        data class ShowSharingDialog(val inviteLink: String) : Event
+    }
 
 }

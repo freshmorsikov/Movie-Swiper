@@ -30,35 +30,57 @@ import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.UserPairCard
 import com.github.freshmorsikov.moviematcher.shared.ui.UserPairState
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieItem
+import com.github.freshmorsikov.moviematcher.util.SharingManager
+import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.matches_info_text
 import moviematcher.composeapp.generated.resources.matches_info_title
 import moviematcher.composeapp.generated.resources.popcorny_like
+import moviematcher.composeapp.generated.resources.sharing_message
+import moviematcher.composeapp.generated.resources.sharing_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MatchesScreen(
     navController: NavController,
-    viewModel: MatchesViewModel = koinViewModel()
+    viewModel: MatchesViewModel = koinViewModel(),
+    sharingManager: SharingManager = koinInject(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
     MatchesContent(
         state = state,
+        onAction = viewModel::onAction,
         onMovieClick = { movieId ->
             navController.navigate(
                 NavigationRoute.MovieDetails(movieId = movieId)
             )
         }
     )
+
+    val sharingTitle = stringResource(Res.string.sharing_title)
+    val sharingMessage = stringResource(Res.string.sharing_message)
+    SubscribeOnEvents(viewModel.event) { event ->
+        when (event) {
+            is MatchesUdf.Event.ShowSharingDialog -> {
+                sharingManager.share(
+                    title = sharingTitle,
+                    text = "$sharingMessage ${event.inviteLink}"
+                )
+            }
+        }
+    }
 }
 
 @Composable
 private fun MatchesContent(
     state: MatchesUdf.State,
+    onAction: (MatchesUdf.Action) -> Unit,
     onMovieClick: (Long) -> Unit,
 ) {
     MovieScaffold {
@@ -68,13 +90,17 @@ private fun MatchesContent(
             }
 
             is MatchesUdf.State.Empty -> {
-                MatchesInfo(userPair = state.userPair)
+                MatchesInfo(
+                    userPair = state.userPair,
+                    onAction = onAction,
+                )
             }
 
             is MatchesUdf.State.Data -> {
                 MatchesListContent(
                     movies = state.movies,
                     userPair = state.userPair,
+                    onAction = onAction,
                     onMovieClick = onMovieClick,
                 )
             }
@@ -86,6 +112,7 @@ private fun MatchesContent(
 private fun MatchesListContent(
     movies: List<Movie>,
     userPair: UserPairState,
+    onAction: (MatchesUdf.Action) -> Unit,
     onMovieClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -100,7 +127,9 @@ private fun MatchesListContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
-                onInviteClick = {},
+                onInviteClick = {
+                    onAction(MatchesUdf.Action.InviteClick)
+                },
                 userPair = userPair,
             )
         }
@@ -116,6 +145,7 @@ private fun MatchesListContent(
 @Composable
 private fun MatchesInfo(
     userPair: UserPairState,
+    onAction: (MatchesUdf.Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -127,7 +157,9 @@ private fun MatchesInfo(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            onInviteClick = {},
+            onInviteClick = {
+                onAction(MatchesUdf.Action.InviteClick)
+            },
             userPair = userPair,
         )
         Box(
@@ -171,6 +203,7 @@ private fun PairedPreview(
     MovieTheme {
         MatchesContent(
             state = state,
+            onAction = {},
             onMovieClick = {},
         )
     }

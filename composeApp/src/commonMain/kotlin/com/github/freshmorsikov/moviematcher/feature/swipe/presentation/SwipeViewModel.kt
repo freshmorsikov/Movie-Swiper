@@ -8,9 +8,9 @@ import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUs
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
+import com.github.freshmorsikov.moviematcher.shared.domain.GetInviteLinkUseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.GetRoomFlowCaseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
-import com.github.freshmorsikov.moviematcher.util.Constants.LINK_BASE_PATH
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -23,6 +23,7 @@ class SwipeViewModel(
     private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
     private val getPairedFlowUseCase: GetPairedFlowUseCase,
     private val getRoomFlowCaseCase: GetRoomFlowCaseCase,
+    private val getInviteLinkUseCase: GetInviteLinkUseCase,
     analyticsManager: AnalyticsManager,
 ) : UdfViewModel<SwipeUdf.State, SwipeUdf.Action, SwipeUdf.Event>(
     initState = {
@@ -102,8 +103,7 @@ class SwipeViewModel(
             }
 
             is SwipeUdf.Action.InviteClick -> {
-                val code = currentState.code ?: return
-                val inviteLink = "$LINK_BASE_PATH?code=$code"
+                val inviteLink = getInviteLinkUseCase()
                 sendEvent(SwipeUdf.Event.ShowSharingDialog(inviteLink = inviteLink))
             }
 
