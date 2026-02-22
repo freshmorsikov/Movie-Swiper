@@ -7,11 +7,7 @@ class PairingEntryViewModel(
     private val code: String?,
     private val userRepository: UserRepository,
 ) : UdfViewModel<PairingEntryUdf.State, PairingEntryUdf.Action, PairingEntryUdf.Event>(
-    initState = {
-        PairingEntryUdf.State(
-            isLoading = true,
-        )
-    }
+    initState = { PairingEntryUdf.State }
 ) {
 
     init {

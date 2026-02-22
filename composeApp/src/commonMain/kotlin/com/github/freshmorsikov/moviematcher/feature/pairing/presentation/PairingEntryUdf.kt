@@ -4,9 +4,7 @@ import com.github.freshmorsikov.moviematcher.core.presentation.Udf
 
 interface PairingEntryUdf {
 
-    data class State(
-        val isLoading: Boolean,
-    ) : Udf.State
+    data object State : Udf.State
 
     sealed interface Action : Udf.Action {
         data object CheckUser : Action
