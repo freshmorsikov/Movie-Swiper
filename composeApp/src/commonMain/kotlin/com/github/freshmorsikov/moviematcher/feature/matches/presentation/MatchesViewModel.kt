@@ -24,7 +24,7 @@ class MatchesViewModel(
 
     init {
         viewModelScope.launch {
-            val userName = getUserNameUseCase() ?: "You"
+            val userName = getUserNameUseCase()
             combine(
                 getMatchedListFlowUseCase(),
                 getPairedUserFlowUseCase(),
@@ -35,7 +35,7 @@ class MatchesViewModel(
                         userEmoji = getEmojiByName(userName),
                     )
                 } else {
-                    val friendName = pairedUser.name ?: "Friend"
+                    val friendName = pairedUser.name
                     UserPairState.Paired(
                         userName = userName,
                         friendName = friendName,
@@ -83,9 +83,11 @@ class MatchesViewModel(
         }
     }
 
-
-    private fun getEmojiByName(name: String): String {
-        return EMOJIS[name.hashCode() % EMOJIS.size]
+    private fun getEmojiByName(name: String?): String {
+        if (name.isNullOrBlank()) {
+            return EMOJIS.first()
+        }
+        return EMOJIS[name.hashCode().mod(EMOJIS.size)]
     }
 
     companion object {

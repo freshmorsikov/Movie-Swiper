@@ -26,7 +26,7 @@ fun MovieTextField(
         textStyle = MovieTheme.typography.body16,
         placeholder = {
             Text(
-                text = placeholder, //stringResource(Res.string.name_your_name),
+                text = placeholder,
                 color = MovieTheme.colors.text.variant,
                 style = MovieTheme.typography.body16,
             )

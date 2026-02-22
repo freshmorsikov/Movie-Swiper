@@ -28,23 +28,25 @@ import com.github.freshmorsikov.moviematcher.util.clickableWithoutIndication
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_add
 import moviematcher.composeapp.generated.resources.swipe_invite
+import moviematcher.composeapp.generated.resources.user_pair_friend
+import moviematcher.composeapp.generated.resources.user_pair_you
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 sealed interface UserPairState {
-    val userName: String
+    val userName: String?
     val userEmoji: String
 
     data class Paired(
-        override val userName: String,
+        override val userName: String?,
         override val userEmoji: String,
-        val friendName: String,
+        val friendName: String?,
         val friendEmoji: String,
     ) : UserPairState
 
     data class Invite(
-        override val userName: String,
+        override val userName: String?,
         override val userEmoji: String,
     ) : UserPairState
 }
@@ -67,9 +69,11 @@ fun UserPairCard(
                 .fillMaxWidth()
                 .padding(vertical = 24.dp),
         ) {
+            val userName = userPair.userName
+                ?: stringResource(Res.string.user_pair_you)
             Spacer(modifier = Modifier.weight(1f))
             EmojiProfileItem(
-                name = userPair.userName,
+                name = userName,
                 emoji = userPair.userEmoji,
                 backgroundColor = MovieTheme.colors.primary,
             )
@@ -86,8 +90,10 @@ fun UserPairCard(
             )
             when (userPair) {
                 is UserPairState.Paired -> {
+                    val friendName = userPair.friendName
+                        ?: stringResource(Res.string.user_pair_friend)
                     EmojiProfileItem(
-                        name = userPair.friendName,
+                        name = friendName,
                         emoji = userPair.friendEmoji,
                         backgroundColor = MovieTheme.colors.warning,
                     )
