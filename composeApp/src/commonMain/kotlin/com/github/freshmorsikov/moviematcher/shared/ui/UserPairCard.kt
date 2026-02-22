@@ -33,6 +33,7 @@ import moviematcher.composeapp.generated.resources.user_pair_you
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 sealed interface UserPairState {
     val userName: String?
@@ -174,31 +175,13 @@ private fun InviteProfileItem(
 
 @Preview
 @Composable
-private fun PairingUsersCardPreview() {
+private fun UserPairCardPreview(
+    @PreviewParameter(UserPairStatePreviewProvider::class) userPair: UserPairState
+) {
     MovieTheme {
         UserPairCard(
             modifier = Modifier.fillMaxWidth(),
-            userPair = UserPairState.Paired(
-                userName = "Alan",
-                friendName = "Kate",
-                userEmoji = "\uD83D\uDC35",
-                friendEmoji = "\uD83D\uDC36",
-            ),
-            onInviteClick = {},
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun PairingInviteCardPreview() {
-    MovieTheme {
-        UserPairCard(
-            modifier = Modifier.fillMaxWidth(),
-            userPair = UserPairState.Invite(
-                userName = "Alan",
-                userEmoji = "\uD83D\uDC35",
-            ),
+            userPair = userPair,
             onInviteClick = {},
         )
     }
