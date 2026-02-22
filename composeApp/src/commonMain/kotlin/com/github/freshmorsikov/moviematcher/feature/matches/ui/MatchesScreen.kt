@@ -27,36 +27,60 @@ import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesUdf
 import com.github.freshmorsikov.moviematcher.feature.matches.presentation.MatchesViewModel
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
+import com.github.freshmorsikov.moviematcher.shared.ui.UserPairCard
+import com.github.freshmorsikov.moviematcher.shared.ui.UserPairState
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieItem
+import com.github.freshmorsikov.moviematcher.util.SharingManager
+import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.matches_info_text
 import moviematcher.composeapp.generated.resources.matches_info_title
 import moviematcher.composeapp.generated.resources.popcorny_like
+import moviematcher.composeapp.generated.resources.sharing_message
+import moviematcher.composeapp.generated.resources.sharing_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MatchesScreen(
     navController: NavController,
-    viewModel: MatchesViewModel = koinViewModel()
+    viewModel: MatchesViewModel = koinViewModel(),
+    sharingManager: SharingManager = koinInject(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
     MatchesContent(
         state = state,
+        onAction = viewModel::onAction,
         onMovieClick = { movieId ->
             navController.navigate(
                 NavigationRoute.MovieDetails(movieId = movieId)
             )
         }
     )
+
+    val sharingTitle = stringResource(Res.string.sharing_title)
+    val sharingMessage = stringResource(Res.string.sharing_message)
+    SubscribeOnEvents(viewModel.event) { event ->
+        when (event) {
+            is MatchesUdf.Event.ShowSharingDialog -> {
+                sharingManager.share(
+                    title = sharingTitle,
+                    text = "$sharingMessage ${event.inviteLink}"
+                )
+            }
+        }
+    }
 }
 
 @Composable
 private fun MatchesContent(
     state: MatchesUdf.State,
+    onAction: (MatchesUdf.Action) -> Unit,
     onMovieClick: (Long) -> Unit,
 ) {
     MovieScaffold {
@@ -66,12 +90,17 @@ private fun MatchesContent(
             }
 
             is MatchesUdf.State.Empty -> {
-                MatchesInfo()
+                MatchesInfo(
+                    userPair = state.userPair,
+                    onAction = onAction,
+                )
             }
 
             is MatchesUdf.State.Data -> {
                 MatchesListContent(
                     movies = state.movies,
+                    userPair = state.userPair,
+                    onAction = onAction,
                     onMovieClick = onMovieClick,
                 )
             }
@@ -82,6 +111,8 @@ private fun MatchesContent(
 @Composable
 private fun MatchesListContent(
     movies: List<Movie>,
+    userPair: UserPairState,
+    onAction: (MatchesUdf.Action) -> Unit,
     onMovieClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -91,6 +122,17 @@ private fun MatchesListContent(
         verticalArrangement = spacedBy(8.dp),
         overscrollEffect = null,
     ) {
+        item {
+            UserPairCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                onInviteClick = {
+                    onAction(MatchesUdf.Action.InviteClick)
+                },
+                userPair = userPair,
+            )
+        }
         items(movies) { movie ->
             MovieItem(
                 movie = movie,
@@ -101,35 +143,54 @@ private fun MatchesListContent(
 }
 
 @Composable
-private fun MatchesInfo(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
+private fun MatchesInfo(
+    userPair: UserPairState,
+    onAction: (MatchesUdf.Action) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(paddingWithSystemTopBar(all = 16.dp)),
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                modifier = Modifier.width(width = 360.dp),
-                painter = painterResource(Res.drawable.popcorny_like),
-                contentDescription = null,
-            )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp),
-                text = stringResource(Res.string.matches_info_title),
-                style = MovieTheme.typography.title16,
-                color = MovieTheme.colors.text.variant,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                text = stringResource(Res.string.matches_info_text),
-                style = MovieTheme.typography.body14,
-                color = MovieTheme.colors.text.variant,
-                textAlign = TextAlign.Center,
-            )
+        UserPairCard(
+            modifier = Modifier.fillMaxWidth(),
+            onInviteClick = {
+                onAction(MatchesUdf.Action.InviteClick)
+            },
+            userPair = userPair,
+        )
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .weight(1f),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    modifier = Modifier.width(width = 360.dp),
+                    painter = painterResource(Res.drawable.popcorny_like),
+                    contentDescription = null,
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
+                    text = stringResource(Res.string.matches_info_title),
+                    style = MovieTheme.typography.title16,
+                    color = MovieTheme.colors.text.variant,
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    text = stringResource(Res.string.matches_info_text),
+                    style = MovieTheme.typography.body14,
+                    color = MovieTheme.colors.text.variant,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }
@@ -142,6 +203,7 @@ private fun PairedPreview(
     MovieTheme {
         MatchesContent(
             state = state,
+            onAction = {},
             onMovieClick = {},
         )
     }

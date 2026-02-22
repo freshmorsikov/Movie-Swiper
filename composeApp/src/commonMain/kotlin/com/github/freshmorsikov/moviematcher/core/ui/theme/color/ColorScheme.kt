@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 @Stable
 class ColorScheme(
     primary: Color,
+    primaryDisabled: Color,
     background: Color,
     stroke: Color,
     warning: Color,
@@ -20,6 +21,9 @@ class ColorScheme(
 ) {
 
     var primary by mutableStateOf(primary)
+        internal set
+
+    var primaryDisabled by mutableStateOf(primaryDisabled)
         internal set
 
     var background by mutableStateOf(background)
@@ -48,6 +52,7 @@ class ColorScheme(
 
     fun copy(
         primary: Color = this.primary,
+        primaryDisabled: Color = this.primaryDisabled,
         background: Color = this.background,
         stroke: Color = this.stroke,
         warning: Color = this.warning,
@@ -58,6 +63,7 @@ class ColorScheme(
         text: TextColors = this.text,
     ): ColorScheme = ColorScheme(
         primary = primary,
+        primaryDisabled = primaryDisabled,
         background = background,
         stroke = stroke,
         warning = warning,

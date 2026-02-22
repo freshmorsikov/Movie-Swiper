@@ -7,9 +7,12 @@ import org.koin.dsl.module
 
 val appModule = module {
     single {
-        StartupManager(checkUserUseCase = get())
+        StartupManager()
     }
     viewModel {
-        AppViewModel(getMatchedListFlowUseCase = get())
+        AppViewModel(
+            getMatchedListFlowUseCase = get(),
+            userRepository = get(),
+        )
     }
 }
