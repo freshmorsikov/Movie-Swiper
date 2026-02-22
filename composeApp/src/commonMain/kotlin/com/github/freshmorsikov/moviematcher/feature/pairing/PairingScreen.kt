@@ -94,7 +94,7 @@ private fun ResultContent(
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(16.dp),
+                .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             PairingIcon(isSuccess = isSuccess)

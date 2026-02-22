@@ -154,16 +154,16 @@ private fun MatchesInfo(
             .padding(paddingWithSystemTopBar(all = 16.dp)),
     ) {
         UserPairCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
             onInviteClick = {
                 onAction(MatchesUdf.Action.InviteClick)
             },
             userPair = userPair,
         )
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .weight(1f),
             contentAlignment = Alignment.Center,
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {

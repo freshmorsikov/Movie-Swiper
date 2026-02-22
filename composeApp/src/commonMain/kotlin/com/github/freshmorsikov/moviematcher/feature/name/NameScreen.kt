@@ -93,37 +93,39 @@ private fun NameScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(32.dp),
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Spacer(Modifier.weight(1f))
-            Image(
-                modifier = Modifier.width(width = 360.dp),
-                painter = painterResource(Res.drawable.popcorny_hello),
-                contentDescription = null,
-            )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                text = stringResource(
-                    Res.string.name_hi_i_am,
-                    stringResource(Res.string.name)
-                ),
-                style = MovieTheme.typography.title20,
-                color = MovieTheme.colors.text.main,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                text = stringResource(Res.string.name_what_is_your_name),
-                style = MovieTheme.typography.title16,
-                color = MovieTheme.colors.text.variant,
-                textAlign = TextAlign.Center
-            )
+            Spacer(modifier = Modifier.weight(1f))
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Image(
+                    modifier = Modifier.width(width = 360.dp),
+                    painter = painterResource(Res.drawable.popcorny_hello),
+                    contentDescription = null,
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    text = stringResource(
+                        Res.string.name_hi_i_am,
+                        stringResource(Res.string.name)
+                    ),
+                    style = MovieTheme.typography.title20,
+                    color = MovieTheme.colors.text.main,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    text = stringResource(Res.string.name_what_is_your_name),
+                    style = MovieTheme.typography.title16,
+                    color = MovieTheme.colors.text.variant,
+                    textAlign = TextAlign.Center
+                )
+            }
 
             MovieTextField(
                 modifier = Modifier
@@ -135,7 +137,7 @@ private fun NameScreenContent(
                 },
                 placeholder = stringResource(Res.string.name_your_name),
             )
-            Spacer(Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
             PrimaryMovieButton(
                 modifier = Modifier
