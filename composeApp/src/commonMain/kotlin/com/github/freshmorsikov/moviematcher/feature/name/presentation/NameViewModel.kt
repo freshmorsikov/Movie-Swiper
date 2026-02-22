@@ -20,7 +20,7 @@ class NameViewModel(
                 currentState.copy(name = action.value)
             }
 
-            NameUdf.Action.Submit -> {
+            is NameUdf.Action.Submit -> {
                 currentState.copy(isLoading = true)
             }
         }
@@ -29,11 +29,17 @@ class NameViewModel(
     override suspend fun handleEffects(action: NameUdf.Action) {
         when (action) {
             is NameUdf.Action.UpdateName -> Unit
-            NameUdf.Action.Submit -> {
+            is NameUdf.Action.Submit -> {
                 val name = currentState.name.trim()
 
                 saveUserNameUseCase(name = name)
-                sendEvent(NameUdf.Event.NavigateToSwipe)
+                if (action.pairingCode.isNullOrBlank()) {
+                    sendEvent(NameUdf.Event.NavigateToSwipe)
+                } else {
+                    sendEvent(
+                        NameUdf.Event.NavigateToPairing(pairingCode = action.pairingCode)
+                    )
+                }
             }
         }
     }

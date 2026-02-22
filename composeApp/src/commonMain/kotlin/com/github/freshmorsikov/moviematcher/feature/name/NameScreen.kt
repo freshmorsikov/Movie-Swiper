@@ -45,6 +45,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun NameScreen(
     navController: NavController,
+    pairingCode: String?,
     viewModel: NameViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -52,7 +53,15 @@ fun NameScreen(
         when (event) {
             NameUdf.Event.NavigateToSwipe -> {
                 navController.navigate(route = NavigationRoute.Swipe) {
-                    popUpTo(NavigationRoute.Name) {
+                    popUpTo(NavigationRoute.Name::class) {
+                        inclusive = true
+                    }
+                }
+            }
+
+            is NameUdf.Event.NavigateToPairing -> {
+                navController.navigate(route = NavigationRoute.Pairing(code = event.pairingCode)) {
+                    popUpTo(NavigationRoute.Name::class) {
                         inclusive = true
                     }
                 }
@@ -63,7 +72,13 @@ fun NameScreen(
     NameScreenContent(
         state = state,
         onAction = viewModel::onAction,
-        onClick = { viewModel.onAction(NameUdf.Action.Submit) }
+        onClick = {
+            viewModel.onAction(
+                action = NameUdf.Action.Submit(
+                    pairingCode = pairingCode
+                )
+            )
+        }
     )
 }
 
