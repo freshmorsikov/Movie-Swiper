@@ -17,6 +17,7 @@ import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.selectAsFlow
 import io.github.jan.supabase.realtime.selectSingleValueAsFlow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emptyFlow
 
 private const val COUNTER_TABLE = "counter"
@@ -121,12 +122,29 @@ class SupabaseApiService(
         }
     }
 
-    suspend fun createUser(roomId: String): UserEntity? {
+    suspend fun updateUserName(
+        userId: String,
+        name: String,
+    ) {
+        safeCall {
+            supabaseClient.from(USER_TABLE).update(
+                update = { UserEntity::name setTo name }
+            ) {
+                filter { UserEntity::id eq userId }
+            }
+        }
+    }
+
+    suspend fun createUser(
+        roomId: String,
+        name: String,
+    ): UserEntity? {
         return safeCall {
             supabaseClient.from(table = USER_TABLE)
                 .insert(
                     value = InsertUser(
-                        room = roomId
+                        room = roomId,
+                        name = name,
                     )
                 ) {
                     select()
@@ -243,7 +261,9 @@ class SupabaseApiService(
         block: () -> Flow<T>
     ): Flow<T> {
         return runCatching {
-            block()
+            block().catch {
+                // TODO add proper handling
+            }
         }.getOrElse {
             emptyFlow()
         }

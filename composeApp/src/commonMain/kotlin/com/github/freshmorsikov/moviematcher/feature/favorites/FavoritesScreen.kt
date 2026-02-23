@@ -53,7 +53,7 @@ fun FavoriteScreen(
 }
 
 @Composable
-fun FavoriteScreenContent(
+private fun FavoriteScreenContent(
     state: FavoritesUdf.State,
     onMovieClick: (Long) -> Unit,
 ) {

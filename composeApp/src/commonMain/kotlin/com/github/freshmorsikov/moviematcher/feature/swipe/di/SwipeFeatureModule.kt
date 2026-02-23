@@ -1,6 +1,5 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe.di
 
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.CheckUserUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
@@ -18,11 +17,9 @@ val swipeFeatureModule = module {
             updateMovieStatusUseCase = get(),
             getPairedFlowUseCase = get(),
             getRoomFlowCaseCase = get(),
+            getInviteLinkUseCase = get(),
             analyticsManager = get(),
         )
-    }
-    factory {
-        CheckUserUseCase(userRepository = get())
     }
     factory {
         LoadGenreListUseCase(movieRepository = get())

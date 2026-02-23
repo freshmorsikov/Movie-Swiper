@@ -7,6 +7,16 @@ interface NavigationRoute {
     sealed interface BottomNavigationRoute : NavigationRoute
 
     @Serializable
+    data class Name(
+        val pairingCode: String?,
+    ) : NavigationRoute
+
+    @Serializable
+    data class PairingEntry(
+        val code: String? = null,
+    ) : NavigationRoute
+
+    @Serializable
     data object Swipe : BottomNavigationRoute
 
     @Serializable
