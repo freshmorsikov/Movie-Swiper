@@ -12,7 +12,7 @@ val appModule = module {
     viewModel {
         AppViewModel(
             getMatchedListFlowUseCase = get(),
-            userRepository = get(),
+            getUserNameUseCase = get(),
         )
     }
 }

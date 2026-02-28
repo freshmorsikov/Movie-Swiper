@@ -13,7 +13,7 @@ val pairingFeatureModule = module {
     viewModel { (code: String?) ->
         PairingEntryViewModel(
             code = code,
-            userRepository = get(),
+            getUserNameUseCase = get(),
         )
     }
     factory {

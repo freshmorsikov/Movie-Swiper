@@ -3,12 +3,12 @@ package com.github.freshmorsikov.moviematcher.app.presentation
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetMatchedListFlowUseCase
-import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
+import com.github.freshmorsikov.moviematcher.feature.name.domain.GetUserNameUseCase
 import kotlinx.coroutines.launch
 
 class AppViewModel(
     private val getMatchedListFlowUseCase: GetMatchedListFlowUseCase,
-    private val userRepository: UserRepository,
+    private val getUserNameUseCase: GetUserNameUseCase,
 ) : UdfViewModel<AppUdf.State, AppUdf.Action, AppUdf.Event>(
     initState = {
         AppUdf.State(
@@ -21,7 +21,7 @@ class AppViewModel(
 
     init {
         viewModelScope.launch {
-            val startupRoute = if (userRepository.getUserNameOrNull().isNullOrBlank()) {
+            val startupRoute = if (getUserNameUseCase().isNullOrBlank()) {
                 AppUdf.StartupRoute.Name
             } else {
                 AppUdf.StartupRoute.Swipe

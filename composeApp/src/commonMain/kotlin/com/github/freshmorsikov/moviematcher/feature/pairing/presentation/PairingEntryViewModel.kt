@@ -1,11 +1,11 @@
 package com.github.freshmorsikov.moviematcher.feature.pairing.presentation
 
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
-import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
+import com.github.freshmorsikov.moviematcher.feature.name.domain.GetUserNameUseCase
 
 class PairingEntryViewModel(
     private val code: String?,
-    private val userRepository: UserRepository,
+    private val getUserNameUseCase: GetUserNameUseCase,
 ) : UdfViewModel<PairingEntryUdf.State, PairingEntryUdf.Action, PairingEntryUdf.Event>(
     initState = { PairingEntryUdf.State }
 ) {
@@ -23,7 +23,7 @@ class PairingEntryViewModel(
     override suspend fun handleEffects(action: PairingEntryUdf.Action) {
         when (action) {
             PairingEntryUdf.Action.CheckUser -> {
-                val hasUserName = userRepository.getUserNameOrNull().isNullOrBlank().not()
+                val hasUserName = getUserNameUseCase().isNullOrBlank().not()
                 if (hasUserName) {
                     sendEvent(PairingEntryUdf.Event.NavigateToPairing(code = code))
                 } else {
