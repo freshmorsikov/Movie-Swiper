@@ -27,9 +27,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun NoConnectionScreen(
-    onRetryClick: () -> Unit,
-) {
+fun NoConnectionScreen() {
     MovieScaffold {
         Column(
             modifier = Modifier
@@ -70,7 +68,7 @@ fun NoConnectionScreen(
                     bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
                 ),
             text = stringResource(Res.string.no_connection_retry),
-            onClick = onRetryClick,
+            onClick = {},
         )
     }
 }
@@ -79,6 +77,6 @@ fun NoConnectionScreen(
 @Composable
 fun NoConnectionScreenPreview() {
     MovieTheme {
-        NoConnectionScreen(onRetryClick = {})
+        NoConnectionScreen()
     }
 }

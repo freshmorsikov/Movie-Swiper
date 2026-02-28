@@ -17,6 +17,9 @@ interface NavigationRoute {
     ) : NavigationRoute
 
     @Serializable
+    data object NoConnection : NavigationRoute
+
+    @Serializable
     data object Swipe : BottomNavigationRoute
 
     @Serializable

@@ -21,6 +21,7 @@ interface AppUdf {
     }
 
     enum class StartupRoute {
+        NoConnection,
         Name,
         Swipe,
     }

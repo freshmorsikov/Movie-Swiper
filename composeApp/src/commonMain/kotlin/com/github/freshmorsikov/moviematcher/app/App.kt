@@ -36,6 +36,7 @@ import com.github.freshmorsikov.moviematcher.feature.details.MovieDetailsScreen
 import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.ui.MatchesScreen
 import com.github.freshmorsikov.moviematcher.feature.name.NameScreen
+import com.github.freshmorsikov.moviematcher.feature.no_connection.NoConnectionScreen
 import com.github.freshmorsikov.moviematcher.feature.pairing.PairingEntryScreen
 import com.github.freshmorsikov.moviematcher.feature.pairing.PairingScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
@@ -109,6 +110,7 @@ fun App() {
             }
 
             AppUdf.StartupRoute.Name,
+            AppUdf.StartupRoute.NoConnection,
             AppUdf.StartupRoute.Swipe -> {
                 NavigationContainer(
                     modifier = Modifier.padding(bottom = padding.calculateBottomPadding()),
@@ -135,6 +137,7 @@ fun NavigationContainer(
     modifier: Modifier = Modifier,
 ) {
     val startDestination = when (startupRoute) {
+        AppUdf.StartupRoute.NoConnection -> NavigationRoute.NoConnection
         AppUdf.StartupRoute.Name -> NavigationRoute.Name(pairingCode = null)
         AppUdf.StartupRoute.Swipe -> NavigationRoute.Swipe
     }
@@ -164,6 +167,9 @@ fun NavigationContainer(
                 navController = navController,
                 code = code,
             )
+        }
+        composable<NavigationRoute.NoConnection> {
+            NoConnectionScreen()
         }
         composable<NavigationRoute.Swipe> {
             SwipeScreen(navController = navController)

@@ -4,11 +4,13 @@ import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetMatchedListFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.name.domain.GetUserNameUseCase
+import com.github.freshmorsikov.moviematcher.feature.no_connection.domain.CheckConnectivityUseCase
 import kotlinx.coroutines.launch
 
 class AppViewModel(
     private val getMatchedListFlowUseCase: GetMatchedListFlowUseCase,
     private val getUserNameUseCase: GetUserNameUseCase,
+    private val checkConnectivityUseCase: CheckConnectivityUseCase,
 ) : UdfViewModel<AppUdf.State, AppUdf.Action, AppUdf.Event>(
     initState = {
         AppUdf.State(
@@ -20,14 +22,7 @@ class AppViewModel(
 ) {
 
     init {
-        viewModelScope.launch {
-            val startupRoute = if (getUserNameUseCase().isNullOrBlank()) {
-                AppUdf.StartupRoute.Name
-            } else {
-                AppUdf.StartupRoute.Swipe
-            }
-            onAction(AppUdf.Action.UpdateStartupRoute(route = startupRoute))
-        }
+        checkStartupRoute()
 
         viewModelScope.launch {
             var currentSize: Int? = null
@@ -40,6 +35,17 @@ class AppViewModel(
                 }
                 currentSize = movies.size
             }
+        }
+    }
+
+    fun checkStartupRoute() {
+        viewModelScope.launch {
+            val startupRoute = when {
+                checkConnectivityUseCase().not() -> AppUdf.StartupRoute.NoConnection
+                getUserNameUseCase().isNullOrBlank() -> AppUdf.StartupRoute.Name
+                else -> AppUdf.StartupRoute.Swipe
+            }
+            onAction(AppUdf.Action.UpdateStartupRoute(route = startupRoute))
         }
     }
 
