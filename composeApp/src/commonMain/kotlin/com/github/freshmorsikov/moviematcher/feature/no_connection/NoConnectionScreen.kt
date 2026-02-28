@@ -47,7 +47,7 @@ fun NoConnectionScreen(
                     .fillMaxWidth()
                     .padding(top = 24.dp),
                 text = stringResource(Res.string.no_connection_title),
-                style = MovieTheme.typography.title16,
+                style = MovieTheme.typography.title20,
                 color = MovieTheme.colors.text.main,
                 textAlign = TextAlign.Center,
             )
@@ -56,7 +56,7 @@ fun NoConnectionScreen(
                     .fillMaxWidth()
                     .padding(top = 8.dp),
                 text = stringResource(Res.string.no_connection_subtitle),
-                style = MovieTheme.typography.body14,
+                style = MovieTheme.typography.body16,
                 color = MovieTheme.colors.text.variant,
                 textAlign = TextAlign.Center,
             )
@@ -78,5 +78,7 @@ fun NoConnectionScreen(
 @Preview
 @Composable
 fun NoConnectionScreenPreview() {
-    NoConnectionScreen(onRetryClick = {})
+    MovieTheme {
+        NoConnectionScreen(onRetryClick = {})
+    }
 }

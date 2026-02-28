@@ -77,6 +77,9 @@ kotlin {
             implementation(project.dependencies.platform(libs.supabase.bom))
             implementation(libs.supabase.realtime)
             implementation(libs.supabase.postgrest)
+
+            implementation(libs.connectivity.core)
+            implementation(libs.connectivity.device)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
