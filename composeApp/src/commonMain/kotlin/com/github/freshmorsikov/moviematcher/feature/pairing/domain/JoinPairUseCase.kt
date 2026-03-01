@@ -1,6 +1,6 @@
 package com.github.freshmorsikov.moviematcher.feature.pairing.domain
 
-import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
+import com.github.freshmorsikov.moviematcher.feature.user.data.UserRepository
 import com.github.freshmorsikov.moviematcher.shared.domain.GetRoomFlowCaseCase
 import kotlinx.coroutines.flow.first
 

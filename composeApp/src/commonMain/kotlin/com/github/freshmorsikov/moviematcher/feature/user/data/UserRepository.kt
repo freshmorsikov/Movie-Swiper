@@ -1,10 +1,10 @@
-package com.github.freshmorsikov.moviematcher.shared.data
+package com.github.freshmorsikov.moviematcher.feature.user.data
 
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.SupabaseApiService
-import com.github.freshmorsikov.moviematcher.core.data.mapper.toUser
+import com.github.freshmorsikov.moviematcher.feature.user.data.mapper.toUser
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Room
-import com.github.freshmorsikov.moviematcher.shared.domain.model.User
+import com.github.freshmorsikov.moviematcher.feature.user.domain.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
@@ -20,6 +20,7 @@ private const val SHOW_PAIR_STATUS_KEY = "SHOW_PAIR_STATUS_KEY"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserRepository(
+    private val userRemoteDataSource: UserRemoteDataSource,
     private val supabaseApiService: SupabaseApiService,
     private val keyValueStore: KeyValueStore,
 ) {
@@ -28,7 +29,7 @@ class UserRepository(
         return getRoomFlow()
             .filterNotNull()
             .flatMapLatest { room ->
-                supabaseApiService.getUsersFlowByRoomId(roomId = room.id).map { users ->
+                userRemoteDataSource.getUsersFlowByRoomId(roomId = room.id).map { users ->
                     users.size > 1
                 }
             }
@@ -48,7 +49,7 @@ class UserRepository(
             .flatMapLatest { userId ->
                 getRoomFlowByUserId(userId = userId)
                     .flatMapLatest { room ->
-                        supabaseApiService.getUsersFlowByRoomId(roomId = room.id)
+                        userRemoteDataSource.getUsersFlowByRoomId(roomId = room.id)
                             .map { users ->
                                 users.firstOrNull { user -> user.id != userId }?.toUser()
                             }
@@ -57,7 +58,7 @@ class UserRepository(
     }
 
     private suspend fun getRoomByUserId(userId: String): Room? {
-        val user = supabaseApiService.getUserById(userId = userId) ?: return null
+        val user = userRemoteDataSource.getUserById(userId = userId) ?: return null
         val room = supabaseApiService.getRoomById(roomId = user.room) ?: return null
         return Room(
             id = room.id,
@@ -66,7 +67,7 @@ class UserRepository(
     }
 
     private suspend fun getRoomFlowByUserId(userId: String): Flow<Room> {
-        return supabaseApiService.getUserFlowById(userId = userId)
+        return userRemoteDataSource.getUserFlowById(userId = userId)
             .filterNotNull()
             .mapNotNull { user ->
                 val room = supabaseApiService.getRoomById(roomId = user.room) ?: return@mapNotNull null
@@ -102,7 +103,7 @@ class UserRepository(
     suspend fun getPairedUser(): User? {
         val userId = getUserId()
         val room = getRoomByUserId(userId = userId) ?: return null
-        val users = supabaseApiService.getUsersByRoomId(roomId = room.id)
+        val users = userRemoteDataSource.getUsersByRoomId(roomId = room.id)
 
         return users.find { user ->
             user.id != userId
@@ -118,7 +119,7 @@ class UserRepository(
         name: String,
     ) {
         val roomId = supabaseApiService.createRoom(code = code)?.id ?: return
-        val userId = supabaseApiService.createUser(
+        val userId = userRemoteDataSource.createUser(
             roomId = roomId,
             name = name
         )?.id ?: return
@@ -132,7 +133,7 @@ class UserRepository(
         userId: String,
         name: String,
     ) {
-        supabaseApiService.updateUserName(
+        userRemoteDataSource.updateUserName(
             userId = userId,
             name = name,
         )
@@ -145,7 +146,7 @@ class UserRepository(
     ): Boolean {
         val room = supabaseApiService.getRoomByCode(code = code) ?: return false
 
-        supabaseApiService.updateUserRoom(
+        userRemoteDataSource.updateUserRoom(
             userId = userId,
             roomId = room.id,
         )
