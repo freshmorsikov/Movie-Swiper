@@ -13,11 +13,11 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -40,21 +40,13 @@ import moviematcher.composeapp.generated.resources.popcorny_failed
 import moviematcher.composeapp.generated.resources.popcorny_success
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun PairingScreen(
     navController: NavController,
-    code: String?,
     viewModel: PairingViewModel = koinViewModel(),
 ) {
-    LaunchedEffect(code) {
-        viewModel.onAction(
-            PairingUdf.Action.HandleCode(code = code)
-        )
-    }
-
     val state by viewModel.state.collectAsStateWithLifecycle()
     PairingContent(
         navController = navController,
@@ -143,9 +135,7 @@ private fun ResultContent(
             text = stringResource(resource = buttonTextRes),
             onClick = {
                 navController.navigate(NavigationRoute.Swipe) {
-                    popUpTo(navController.graph.id) {
-                        inclusive = true
-                    }
+                    popUpTo<NavigationRoute.Pairing> { inclusive = true }
                 }
             }
         )

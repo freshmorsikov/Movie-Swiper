@@ -12,8 +12,6 @@ val appModule = module {
     viewModel {
         AppViewModel(
             getMatchedListFlowUseCase = get(),
-            getUserNameUseCase = get(),
-            checkConnectivityUseCase = get(),
         )
     }
 }

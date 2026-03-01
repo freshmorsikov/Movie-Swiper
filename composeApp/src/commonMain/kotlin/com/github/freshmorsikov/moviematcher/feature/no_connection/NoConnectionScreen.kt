@@ -15,9 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.PrimaryMovieButton
 import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
+import com.github.freshmorsikov.moviematcher.feature.no_connection.presentation.NoConnectionUdf
+import com.github.freshmorsikov.moviematcher.feature.no_connection.presentation.NoConnectionViewModel
+import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.no_connection_retry
 import moviematcher.composeapp.generated.resources.no_connection_subtitle
@@ -25,9 +30,32 @@ import moviematcher.composeapp.generated.resources.no_connection_title
 import moviematcher.composeapp.generated.resources.popcorny_no_connection
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun NoConnectionScreen() {
+fun NoConnectionScreen(
+    navController: NavController,
+    viewModel: NoConnectionViewModel = koinViewModel(),
+) {
+    SubscribeOnEvents(viewModel.event) { event ->
+        when (event) {
+            NoConnectionUdf.Event.NavigateToEntry -> {
+                navController.navigate(route = NavigationRoute.Entry()) {
+                    popUpTo<NavigationRoute.NoConnection> { inclusive = true }
+                }
+            }
+        }
+    }
+
+    NoConnectionScreenContent(
+        onRetry = {
+            viewModel.onAction(NoConnectionUdf.Action.Retry)
+        }
+    )
+}
+
+@Composable
+private fun NoConnectionScreenContent(onRetry: () -> Unit) {
     MovieScaffold {
         Column(
             modifier = Modifier
@@ -68,7 +96,7 @@ fun NoConnectionScreen() {
                     bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
                 ),
             text = stringResource(Res.string.no_connection_retry),
-            onClick = {},
+            onClick = onRetry,
         )
     }
 }
@@ -77,6 +105,6 @@ fun NoConnectionScreen() {
 @Composable
 fun NoConnectionScreenPreview() {
     MovieTheme {
-        NoConnectionScreen()
+        NoConnectionScreenContent(onRetry = {})
     }
 }
