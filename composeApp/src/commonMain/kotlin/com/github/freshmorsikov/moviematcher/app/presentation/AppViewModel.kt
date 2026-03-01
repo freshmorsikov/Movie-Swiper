@@ -54,6 +54,4 @@ class AppViewModel(
         }
     }
 
-    override suspend fun handleEffects(action: AppUdf.Action) {}
-
 }
