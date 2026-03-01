@@ -30,6 +30,4 @@ class FavoritesViewModel(
         }
     }
 
-    override suspend fun handleEffects(action: FavoritesUdf.Action) {}
-
 }

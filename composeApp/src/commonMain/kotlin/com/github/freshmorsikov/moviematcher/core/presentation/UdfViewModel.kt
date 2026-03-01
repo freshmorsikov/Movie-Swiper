@@ -31,9 +31,13 @@ abstract class UdfViewModel<S : Udf.State, A : Udf.Action, E : Udf.Event>(
         }
     }
 
-    protected abstract fun reduce(action: A): S
+    protected open fun reduce(action: A): S {
+        return currentState // Returns unchanged state by default
+    }
 
-    protected abstract suspend fun handleEffects(action: A)
+    protected open suspend fun handleEffects(action: A) {
+        // No default implementation
+    }
 
     protected fun sendEvent(event: E) {
         viewModelScope.launch {

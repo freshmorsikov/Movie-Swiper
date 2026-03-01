@@ -1,6 +1,6 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe.domain
 
-import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
+import com.github.freshmorsikov.moviematcher.feature.user.data.UserRepository
 
 class UpdateShowPairStatusUseCase(
     private val userRepository: UserRepository

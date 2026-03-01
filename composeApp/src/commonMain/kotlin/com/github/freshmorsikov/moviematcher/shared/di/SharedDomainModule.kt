@@ -1,8 +1,7 @@
 package com.github.freshmorsikov.moviematcher.shared.di
 
-import com.github.freshmorsikov.moviematcher.shared.domain.CreateUserUseCase
-import com.github.freshmorsikov.moviematcher.shared.domain.GetRoomFlowCaseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.GetInviteLinkUseCase
+import com.github.freshmorsikov.moviematcher.shared.domain.GetRoomFlowCaseCase
 import org.koin.dsl.module
 
 val sharedDomainModule = module {
@@ -13,11 +12,6 @@ val sharedDomainModule = module {
     }
     factory {
         GetInviteLinkUseCase(
-            userRepository = get(),
-        )
-    }
-    factory {
-        CreateUserUseCase(
             userRepository = get(),
         )
     }

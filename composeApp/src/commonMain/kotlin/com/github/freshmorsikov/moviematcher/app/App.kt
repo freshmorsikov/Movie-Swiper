@@ -3,9 +3,6 @@ package com.github.freshmorsikov.moviematcher.app
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
@@ -31,12 +28,12 @@ import com.github.freshmorsikov.moviematcher.app.presentation.AppUdf
 import com.github.freshmorsikov.moviematcher.app.presentation.AppViewModel
 import com.github.freshmorsikov.moviematcher.app.snackbar.MatchSnackbarVisuals
 import com.github.freshmorsikov.moviematcher.app.snackbar.MovieSnackbarHost
-import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.feature.details.MovieDetailsScreen
 import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.ui.MatchesScreen
 import com.github.freshmorsikov.moviematcher.feature.name.NameScreen
-import com.github.freshmorsikov.moviematcher.feature.pairing.PairingEntryScreen
+import com.github.freshmorsikov.moviematcher.feature.no_connection.NoConnectionScreen
+import com.github.freshmorsikov.moviematcher.feature.pairing.EntryScreen
 import com.github.freshmorsikov.moviematcher.feature.pairing.PairingScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
 import com.github.freshmorsikov.moviematcher.util.Constants.LINK_BASE_PATH
@@ -99,25 +96,10 @@ fun App() {
             )
         }
     ) { padding ->
-        when (val route = state.startupRoute) {
-            null -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MovieTheme.colors.background)
-                )
-            }
-
-            AppUdf.StartupRoute.Name,
-            AppUdf.StartupRoute.Swipe -> {
-                NavigationContainer(
-                    modifier = Modifier.padding(bottom = padding.calculateBottomPadding()),
-                    startupRoute = route,
-                    navController = navController,
-                )
-            }
-        }
-
+        NavigationContainer(
+            modifier = Modifier.padding(bottom = padding.calculateBottomPadding()),
+            navController = navController,
+        )
         MovieSnackbarHost(
             modifier = Modifier
                 .padding(top = padding.calculateTopPadding())
@@ -130,40 +112,34 @@ fun App() {
 
 @Composable
 fun NavigationContainer(
-    startupRoute: AppUdf.StartupRoute,
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val startDestination = when (startupRoute) {
-        AppUdf.StartupRoute.Name -> NavigationRoute.Name(pairingCode = null)
-        AppUdf.StartupRoute.Swipe -> NavigationRoute.Swipe
-    }
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = startDestination,
+        startDestination = NavigationRoute.Entry(),
         enterTransition = { fadeIn(animationSpec = tween(300)) },
         exitTransition = { fadeOut(animationSpec = tween(300)) },
     ) {
-        composable<NavigationRoute.Name> { backStackEntry ->
-            val route: NavigationRoute.Name = backStackEntry.toRoute()
-            NameScreen(
-                navController = navController,
-                pairingCode = route.pairingCode,
-            )
-        }
-        composable<NavigationRoute.PairingEntry>(
+        composable<NavigationRoute.Entry>(
             deepLinks = listOf(
-                navDeepLink<NavigationRoute.PairingEntry>(
+                navDeepLink<NavigationRoute.Entry>(
                     basePath = LINK_BASE_PATH
                 )
             )
         ) { backStackEntry ->
-            val code = backStackEntry.toRoute<NavigationRoute.PairingEntry>().code
-            PairingEntryScreen(
+            val code = backStackEntry.toRoute<NavigationRoute.Entry>().code
+            EntryScreen(
                 navController = navController,
                 code = code,
             )
+        }
+        composable<NavigationRoute.Name> {
+            NameScreen(navController = navController)
+        }
+        composable<NavigationRoute.NoConnection> {
+            NoConnectionScreen(navController = navController)
         }
         composable<NavigationRoute.Swipe> {
             SwipeScreen(navController = navController)
@@ -174,12 +150,8 @@ fun NavigationContainer(
         composable<NavigationRoute.Matches> {
             MatchesScreen(navController = navController)
         }
-        composable<NavigationRoute.Pairing> { backStackEntry ->
-            val code = backStackEntry.toRoute<NavigationRoute.Pairing>().code
-            PairingScreen(
-                navController = navController,
-                code = code,
-            )
+        composable<NavigationRoute.Pairing> {
+            PairingScreen(navController = navController)
         }
         composable<NavigationRoute.MovieDetails> { backStackEntry ->
             val route: NavigationRoute.MovieDetails = backStackEntry.toRoute()

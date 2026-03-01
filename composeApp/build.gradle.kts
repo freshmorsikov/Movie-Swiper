@@ -43,7 +43,7 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
-            implementation(compose.preview)
+            implementation(libs.compose.ui.tooling)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.okhttp)
             implementation(libs.sqldelight.android.driver)
@@ -54,12 +54,13 @@ kotlin {
             implementation(libs.sqldelight.native.driver)
         }
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.resources)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.ui.tooling.preview)
+
             implementation(libs.navigation.compose)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
@@ -76,6 +77,9 @@ kotlin {
             implementation(project.dependencies.platform(libs.supabase.bom))
             implementation(libs.supabase.realtime)
             implementation(libs.supabase.postgrest)
+
+            implementation(libs.connectivity.core)
+            implementation(libs.connectivity.device)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -123,5 +127,5 @@ sqldelight {
 }
 
 dependencies {
-    debugImplementation(compose.uiTooling)
+    debugImplementation(libs.compose.ui.tooling)
 }

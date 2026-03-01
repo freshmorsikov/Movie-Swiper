@@ -1,4 +1,4 @@
-package com.github.freshmorsikov.moviematcher.core.data.api.supabase.model
+package com.github.freshmorsikov.moviematcher.feature.user.data
 
 import kotlinx.serialization.Serializable
 

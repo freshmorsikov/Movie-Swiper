@@ -1,7 +1,7 @@
 package com.github.freshmorsikov.moviematcher.feature.name.domain
 
-import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
-import com.github.freshmorsikov.moviematcher.shared.domain.CreateUserUseCase
+import com.github.freshmorsikov.moviematcher.feature.user.data.UserRepository
+import com.github.freshmorsikov.moviematcher.feature.user.domain.CreateUserUseCase
 
 class SaveUserNameUseCase(
     private val createUserUseCase: CreateUserUseCase,

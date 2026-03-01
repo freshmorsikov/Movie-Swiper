@@ -7,14 +7,18 @@ interface NavigationRoute {
     sealed interface BottomNavigationRoute : NavigationRoute
 
     @Serializable
-    data class Name(
-        val pairingCode: String?,
+    data class Entry(
+        val code: String? = null,
     ) : NavigationRoute
 
     @Serializable
-    data class PairingEntry(
-        val code: String? = null,
-    ) : NavigationRoute
+    data object NoConnection : NavigationRoute
+
+    @Serializable
+    data object Name : NavigationRoute
+
+    @Serializable
+    data object Pairing : NavigationRoute
 
     @Serializable
     data object Swipe : BottomNavigationRoute
@@ -24,11 +28,6 @@ interface NavigationRoute {
 
     @Serializable
     data object Matches : BottomNavigationRoute
-
-    @Serializable
-    data class Pairing(
-        val code: String? = null
-    ) : NavigationRoute
 
     @Serializable
     data class MovieDetails(val movieId: Long) : NavigationRoute
