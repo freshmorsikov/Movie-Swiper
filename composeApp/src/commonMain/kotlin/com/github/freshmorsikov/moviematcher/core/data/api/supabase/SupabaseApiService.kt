@@ -2,7 +2,7 @@ package com.github.freshmorsikov.moviematcher.core.data.api.supabase
 
 import com.github.freshmorsikov.moviematcher.core.data.api.safeCall
 import com.github.freshmorsikov.moviematcher.core.data.api.safeFlow
-import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.CounterEntity
+import com.github.freshmorsikov.moviematcher.feature.user.data.model.IncrementCounterResponse
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertMatched
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertReaction
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertRoom
@@ -11,43 +11,34 @@ import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.Reacti
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.RoomEntity
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseExperimental
+import io.github.jan.supabase.functions.functions
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.filter.FilterOperation
 import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.selectAsFlow
+import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.json.Json
 
-private const val COUNTER_TABLE = "counter"
 private const val ROOM_TABLE = "room"
 private const val MATCHED_TABLE = "matched"
 private const val REACTION_TABLE = "reaction"
+private const val INCREMENT_COUNTER_FUNCTION = "increment-counter"
 
 private const val ROOM_COLUMN = "room"
-
-private const val COUNTER_ID = 1
 
 class SupabaseApiService(
     private val supabaseClient: SupabaseClient
 ) {
-
-    // COUNTER
-
-    suspend fun getCounter(): CounterEntity? {
-        return safeCall {
-            supabaseClient.from(table = COUNTER_TABLE)
-                .select {
-                    filter { CounterEntity::id eq COUNTER_ID }
-                }.decodeSingle<CounterEntity>()
-        }
+    private val json = Json {
+        ignoreUnknownKeys = true
     }
 
-    suspend fun updateCounter(value: Long) {
-        safeCall {
-            supabaseClient.from(COUNTER_TABLE).update(
-                update = { CounterEntity::value setTo value }
-            ) {
-                filter { CounterEntity::id eq COUNTER_ID }
-            }
+    suspend fun incrementCounter(): Long? {
+        return safeCall {
+            val response = supabaseClient.functions.invoke(function = INCREMENT_COUNTER_FUNCTION)
+            println("")
+            json.decodeFromString<IncrementCounterResponse>(response.bodyAsText()).value
         }
     }
 

@@ -96,8 +96,8 @@ class UserRepository(
         return keyValueStore.getString(ROOM_CODE_KEY)
     }
 
-    suspend fun getCodeCounter(): Long {
-        return supabaseApiService.getCounter()?.value ?: 0L
+    suspend fun incrementCodeCounter(): Long {
+        return supabaseApiService.incrementCounter() ?: 0L
     }
 
     suspend fun getPairedUser(): User? {
@@ -108,10 +108,6 @@ class UserRepository(
         return users.find { user ->
             user.id != userId
         }?.toUser()
-    }
-
-    suspend fun updateCodeCounter(counter: Long) {
-        supabaseApiService.updateCounter(value = counter)
     }
 
     suspend fun createUser(

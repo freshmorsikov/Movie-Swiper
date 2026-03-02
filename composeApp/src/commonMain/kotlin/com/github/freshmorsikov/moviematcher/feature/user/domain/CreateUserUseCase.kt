@@ -9,9 +9,7 @@ class CreateUserUseCase(
 ) {
 
     suspend operator fun invoke(name: String) {
-        val counter = userRepository.getCodeCounter()
-        userRepository.updateCodeCounter(counter = counter + 1)
-
+        val counter = userRepository.incrementCodeCounter()
         val code = generateCode(counter = counter)
         userRepository.createUser(
             code = code,
