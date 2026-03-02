@@ -1,7 +1,7 @@
 package com.github.freshmorsikov.moviematcher.feature.matches.domain
 
-import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
-import com.github.freshmorsikov.moviematcher.shared.domain.model.User
+import com.github.freshmorsikov.moviematcher.feature.user.data.UserRepository
+import com.github.freshmorsikov.moviematcher.feature.user.domain.User
 import kotlinx.coroutines.flow.Flow
 
 class GetPairedUserFlowUseCase(

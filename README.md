@@ -6,7 +6,6 @@ Just like in dating apps, swipe right to like, swipe left to skip, and when you 
 
 ![Moview Swiper Preview](https://github.com/user-attachments/assets/689a354a-5e52-4cf7-b388-ae6ea805cfd2)
 
-
 ## Features
 ✅ Сreating a pair </br>
 ✅ Swiping movies </br>

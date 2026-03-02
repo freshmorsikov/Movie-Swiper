@@ -45,6 +45,10 @@
     <string name="pairing_find_matches">Find matches</string>
     <string name="pairing_close">Close</string>
 
+    <string name="no_connection_title">No internet connection</string>
+    <string name="no_connection_subtitle">Please check your connection and try again</string>
+    <string name="no_connection_retry">Retry</string>
+
     <string name="sharing_title">Sharing</string>
     <string name="sharing_message">Let's find a movie we both like:</string>
 

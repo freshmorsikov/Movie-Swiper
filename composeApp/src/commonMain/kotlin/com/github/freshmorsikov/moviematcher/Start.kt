@@ -20,8 +20,6 @@ object Start {
     }
 
     private fun setupFirebase(appContext: Any? = null) {
-        val isDebug = isDebug()
-        println("Test: isDebug=$isDebug")
         if (!isDebug()) {
             Firebase.initialize(context = appContext)
             Firebase.crashlytics.setCrashlyticsCollectionEnabled(true)

@@ -39,31 +39,20 @@ import moviematcher.composeapp.generated.resources.name_your_name
 import moviematcher.composeapp.generated.resources.popcorny_hello
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun NameScreen(
     navController: NavController,
-    pairingCode: String?,
     viewModel: NameViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     SubscribeOnEvents(viewModel.event) { event ->
         when (event) {
-            NameUdf.Event.NavigateToSwipe -> {
-                navController.navigate(route = NavigationRoute.Swipe) {
-                    popUpTo(NavigationRoute.Name::class) {
-                        inclusive = true
-                    }
-                }
-            }
-
-            is NameUdf.Event.NavigateToPairing -> {
-                navController.navigate(route = NavigationRoute.Pairing(code = event.pairingCode)) {
-                    popUpTo(NavigationRoute.Name::class) {
-                        inclusive = true
-                    }
+            NameUdf.Event.NavigateToEntry -> {
+                navController.navigate(route = NavigationRoute.Entry()) {
+                    popUpTo<NavigationRoute.Name> { inclusive = true }
                 }
             }
         }
@@ -73,11 +62,7 @@ fun NameScreen(
         state = state,
         onAction = viewModel::onAction,
         onClick = {
-            viewModel.onAction(
-                action = NameUdf.Action.Submit(
-                    pairingCode = pairingCode
-                )
-            )
+            viewModel.onAction(action = NameUdf.Action.Submit)
         }
     )
 }

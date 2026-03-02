@@ -31,16 +31,11 @@ class NameViewModel(
             is NameUdf.Action.UpdateName -> Unit
             is NameUdf.Action.Submit -> {
                 val name = currentState.name.trim()
-
                 saveUserNameUseCase(name = name)
-                if (action.pairingCode.isNullOrBlank()) {
-                    sendEvent(NameUdf.Event.NavigateToSwipe)
-                } else {
-                    sendEvent(
-                        NameUdf.Event.NavigateToPairing(pairingCode = action.pairingCode)
-                    )
-                }
+
+                sendEvent(NameUdf.Event.NavigateToEntry)
             }
         }
     }
+
 }

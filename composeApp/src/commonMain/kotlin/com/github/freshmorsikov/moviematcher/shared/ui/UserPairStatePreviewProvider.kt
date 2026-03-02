@@ -1,6 +1,6 @@
 package com.github.freshmorsikov.moviematcher.shared.ui
 
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 
 class UserPairStatePreviewProvider : PreviewParameterProvider<UserPairState> {
     override val values: Sequence<UserPairState>

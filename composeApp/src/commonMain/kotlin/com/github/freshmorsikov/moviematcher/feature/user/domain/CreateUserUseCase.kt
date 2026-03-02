@@ -1,6 +1,6 @@
-package com.github.freshmorsikov.moviematcher.shared.domain
+package com.github.freshmorsikov.moviematcher.feature.user.domain
 
-import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
+import com.github.freshmorsikov.moviematcher.feature.user.data.UserRepository
 
 private const val PAIR_ID_ABC = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 

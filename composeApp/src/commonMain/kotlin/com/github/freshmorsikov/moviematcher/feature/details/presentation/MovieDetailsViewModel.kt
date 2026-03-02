@@ -61,6 +61,4 @@ class MovieDetailsViewModel(
         }
     }
 
-    override suspend fun handleEffects(action: MovieDetailsUdf.Action) {}
-
 }

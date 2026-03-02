@@ -3,32 +3,20 @@ package com.github.freshmorsikov.moviematcher.app.presentation
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetMatchedListFlowUseCase
-import com.github.freshmorsikov.moviematcher.shared.data.UserRepository
 import kotlinx.coroutines.launch
 
 class AppViewModel(
     private val getMatchedListFlowUseCase: GetMatchedListFlowUseCase,
-    private val userRepository: UserRepository,
 ) : UdfViewModel<AppUdf.State, AppUdf.Action, AppUdf.Event>(
     initState = {
         AppUdf.State(
             newMatches = 0,
             isCurrentMatches = false,
-            startupRoute = null,
         )
     }
 ) {
 
     init {
-        viewModelScope.launch {
-            val startupRoute = if (userRepository.getUserNameOrNull().isNullOrBlank()) {
-                AppUdf.StartupRoute.Name
-            } else {
-                AppUdf.StartupRoute.Swipe
-            }
-            onAction(AppUdf.Action.UpdateStartupRoute(route = startupRoute))
-        }
-
         viewModelScope.launch {
             var currentSize: Int? = null
             getMatchedListFlowUseCase().collect { movies ->
@@ -63,13 +51,7 @@ class AppViewModel(
                     isCurrentMatches = action.isCurrentMatches,
                 )
             }
-
-            is AppUdf.Action.UpdateStartupRoute -> {
-                currentState.copy(startupRoute = action.route)
-            }
         }
     }
-
-    override suspend fun handleEffects(action: AppUdf.Action) {}
 
 }

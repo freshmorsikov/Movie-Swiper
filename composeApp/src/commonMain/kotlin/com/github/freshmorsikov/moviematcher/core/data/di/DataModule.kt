@@ -7,6 +7,7 @@ import com.github.freshmorsikov.moviematcher.core.data.api.NetworkLogger
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.SupabaseApiService
 import com.github.freshmorsikov.moviematcher.core.data.api.engine
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
+import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.realtime.Realtime
@@ -50,22 +51,22 @@ val dataModule = module {
         get<Database>().actorEntityQueries
     }
 
-    single {
-        SupabaseApiService(
-            supabaseClient = createSupabaseClient(
-                supabaseUrl = BuildConfig.SUPABASE_URL,
-                supabaseKey = BuildConfig.SUPABASE_API_KEY,
-            ) {
-                install(Postgrest)
-                install(Realtime)
-                val json = Json {
-                    ignoreUnknownKeys = true
-                }
-                defaultSerializer = KotlinXSerializer(json = json)
+    single<SupabaseClient> {
+        createSupabaseClient(
+            supabaseUrl = BuildConfig.SUPABASE_URL,
+            supabaseKey = BuildConfig.SUPABASE_API_KEY,
+        ) {
+            install(Postgrest)
+            install(Realtime)
+            val json = Json {
+                ignoreUnknownKeys = true
             }
-        )
+            defaultSerializer = KotlinXSerializer(json = json)
+        }
     }
-
+    single {
+        SupabaseApiService(supabaseClient = get())
+    }
     single {
         ApiService(httpClient = get())
     }
