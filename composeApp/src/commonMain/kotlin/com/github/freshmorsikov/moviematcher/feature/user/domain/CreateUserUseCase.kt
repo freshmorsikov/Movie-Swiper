@@ -2,7 +2,7 @@ package com.github.freshmorsikov.moviematcher.feature.user.domain
 
 import com.github.freshmorsikov.moviematcher.feature.user.data.UserRepository
 
-private const val PAIR_ID_ABC = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+private const val CODE_ABC = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 class CreateUserUseCase(
     private val userRepository: UserRepository,
@@ -18,14 +18,14 @@ class CreateUserUseCase(
     }
 
     private fun generateCode(counter: Long): String {
-        var pairId = ""
+        var code = ""
         var remainder = counter
         repeat(4) {
-            val letterIndex = remainder % PAIR_ID_ABC.length
-            pairId += PAIR_ID_ABC[letterIndex.toInt()]
-            remainder /= PAIR_ID_ABC.length
+            val letterIndex = remainder % CODE_ABC.length
+            code += CODE_ABC[letterIndex.toInt()]
+            remainder /= CODE_ABC.length
         }
 
-        return pairId
+        return code
     }
 }

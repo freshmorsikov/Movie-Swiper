@@ -37,7 +37,6 @@ class SupabaseApiService(
     suspend fun incrementCounter(): Long? {
         return safeCall {
             val response = supabaseClient.functions.invoke(function = INCREMENT_COUNTER_FUNCTION)
-            println("")
             json.decodeFromString<IncrementCounterResponse>(response.bodyAsText()).value
         }
     }
