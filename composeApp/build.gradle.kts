@@ -77,6 +77,7 @@ kotlin {
             implementation(project.dependencies.platform(libs.supabase.bom))
             implementation(libs.supabase.realtime)
             implementation(libs.supabase.postgrest)
+            implementation(libs.supabase.functions)
 
             implementation(libs.connectivity.core)
             implementation(libs.connectivity.device)
@@ -95,8 +96,8 @@ android {
         applicationId = "com.github.freshmorsikov.moviematcher"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 80
-        versionName = "0.8.0"
+        versionCode = 90
+        versionName = "0.9.0"
     }
     packaging {
         resources {

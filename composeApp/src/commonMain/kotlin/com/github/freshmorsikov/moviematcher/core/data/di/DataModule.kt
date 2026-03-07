@@ -9,6 +9,7 @@ import com.github.freshmorsikov.moviematcher.core.data.api.engine
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.functions.Functions
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.serializer.KotlinXSerializer
@@ -58,6 +59,7 @@ val dataModule = module {
         ) {
             install(Postgrest)
             install(Realtime)
+            install(Functions)
             val json = Json {
                 ignoreUnknownKeys = true
             }

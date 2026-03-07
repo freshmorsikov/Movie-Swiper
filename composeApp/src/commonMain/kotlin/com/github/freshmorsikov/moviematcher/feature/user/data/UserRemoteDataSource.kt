@@ -2,6 +2,8 @@ package com.github.freshmorsikov.moviematcher.feature.user.data
 
 import com.github.freshmorsikov.moviematcher.core.data.api.safeCall
 import com.github.freshmorsikov.moviematcher.core.data.api.safeFlow
+import com.github.freshmorsikov.moviematcher.feature.user.data.model.InsertUser
+import com.github.freshmorsikov.moviematcher.feature.user.data.model.UserEntity
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.postgrest.from
