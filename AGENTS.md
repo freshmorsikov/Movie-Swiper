@@ -1,11 +1,12 @@
 # AI agent guidelines
 
+## Basics
 You MUST follow these guidelines every time before answering questions or editing code in this repository.
 You MUST prioritize code quality, app stability, maintainability, and a smooth third-party developer experience.
 You MUST search existing implementations before creating new code.
 You MUST refactor duplicated logic into shared utilities.
 
-## Architecture (strict)
+## Architecture
 - You SHOULD keep feature-first packages under `feature/<name>`.
 - You MUST enforce layering as `presentation -> domain -> data`. You MUST NOT reverse the layering direction.
   - UI (Compose) MUST be stateless and render-focused.
