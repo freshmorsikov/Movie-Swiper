@@ -7,3 +7,7 @@ insert:
 INSERT OR IGNORE
 INTO genreEntity
 VALUES ?;
+
+getCount:
+SELECT COUNT(*)
+FROM genreEntity;

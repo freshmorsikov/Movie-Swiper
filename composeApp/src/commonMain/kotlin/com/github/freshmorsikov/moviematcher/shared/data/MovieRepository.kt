@@ -36,6 +36,10 @@ class MovieRepository(
 ) {
 
     suspend fun loadGenreList() {
+        if (genreEntityQueries.getCount().executeAsOne() > 0) {
+            return
+        }
+
         theMovieDbApiService.getGenreList()
             .onSuccess { genreList ->
                 genreList.genres.forEach { genre ->
