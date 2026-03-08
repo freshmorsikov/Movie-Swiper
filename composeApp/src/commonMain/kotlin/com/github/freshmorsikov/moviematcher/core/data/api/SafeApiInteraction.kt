@@ -9,6 +9,8 @@ suspend inline fun <T> safeCall(
 ): T? {
     return runCatching {
         block()
+    }.onFailure { exception ->
+        println("Remote call: ${exception.message}")
     }.getOrNull()
 }
 
@@ -19,6 +21,8 @@ inline fun <T> safeFlow(
         block().catch {
             // TODO add proper handling
         }
+    }.onFailure { exception ->
+        println("Remote flow: ${exception.message}")
     }.getOrElse {
         emptyFlow()
     }
