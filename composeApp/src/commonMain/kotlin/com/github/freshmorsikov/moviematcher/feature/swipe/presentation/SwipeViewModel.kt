@@ -4,9 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.analytics.AnalyticsManager
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.OpenSwipeScreenEvent
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedFlowUseCase
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.GetInviteLinkUseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.GetRoomFlowCaseCase
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 private const val MOVIE_COUNT = 3
 
 class SwipeViewModel(
-    private val loadGenreListUseCase: LoadGenreListUseCase,
+    private val getGenreListUseCase: GetGenreListUseCase,
     private val getMovieListUseCase: GetMovieListUseCase,
     private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
     private val getPairedFlowUseCase: GetPairedFlowUseCase,
@@ -31,6 +31,7 @@ class SwipeViewModel(
             code = null,
             inviteBannerVisible = false,
             movies = null,
+            genres = emptyList(),
         )
     }
 ) {
@@ -42,7 +43,11 @@ class SwipeViewModel(
         subscribeOnCode()
         subscribeOnMovieList()
         viewModelScope.launch {
-            loadGenreListUseCase()
+            onAction(
+                SwipeUdf.Action.UpdateGenreList(
+                    genres = getGenreListUseCase()
+                )
+            )
         }
     }
 
@@ -74,6 +79,10 @@ class SwipeViewModel(
         return when (action) {
             is SwipeUdf.Action.UpdateMovie -> {
                 currentState.copy(movies = action.movies)
+            }
+
+            is SwipeUdf.Action.UpdateGenreList -> {
+                currentState.copy(genres = action.genres)
             }
 
             is SwipeUdf.Action.UpdateInviteBanner -> {

@@ -512,7 +512,8 @@ private fun SwipeScreenDataPreview() {
                 inviteBannerVisible = true,
                 movies = List(3) { i ->
                     Movie.mock
-                }
+                },
+                genres = emptyList(),
             ),
             onAction = {},
             onMovieClick = {},
@@ -528,7 +529,8 @@ private fun SwipeScreenLoadingPreview() {
             state = SwipeUdf.State(
                 code = null,
                 inviteBannerVisible = false,
-                movies = null
+                movies = null,
+                genres = emptyList(),
             ),
             onAction = {},
             onMovieClick = {},

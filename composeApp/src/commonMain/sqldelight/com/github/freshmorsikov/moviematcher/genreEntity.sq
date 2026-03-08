@@ -8,6 +8,7 @@ INSERT OR IGNORE
 INTO genreEntity
 VALUES ?;
 
-getCount:
-SELECT COUNT(*)
-FROM genreEntity;
+getGenreList:
+SELECT *
+FROM genreEntity
+ORDER BY genreName ASC;

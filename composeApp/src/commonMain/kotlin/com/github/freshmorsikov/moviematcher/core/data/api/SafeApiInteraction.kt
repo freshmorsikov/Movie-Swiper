@@ -18,8 +18,8 @@ inline fun <T> safeFlow(
     block: () -> Flow<T>
 ): Flow<T> {
     return runCatching {
-        block().catch {
-            // TODO add proper handling
+        block().catch { exception ->
+            println("Remote flow: ${exception.message}")
         }
     }.onFailure { exception ->
         println("Remote flow: ${exception.message}")

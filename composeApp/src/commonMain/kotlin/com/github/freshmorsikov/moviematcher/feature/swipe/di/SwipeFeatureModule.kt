@@ -1,8 +1,8 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe.di
 
+import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedFlowUseCase
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.LoadGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.presentation.SwipeViewModel
 import com.github.freshmorsikov.moviematcher.shared.data.MovieRepository
@@ -12,7 +12,7 @@ import org.koin.dsl.module
 val swipeFeatureModule = module {
     viewModel {
         SwipeViewModel(
-            loadGenreListUseCase = get(),
+            getGenreListUseCase = get(),
             getMovieListUseCase = get(),
             updateMovieStatusUseCase = get(),
             getPairedFlowUseCase = get(),
@@ -22,7 +22,7 @@ val swipeFeatureModule = module {
         )
     }
     factory {
-        LoadGenreListUseCase(movieRepository = get())
+        GetGenreListUseCase(movieRepository = get())
     }
     factory {
         GetMovieListUseCase(movieRepository = get())

@@ -12,7 +12,11 @@ import com.github.freshmorsikov.moviematcher.MovieWithGenreView
 import com.github.freshmorsikov.moviematcher.MovieWithGenreViewQueries
 import com.github.freshmorsikov.moviematcher.core.analytics.AnalyticsManager
 import com.github.freshmorsikov.moviematcher.core.data.api.TheMovieDbApiService
+import com.github.freshmorsikov.moviematcher.core.data.api.model.GenreResponse
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
+import com.github.freshmorsikov.moviematcher.feature.movie.data.mapper.toGenre
+import com.github.freshmorsikov.moviematcher.feature.movie.data.mapper.toGenreEntity
+import com.github.freshmorsikov.moviematcher.feature.movie.domain.model.Genre
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.FetchMoviesEvent
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.FetchMoviesFailedEvent
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
@@ -35,21 +39,23 @@ class MovieRepository(
     private val analyticsManager: AnalyticsManager,
 ) {
 
-    suspend fun loadGenreList() {
-        if (genreEntityQueries.getCount().executeAsOne() > 0) {
-            return
+    suspend fun getGenreList(): List<Genre> {
+        val localGenreList = genreEntityQueries.getGenreList().executeAsList()
+        if (localGenreList.isNotEmpty()) {
+            return localGenreList.map(GenreEntity::toGenre)
         }
 
+        var remoteGenreList: List<Genre>? = null
         theMovieDbApiService.getGenreList()
             .onSuccess { genreList ->
+                remoteGenreList = genreList.genres.map(GenreResponse::toGenre)
                 genreList.genres.forEach { genre ->
-                    val genreEntity = GenreEntity(
-                        id = genre.id,
-                        genreName = genre.name,
-                    )
+                    val genreEntity = genre.toGenreEntity()
                     genreEntityQueries.insert(genreEntity)
                 }
             }
+
+        return remoteGenreList.orEmpty()
     }
 
     suspend fun loadMovieDetailsById(id: Long) {
@@ -193,6 +199,5 @@ class MovieRepository(
             revenue = movie.revenue,
         )
     }
-
 
 }
