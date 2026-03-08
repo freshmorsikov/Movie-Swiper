@@ -63,6 +63,7 @@ class UserRepository(
         return Room(
             id = room.id,
             code = room.code,
+            genreFilter = room.genreFilter.orEmpty(),
         )
     }
 
@@ -74,6 +75,7 @@ class UserRepository(
                 Room(
                     id = room.id,
                     code = room.code,
+                    genreFilter = room.genreFilter.orEmpty(),
                 )
             }
     }

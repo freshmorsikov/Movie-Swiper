@@ -66,7 +66,8 @@ class SupabaseApiService(
             supabaseClient.from(table = ROOM_TABLE)
                 .insert(
                     value = InsertRoom(
-                        code = code
+                        code = code,
+                        genreFilter = emptyList(),
                     )
                 ) {
                     select()
