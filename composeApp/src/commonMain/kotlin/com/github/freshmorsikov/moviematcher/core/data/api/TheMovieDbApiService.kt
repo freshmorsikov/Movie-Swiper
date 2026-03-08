@@ -17,7 +17,7 @@ import io.ktor.http.path
 
 expect val engine: HttpClientEngine
 
-class ApiService(private val httpClient: HttpClient) {
+class TheMovieDbApiService(private val httpClient: HttpClient) {
 
     suspend fun getMovieList(page: Int): Result<PageResponse<MovieResponse>> {
         return safeApiCall {

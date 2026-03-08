@@ -2,18 +2,18 @@ package com.github.freshmorsikov.moviematcher.feature.details.data
 
 import com.github.freshmorsikov.moviematcher.ActorEntity
 import com.github.freshmorsikov.moviematcher.ActorEntityQueries
-import com.github.freshmorsikov.moviematcher.core.data.api.ApiService
+import com.github.freshmorsikov.moviematcher.core.data.api.TheMovieDbApiService
 import com.github.freshmorsikov.moviematcher.feature.details.domain.model.Actor
 
 class ActorRepository(
-    private val apiService: ApiService,
+    private val theMovieDbApiService: TheMovieDbApiService,
     private val actorEntityQueries: ActorEntityQueries,
 ) {
 
     suspend fun getActorsByMovieId(movieId: Long): List<Actor> {
         val actors = actorEntityQueries.getActorsByMovieId(movieId).executeAsList()
         return if (actors.isEmpty()) {
-            val movieCastResult = apiService.getMovieCastByMovieId(movieId = movieId)
+            val movieCastResult = theMovieDbApiService.getMovieCastByMovieId(movieId = movieId)
             movieCastResult.onSuccess { response ->
                 response.cast.take(10).onEach { actorResponse ->
                     val actorEntity = ActorEntity(

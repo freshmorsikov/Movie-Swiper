@@ -47,7 +47,7 @@ val swipeFeatureModule = module {
             movieWithGenreViewQueries = get(),
             movieGenreReferenceQueries = get(),
             keyValueStore = get(),
-            apiService = get(),
+            theMovieDbApiService = get(),
             analyticsManager = get(),
         )
     }

@@ -11,7 +11,7 @@ import com.github.freshmorsikov.moviematcher.MovieGenreReferenceQueries
 import com.github.freshmorsikov.moviematcher.MovieWithGenreView
 import com.github.freshmorsikov.moviematcher.MovieWithGenreViewQueries
 import com.github.freshmorsikov.moviematcher.core.analytics.AnalyticsManager
-import com.github.freshmorsikov.moviematcher.core.data.api.ApiService
+import com.github.freshmorsikov.moviematcher.core.data.api.TheMovieDbApiService
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.FetchMoviesEvent
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.FetchMoviesFailedEvent
@@ -31,12 +31,12 @@ class MovieRepository(
     private val movieWithGenreViewQueries: MovieWithGenreViewQueries,
     private val movieGenreReferenceQueries: MovieGenreReferenceQueries,
     private val keyValueStore: KeyValueStore,
-    private val apiService: ApiService,
+    private val theMovieDbApiService: TheMovieDbApiService,
     private val analyticsManager: AnalyticsManager,
 ) {
 
     suspend fun loadGenreList() {
-        apiService.getGenreList()
+        theMovieDbApiService.getGenreList()
             .onSuccess { genreList ->
                 genreList.genres.forEach { genre ->
                     val genreEntity = GenreEntity(
@@ -49,7 +49,7 @@ class MovieRepository(
     }
 
     suspend fun loadMovieDetailsById(id: Long) {
-        apiService.getMovieDetailsById(movieId = id)
+        theMovieDbApiService.getMovieDetailsById(movieId = id)
             .onSuccess { movieDetails ->
                 movieEntityQueries.updateMovieDetails(
                     voteAverage = movieDetails.voteAverage,
@@ -82,7 +82,7 @@ class MovieRepository(
         val page = keyValueStore.getInt(PAGE_KEY)?.let { cachedPage ->
             cachedPage + 1
         } ?: 1
-        apiService.getMovieList(page = page)
+        theMovieDbApiService.getMovieList(page = page)
             .onSuccess { movieResponse ->
                 if (page == 1) {
                     analyticsManager.sendEvent(event = FetchMoviesEvent)

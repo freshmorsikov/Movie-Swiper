@@ -28,7 +28,7 @@ val movieDetailsFeatureModule = module {
     }
     single {
         ActorRepository(
-            apiService = get(),
+            theMovieDbApiService = get(),
             actorEntityQueries = get(),
         )
     }
