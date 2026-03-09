@@ -29,4 +29,5 @@ The Kotlin Multiplatform source sets are split by responsibility:
 Shared code MUST live in `commonMain`, while platform-specific details MUST stay inside their respective platform directories.
 
 ## Definition of Done
-- You MUST ensure that build is successful `./gradlew :composeApp:assembleDebug`
+- You MUST ensure the build succeeds by running `./gradlew :composeApp:assembleDebug`.
+- You MUST ensure there is no unused or dead code from your changes.
