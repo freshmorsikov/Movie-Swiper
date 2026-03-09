@@ -14,6 +14,7 @@
     <string name="name_hi">Nice to meet you</string>
 
     <string name="swipe_create_pair">Create a pair to find a match</string>
+    <string name="swipe_filter">Filter</string>
     <string name="swipe_invite">Invite</string>
     <string name="swipe_linking">Linking</string>
     <string name="swipe_paired">Paired with</string>

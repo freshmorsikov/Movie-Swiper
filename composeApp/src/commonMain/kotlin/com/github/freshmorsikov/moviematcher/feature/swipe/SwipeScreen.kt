@@ -32,6 +32,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -51,6 +53,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -76,13 +79,14 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_chevron_right
+import moviematcher.composeapp.generated.resources.ic_filter
 import moviematcher.composeapp.generated.resources.sharing_message
 import moviematcher.composeapp.generated.resources.sharing_title
 import moviematcher.composeapp.generated.resources.swipe_create_pair
+import moviematcher.composeapp.generated.resources.swipe_filter
 import moviematcher.composeapp.generated.resources.swipe_invite
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -128,7 +132,7 @@ fun SwipeScreenContent(
     onMovieClick: (Long) -> Unit,
 ) {
     MovieScaffold(contentWindowInsets = WindowInsets.none) {
-        Column {
+        Column(modifier = Modifier.fillMaxSize()) {
             InviteBanner(
                 visible = state.inviteBannerVisible,
                 onAction = onAction,
@@ -137,6 +141,43 @@ fun SwipeScreenContent(
                 movies = state.movies,
                 onAction = onAction,
                 onMovieClick = onMovieClick,
+            )
+        }
+        FilterButton(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            onClick = {},
+        )
+    }
+}
+
+@Composable
+private fun FilterButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Button(
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MovieTheme.colors.surface.main,
+            contentColor = MovieTheme.colors.text.main,
+        ),
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier.padding(vertical = 4.dp),
+            horizontalArrangement = spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(Res.drawable.ic_filter),
+                contentDescription = null,
+            )
+            Text(
+                text = stringResource(Res.string.swipe_filter),
+                style = MovieTheme.typography.label16,
             )
         }
     }
