@@ -148,7 +148,7 @@ fun SwipeScreenContent(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
-            count = 4,
+            count = state.filterCount,
             onClick = {},
         )
     }
@@ -156,7 +156,7 @@ fun SwipeScreenContent(
 
 @Composable
 private fun FilterButton(
-    count: Int,
+    count: Int?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -182,22 +182,24 @@ private fun FilterButton(
                 text = stringResource(Res.string.swipe_filter),
                 style = MovieTheme.typography.label16,
             )
-            Box(
-                modifier = Modifier
-                    .defaultMinSize(
-                        minWidth = 24.dp,
-                        minHeight = 24.dp,
+            if (count != null) {
+                Box(
+                    modifier = Modifier
+                        .defaultMinSize(
+                            minWidth = 24.dp,
+                            minHeight = 24.dp,
+                        )
+                        .clip(shape = RoundedCornerShape(12.dp))
+                        .background(color = MovieTheme.colors.primary)
+                        .padding(4.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = count.toString(),
+                        style = MovieTheme.typography.label12,
+                        color = MovieTheme.colors.text.onAccent,
                     )
-                    .clip(shape = RoundedCornerShape(12.dp))
-                    .background(color = MovieTheme.colors.primary)
-                    .padding(4.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = count.toString(),
-                    style = MovieTheme.typography.label12,
-                    color = MovieTheme.colors.text.onAccent,
-                )
+                }
             }
         }
     }
@@ -575,6 +577,7 @@ private fun SwipeScreenDataPreview() {
                     Movie.mock
                 },
                 genres = emptyList(),
+                filterCount = 4,
             ),
             onAction = {},
             onMovieClick = {},
@@ -592,6 +595,7 @@ private fun SwipeScreenLoadingPreview() {
                 inviteBannerVisible = false,
                 movies = null,
                 genres = emptyList(),
+                filterCount = 0,
             ),
             onAction = {},
             onMovieClick = {},

@@ -32,6 +32,7 @@ class SwipeViewModel(
             inviteBannerVisible = false,
             movies = null,
             genres = emptyList(),
+            filterCount = null,
         )
     }
 ) {
@@ -41,6 +42,7 @@ class SwipeViewModel(
 
         subscribeOnPaired()
         subscribeOnCode()
+        subscribeOnFilters()
         subscribeOnMovieList()
         viewModelScope.launch {
             onAction(
@@ -60,6 +62,12 @@ class SwipeViewModel(
     private fun subscribeOnCode() {
         getRoomFlowCaseCase().onEach { room ->
             onAction(SwipeUdf.Action.UpdateCode(code = room.code))
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeOnFilters() {
+        getRoomFlowCaseCase().onEach { room ->
+            onAction(SwipeUdf.Action.UpdateFilterCount(count = room.genreFilter.size))
         }.launchIn(viewModelScope)
     }
 
@@ -83,6 +91,10 @@ class SwipeViewModel(
 
             is SwipeUdf.Action.UpdateGenreList -> {
                 currentState.copy(genres = action.genres)
+            }
+
+            is SwipeUdf.Action.UpdateFilterCount -> {
+                currentState.copy(filterCount = action.count.takeIf { it > 0 })
             }
 
             is SwipeUdf.Action.UpdateInviteBanner -> {

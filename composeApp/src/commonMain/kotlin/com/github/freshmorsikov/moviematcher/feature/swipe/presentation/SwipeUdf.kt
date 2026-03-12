@@ -11,6 +11,7 @@ interface SwipeUdf {
         val inviteBannerVisible: Boolean,
         val movies: List<Movie>?,
         val genres: List<Genre>,
+        val filterCount: Int?,
     ) : Udf.State
 
     sealed interface MovieCardState {
@@ -24,6 +25,7 @@ interface SwipeUdf {
     sealed interface Action : Udf.Action {
         data class UpdateMovie(val movies: List<Movie>) : Action
         data class UpdateGenreList(val genres: List<Genre>) : Action
+        data class UpdateFilterCount(val count: Int) : Action
         data class UpdateInviteBanner(val visible: Boolean) : Action
         data class UpdateCode(val code: String) : Action
         data class FinishSwiping(val movieCardState: MovieCardState.Swiped) : Action
