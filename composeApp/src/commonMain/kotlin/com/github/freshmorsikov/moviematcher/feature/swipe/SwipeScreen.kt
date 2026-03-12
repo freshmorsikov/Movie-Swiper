@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -147,6 +148,7 @@ fun SwipeScreenContent(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
+            count = 4,
             onClick = {},
         )
     }
@@ -154,6 +156,7 @@ fun SwipeScreenContent(
 
 @Composable
 private fun FilterButton(
+    count: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -179,6 +182,23 @@ private fun FilterButton(
                 text = stringResource(Res.string.swipe_filter),
                 style = MovieTheme.typography.label16,
             )
+            Box(
+                modifier = Modifier
+                    .defaultMinSize(
+                        minWidth = 24.dp,
+                        minHeight = 24.dp,
+                    )
+                    .clip(shape = RoundedCornerShape(12.dp))
+                    .background(color = MovieTheme.colors.primary)
+                    .padding(4.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = count.toString(),
+                    style = MovieTheme.typography.label12,
+                    color = MovieTheme.colors.text.onAccent,
+                )
+            }
         }
     }
 }
