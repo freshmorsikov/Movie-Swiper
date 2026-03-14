@@ -9,6 +9,7 @@ import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.Insert
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.MatchedEntity
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.ReactionEntity
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.RoomEntity
+import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.UpdateRoomGenreFilter
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.functions.functions
@@ -72,6 +73,22 @@ class SupabaseApiService(
                 ) {
                     select()
                 }.decodeSingle<RoomEntity>()
+        }
+    }
+
+    suspend fun updateRoomGenreFilter(
+        roomId: String,
+        genreFilter: List<Long>,
+    ) {
+        safeCall {
+            supabaseClient.from(table = ROOM_TABLE)
+                .update(
+                    value = UpdateRoomGenreFilter(
+                        genreFilter = genreFilter,
+                    )
+                ) {
+                    filter { RoomEntity::id eq roomId }
+                }
         }
     }
 

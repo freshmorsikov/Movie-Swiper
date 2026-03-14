@@ -11,6 +11,12 @@ data class InsertRoom(
 )
 
 @Serializable
+data class UpdateRoomGenreFilter(
+    @SerialName("genre_filter")
+    val genreFilter: List<Long>,
+)
+
+@Serializable
 data class RoomEntity(
     val id: String,
     val code: String,

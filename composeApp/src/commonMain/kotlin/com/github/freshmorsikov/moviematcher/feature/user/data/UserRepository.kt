@@ -152,6 +152,15 @@ class UserRepository(
         return true
     }
 
+    suspend fun updateRoomGenreFilter(genreFilter: List<Long>) {
+        val userId = getUserIdOrNull() ?: return
+        val room = getRoomByUserId(userId = userId) ?: return
+        supabaseApiService.updateRoomGenreFilter(
+            roomId = room.id,
+            genreFilter = genreFilter,
+        )
+    }
+
     suspend fun getShowPairStatus(): Boolean? {
         return keyValueStore.getBoolean(SHOW_PAIR_STATUS_KEY)
     }
