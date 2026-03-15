@@ -57,7 +57,7 @@ class FilterViewModel(
                     initialGenres = action.currentGenres,
                     currentGenres = action.currentGenres,
                     visibleGenres = action.visibleGenres,
-                    isApplyEnabled = true,
+                    isApplyEnabled = false,
                 )
             }
 
