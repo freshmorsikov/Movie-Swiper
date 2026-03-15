@@ -21,6 +21,9 @@ You MUST refactor duplicated logic into shared utilities.
 - You SHOULD keep functions small and side effects explicit.
 - You MUST add and keep null-safety checks at boundaries.
 
+## Testing conventions
+- You MUST keep tests split: 1 domain class = 1 test class.
+
 ## Project structure
 The Kotlin Multiplatform source sets are split by responsibility: 
 - `commonMain` contains shared code.
