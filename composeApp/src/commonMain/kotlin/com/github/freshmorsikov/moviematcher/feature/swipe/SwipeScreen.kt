@@ -105,6 +105,9 @@ fun SwipeScreen(
     SwipeScreenContent(
         state = state,
         onAction = viewModel::onAction,
+        onFilterClick = {
+            navController.navigate(NavigationRoute.Filter)
+        },
         onMovieClick = { movieId ->
             navController.navigate(
                 NavigationRoute.MovieDetails(movieId = movieId)
@@ -130,6 +133,7 @@ fun SwipeScreen(
 fun SwipeScreenContent(
     state: SwipeUdf.State,
     onAction: (SwipeUdf.Action) -> Unit,
+    onFilterClick: () -> Unit,
     onMovieClick: (Long) -> Unit,
 ) {
     MovieScaffold(contentWindowInsets = WindowInsets.none) {
@@ -149,7 +153,7 @@ fun SwipeScreenContent(
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
             count = state.filterCount,
-            onClick = {},
+            onClick = onFilterClick,
         )
     }
 }
@@ -580,6 +584,7 @@ private fun SwipeScreenDataPreview() {
                 filterCount = 4,
             ),
             onAction = {},
+            onFilterClick = {},
             onMovieClick = {},
         )
     }
@@ -598,6 +603,7 @@ private fun SwipeScreenLoadingPreview() {
                 filterCount = 0,
             ),
             onAction = {},
+            onFilterClick = {},
             onMovieClick = {},
         )
     }

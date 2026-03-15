@@ -30,6 +30,9 @@ interface NavigationRoute {
     data object Matches : BottomNavigationRoute
 
     @Serializable
+    data object Filter : NavigationRoute
+
+    @Serializable
     data class MovieDetails(val movieId: Long) : NavigationRoute
 
 }
