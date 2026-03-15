@@ -9,5 +9,8 @@ class GetGenreListUseCase(
 
     suspend operator fun invoke(): List<Genre> {
         return movieRepository.getGenreList()
+            .sortedBy { genre ->
+                genre.name.lowercase()
+            }
     }
 }
