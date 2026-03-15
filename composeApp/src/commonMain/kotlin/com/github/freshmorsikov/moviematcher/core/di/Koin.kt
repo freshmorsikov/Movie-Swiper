@@ -7,6 +7,7 @@ import com.github.freshmorsikov.moviematcher.core.data.di.dataStoreModule
 import com.github.freshmorsikov.moviematcher.core.data.di.sqlDriverModule
 import com.github.freshmorsikov.moviematcher.feature.details.di.movieDetailsFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.favorites.di.favoritesFeatureModule
+import com.github.freshmorsikov.moviematcher.feature.filter.di.filterFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.matches.di.matchesFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.name.di.nameFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.no_connection.di.noConnectionFeatureModule
@@ -36,6 +37,7 @@ fun initKoin(platformModule: Module = module {}) {
             noConnectionFeatureModule,
             nameFeatureModule,
             favoritesFeatureModule,
+            filterFeatureModule,
             matchesFeatureModule,
             pairingFeatureModule,
             movieDetailsFeatureModule,
