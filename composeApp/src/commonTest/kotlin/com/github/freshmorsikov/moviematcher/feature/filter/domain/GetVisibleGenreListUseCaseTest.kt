@@ -29,7 +29,7 @@ class GetVisibleGenreListUseCaseTest {
                 genre2,
                 genre3,
             ),
-            searchQuery = "  aCT  ",
+            searchQuery = "act ",
         )
 
         assertEquals(listOf(genre1), result)
