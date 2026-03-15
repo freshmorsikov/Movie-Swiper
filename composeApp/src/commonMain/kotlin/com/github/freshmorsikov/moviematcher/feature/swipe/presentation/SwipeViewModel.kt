@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.analytics.AnalyticsManager
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.OpenSwipeScreenEvent
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
@@ -18,7 +17,6 @@ import kotlinx.coroutines.launch
 private const val MOVIE_COUNT = 3
 
 class SwipeViewModel(
-    private val getGenreListUseCase: GetGenreListUseCase,
     private val getMovieListUseCase: GetMovieListUseCase,
     private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
     private val getPairedFlowUseCase: GetPairedFlowUseCase,
@@ -31,7 +29,6 @@ class SwipeViewModel(
             code = null,
             inviteBannerVisible = false,
             movies = null,
-            genres = emptyList(),
             filterCount = null,
         )
     }
@@ -41,16 +38,8 @@ class SwipeViewModel(
         analyticsManager.sendEvent(event = OpenSwipeScreenEvent)
 
         subscribeOnPaired()
-        subscribeOnCode()
-        subscribeOnFilters()
+        subscribeOnRoom()
         subscribeOnMovieList()
-        viewModelScope.launch {
-            onAction(
-                SwipeUdf.Action.UpdateGenreList(
-                    genres = getGenreListUseCase()
-                )
-            )
-        }
     }
 
     private fun subscribeOnPaired() {
@@ -59,15 +48,14 @@ class SwipeViewModel(
         }.launchIn(viewModelScope)
     }
 
-    private fun subscribeOnCode() {
+    private fun subscribeOnRoom() {
         getRoomFlowCaseCase().onEach { room ->
-            onAction(SwipeUdf.Action.UpdateCode(code = room.code))
-        }.launchIn(viewModelScope)
-    }
-
-    private fun subscribeOnFilters() {
-        getRoomFlowCaseCase().onEach { room ->
-            onAction(SwipeUdf.Action.UpdateFilterCount(count = room.genreFilter.size))
+            onAction(
+                SwipeUdf.Action.UpdateRoom(
+                    code = room.code,
+                    filterCount = room.genreFilter.size,
+                )
+            )
         }.launchIn(viewModelScope)
     }
 
@@ -89,21 +77,14 @@ class SwipeViewModel(
                 currentState.copy(movies = action.movies)
             }
 
-            is SwipeUdf.Action.UpdateGenreList -> {
-                currentState.copy(genres = action.genres)
-            }
-
-            is SwipeUdf.Action.UpdateFilterCount -> {
-                currentState.copy(filterCount = action.count.takeIf { it > 0 })
-            }
-
             is SwipeUdf.Action.UpdateInviteBanner -> {
                 currentState.copy(inviteBannerVisible = action.visible)
             }
 
-            is SwipeUdf.Action.UpdateCode -> {
+            is SwipeUdf.Action.UpdateRoom -> {
                 currentState.copy(
-                    code = action.code
+                    code = action.code,
+                    filterCount = action.filterCount.takeIf { it > 0 },
                 )
             }
 

@@ -5,7 +5,7 @@ import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.filter.domain.GetVisibleGenreListUseCase
 import com.github.freshmorsikov.moviematcher.feature.filter.domain.SaveRoomGenreFilterUseCase
 import com.github.freshmorsikov.moviematcher.feature.filter.domain.SelectableGenre
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetGenreListUseCase
+import com.github.freshmorsikov.moviematcher.feature.filter.domain.GetGenreListUseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.GetRoomFlowCaseCase
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow

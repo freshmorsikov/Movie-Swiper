@@ -580,7 +580,6 @@ private fun SwipeScreenDataPreview() {
                 movies = List(3) { i ->
                     Movie.mock
                 },
-                genres = emptyList(),
                 filterCount = 4,
             ),
             onAction = {},
@@ -599,7 +598,6 @@ private fun SwipeScreenLoadingPreview() {
                 code = null,
                 inviteBannerVisible = false,
                 movies = null,
-                genres = emptyList(),
                 filterCount = 0,
             ),
             onAction = {},

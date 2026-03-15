@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 
 private const val USER_ID_KEY = "USER_ID_KEY"
 private const val USER_NAME_KEY = "USER_NAME_KEY"
@@ -67,16 +66,19 @@ class UserRepository(
         )
     }
 
-    private suspend fun getRoomFlowByUserId(userId: String): Flow<Room> {
+    private fun getRoomFlowByUserId(userId: String): Flow<Room> {
         return userRemoteDataSource.getUserFlowById(userId = userId)
             .filterNotNull()
-            .mapNotNull { user ->
-                val room = supabaseApiService.getRoomById(roomId = user.room) ?: return@mapNotNull null
-                Room(
-                    id = room.id,
-                    code = room.code,
-                    genreFilter = room.genreFilter.orEmpty(),
-                )
+            .flatMapLatest { user ->
+                supabaseApiService.getRoomFlowById(roomId = user.room)
+                    .filterNotNull()
+                    .map { room ->
+                        Room(
+                            id = room.id,
+                            code = room.code,
+                            genreFilter = room.genreFilter.orEmpty(),
+                        )
+                    }
             }
     }
 

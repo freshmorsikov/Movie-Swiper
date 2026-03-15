@@ -1,4 +1,4 @@
-package com.github.freshmorsikov.moviematcher.feature.swipe.domain
+package com.github.freshmorsikov.moviematcher.feature.filter.domain
 
 import com.github.freshmorsikov.moviematcher.feature.movie.domain.model.Genre
 import com.github.freshmorsikov.moviematcher.shared.data.MovieRepository

@@ -2,7 +2,6 @@ package com.github.freshmorsikov.moviematcher.core.data.api.supabase
 
 import com.github.freshmorsikov.moviematcher.core.data.api.safeCall
 import com.github.freshmorsikov.moviematcher.core.data.api.safeFlow
-import com.github.freshmorsikov.moviematcher.feature.user.data.model.IncrementCounterResponse
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertMatched
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertReaction
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertRoom
@@ -10,6 +9,7 @@ import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.Matche
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.ReactionEntity
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.RoomEntity
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.UpdateRoomGenreFilter
+import com.github.freshmorsikov.moviematcher.feature.user.data.model.IncrementCounterResponse
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.functions.functions
@@ -17,6 +17,7 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.filter.FilterOperation
 import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.selectAsFlow
+import io.github.jan.supabase.realtime.selectSingleValueAsFlow
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.json.Json
@@ -50,6 +51,16 @@ class SupabaseApiService(
                 .select {
                     filter { RoomEntity::id eq roomId }
                 }.decodeSingleOrNull<RoomEntity>()
+        }
+    }
+
+    @OptIn(SupabaseExperimental::class)
+    fun getRoomFlowById(roomId: String): Flow<RoomEntity?> {
+        return safeFlow {
+            supabaseClient.from(table = ROOM_TABLE)
+                .selectSingleValueAsFlow(RoomEntity::id) {
+                    RoomEntity::id eq roomId
+                }
         }
     }
 

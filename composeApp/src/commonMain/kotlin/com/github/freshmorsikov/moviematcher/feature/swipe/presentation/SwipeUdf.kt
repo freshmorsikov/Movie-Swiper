@@ -1,7 +1,6 @@
 package com.github.freshmorsikov.moviematcher.feature.swipe.presentation
 
 import com.github.freshmorsikov.moviematcher.core.presentation.Udf
-import com.github.freshmorsikov.moviematcher.feature.movie.domain.model.Genre
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 
 interface SwipeUdf {
@@ -10,7 +9,6 @@ interface SwipeUdf {
         val code: String?,
         val inviteBannerVisible: Boolean,
         val movies: List<Movie>?,
-        val genres: List<Genre>,
         val filterCount: Int?,
     ) : Udf.State
 
@@ -24,10 +22,8 @@ interface SwipeUdf {
 
     sealed interface Action : Udf.Action {
         data class UpdateMovie(val movies: List<Movie>) : Action
-        data class UpdateGenreList(val genres: List<Genre>) : Action
-        data class UpdateFilterCount(val count: Int) : Action
+        data class UpdateRoom(val code: String, val filterCount: Int) : Action
         data class UpdateInviteBanner(val visible: Boolean) : Action
-        data class UpdateCode(val code: String) : Action
         data class FinishSwiping(val movieCardState: MovieCardState.Swiped) : Action
         data object InviteClick : Action
     }
