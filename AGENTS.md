@@ -13,6 +13,12 @@ You MUST refactor duplicated logic into shared utilities.
   - Presentation (ViewModel) MUST handle actions and produce new UI state and events.
   - Domain (UseCase) MUST contain business logic and MUST NOT hold state.
   - Data (Repositories) MUST manage data sources and handle data input/output.
+- You SHOULD follow the UDF split for presentation state handling.
+  - `reduce` MUST synchronously map `current state + action -> new state`.
+  - `reduce` MUST stay deterministic and MUST NOT perform I/O, navigation, event emission, or coroutine work.
+  - `handleEffects` MUST handle side effects triggered by actions, including async work, use case execution, one-off events, navigation, and dispatching follow-up actions.
+  - `handleEffects` MUST NOT be the primary place for persistent UI state calculation when that state can be derived in `reduce`.
+  - `handleEffects` CAN produce another Action if the state needs to be updated after some operation has been performed.
 - All new classes that own runtime dependencies MUST be registered in DI module.
 
 ## Kotlin conventions
