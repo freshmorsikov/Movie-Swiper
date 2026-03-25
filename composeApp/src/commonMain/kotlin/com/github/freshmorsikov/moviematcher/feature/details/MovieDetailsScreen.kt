@@ -1,6 +1,5 @@
 package com.github.freshmorsikov.moviematcher.feature.details
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
@@ -15,12 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,11 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
+import com.github.freshmorsikov.moviematcher.core.ui.MovieBackButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.Shimmer
 import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
@@ -45,14 +42,11 @@ import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieGenres
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
 import com.github.freshmorsikov.moviematcher.util.toAmountFormat
 import moviematcher.composeapp.generated.resources.Res
-import moviematcher.composeapp.generated.resources.ic_back
 import moviematcher.composeapp.generated.resources.movie_details_budget
 import moviematcher.composeapp.generated.resources.movie_details_cast
 import moviematcher.composeapp.generated.resources.movie_details_overview
 import moviematcher.composeapp.generated.resources.movie_details_revenue
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -99,30 +93,12 @@ private fun MovieDetailsScreenContent(
                 )
             }
         }
-        FilledIconButton(
+        MovieBackButton(
             modifier = Modifier
                 .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 8.dp)
-                .padding(start = 16.dp)
-                .size(48.dp)
-                .border(
-                    width = 1.dp,
-                    color = MovieTheme.colors.surface.main.copy(alpha = 0.8f),
-                    shape = CircleShape
-                ),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MovieTheme.colors.surface.main.copy(
-                    alpha = 0.6f
-                )
-            ),
-            onClick = onBackClick
-        ) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                painter = painterResource(Res.drawable.ic_back),
-                tint = MovieTheme.colors.icon.main,
-                contentDescription = null
-            )
-        }
+                .padding(start = 16.dp),
+            onClick = onBackClick,
+        )
     }
 }
 

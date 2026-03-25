@@ -20,8 +20,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.github.freshmorsikov.moviematcher.core.ui.MovieBackButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.MovieTextField
 import com.github.freshmorsikov.moviematcher.core.ui.OutlinedMovieButton
@@ -50,8 +51,6 @@ import moviematcher.composeapp.generated.resources.filter_cancel
 import moviematcher.composeapp.generated.resources.filter_no_genres_available
 import moviematcher.composeapp.generated.resources.filter_no_genres_found
 import moviematcher.composeapp.generated.resources.filter_search_genre
-import moviematcher.composeapp.generated.resources.filter_title
-import moviematcher.composeapp.generated.resources.ic_back
 import moviematcher.composeapp.generated.resources.ic_check
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -85,30 +84,18 @@ fun FilterScreenContent(
 ) {
     MovieScaffold {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxSize(),
         ) {
             FilterHeader(
-                onBackClick = {
-                    onAction(FilterUdf.Action.BackClick)
-                }
-            )
-            MovieTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                value = (state as? FilterUdf.State.Success)?.searchQuery.orEmpty(),
-                onValueChange = { value ->
+                searchQuery = (state as? FilterUdf.State.Success)?.searchQuery.orEmpty(),
+                onSearchQueryChange = { value ->
                     onAction(FilterUdf.Action.HandleSearchQuery(searchQuery = value))
                 },
-                placeholder = stringResource(Res.string.filter_search_genre),
+                onBackClick = {
+                    onAction(FilterUdf.Action.BackClick)
+                },
             )
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(top = 16.dp)
-            ) {
+            Box(modifier = Modifier.weight(1f)) {
                 when (state) {
                     is FilterUdf.State.Loading -> {
                         FilterLoadingState()
@@ -132,7 +119,7 @@ fun FilterScreenContent(
                                 LazyColumn(
                                     modifier = Modifier.fillMaxSize(),
                                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                                    contentPadding = PaddingValues(bottom = 16.dp),
+                                    contentPadding = PaddingValues(16.dp),
                                 ) {
                                     items(
                                         items = state.visibleGenres,
@@ -152,33 +139,41 @@ fun FilterScreenContent(
                     }
                 }
             }
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        top = 16.dp,
-                        bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding() + 16.dp,
-                    ),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    .padding(bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding() + 16.dp),
             ) {
-                OutlinedMovieButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(Res.string.filter_cancel),
-                    onClick = {
-                        onAction(FilterUdf.Action.CancelClick)
-                    },
-                    color = MovieTheme.colors.primary,
-                    enabled = state !is FilterUdf.State.Success || !state.isSaving,
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = MovieTheme.colors.stroke,
                 )
-                PrimaryMovieButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(Res.string.filter_apply),
-                    onClick = {
-                        onAction(FilterUdf.Action.ApplyClick)
-                    },
-                    enabled = (state as? FilterUdf.State.Success)?.isApplyEnabled == true,
-                    isLoading = (state as? FilterUdf.State.Success)?.isSaving == true,
-                )
+                Row(
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        top = 16.dp,
+                        end = 16.dp,
+                    ),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedMovieButton(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(Res.string.filter_cancel),
+                        onClick = {
+                            onAction(FilterUdf.Action.CancelClick)
+                        },
+                        color = MovieTheme.colors.primary,
+                        enabled = state !is FilterUdf.State.Success || !state.isSaving,
+                    )
+                    PrimaryMovieButton(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(Res.string.filter_apply),
+                        onClick = {
+                            onAction(FilterUdf.Action.ApplyClick)
+                        },
+                        enabled = (state as? FilterUdf.State.Success)?.isApplyEnabled == true,
+                    )
+                }
             }
         }
     }
@@ -186,28 +181,36 @@ fun FilterScreenContent(
 
 @Composable
 private fun FilterHeader(
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
     onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 8.dp,
-            ),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        IconButton(onClick = onBackClick) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_back),
-                contentDescription = null,
-                tint = MovieTheme.colors.icon.main,
+    Column {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 16.dp,
+                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 8.dp,
+                    end = 16.dp,
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            MovieBackButton(onClick = onBackClick)
+            MovieTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp),
+                value = searchQuery,
+                onValueChange = onSearchQueryChange,
+                placeholder = stringResource(Res.string.filter_search_genre),
             )
         }
-        Text(
-            modifier = Modifier.padding(start = 8.dp),
-            text = stringResource(Res.string.filter_title),
-            style = MovieTheme.typography.title20,
-            color = MovieTheme.colors.text.main,
+        HorizontalDivider(
+            modifier = Modifier.padding(top = 8.dp),
+            thickness = 1.dp,
+            color = MovieTheme.colors.stroke,
         )
     }
 }

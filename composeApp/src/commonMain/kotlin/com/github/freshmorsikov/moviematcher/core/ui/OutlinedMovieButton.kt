@@ -1,14 +1,17 @@
 package com.github.freshmorsikov.moviematcher.core.ui
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
-import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun OutlinedMovieButton(
@@ -25,13 +28,18 @@ fun OutlinedMovieButton(
             color = color
         ),
         enabled = enabled,
-        onClick = onClick,
+        onClick = onClick
     ) {
-        Text(
-            text = text,
-            color = color,
-            style = MovieTheme.typography.body14,
-        )
+        Box(
+            modifier = Modifier.padding(8.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = text,
+                style = MovieTheme.typography.label16,
+                color = color,
+            )
+        }
     }
 }
 
@@ -42,7 +50,7 @@ private fun OutlinedMovieButtonPreview() {
         OutlinedMovieButton(
             text = "This is button",
             onClick = {},
-            color = MovieTheme.colors.primary,
+            color = MovieTheme.colors.stroke,
         )
     }
 }
