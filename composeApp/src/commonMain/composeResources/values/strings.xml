@@ -22,7 +22,8 @@
     <string name="user_pair_friend">Friend</string>
 
     <string name="filter_title">Filters</string>
-    <string name="filter_search_genre">Search genre</string>
+    <string name="filter_select_genres">Search genres</string>
+    <string name="filter_search_genres">Search genres</string>
     <string name="filter_no_genres_available">No genres available</string>
     <string name="filter_no_genres_found">No genres found</string>
     <string name="filter_cancel">Cancel</string>

@@ -1,8 +1,6 @@
 package com.github.freshmorsikov.moviematcher.core.ui
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -20,20 +18,14 @@ fun MovieBackButton(
     modifier: Modifier = Modifier,
 ) {
     FilledIconButton(
-        modifier = modifier
-            .size(48.dp)
-            .border(
-                width = 1.dp,
-                color = MovieTheme.colors.surface.main.copy(alpha = 0.8f),
-                shape = CircleShape,
-            ),
+        modifier = modifier,
         colors = IconButtonDefaults.iconButtonColors(
             containerColor = MovieTheme.colors.surface.main.copy(alpha = 0.6f),
         ),
         onClick = onClick,
     ) {
         Icon(
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(16.dp),
             painter = painterResource(Res.drawable.ic_back),
             tint = MovieTheme.colors.icon.main,
             contentDescription = null,

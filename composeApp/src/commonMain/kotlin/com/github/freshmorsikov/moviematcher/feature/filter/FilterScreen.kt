@@ -1,7 +1,6 @@
 package com.github.freshmorsikov.moviematcher.feature.filter
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,14 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -50,9 +48,9 @@ import moviematcher.composeapp.generated.resources.filter_apply
 import moviematcher.composeapp.generated.resources.filter_cancel
 import moviematcher.composeapp.generated.resources.filter_no_genres_available
 import moviematcher.composeapp.generated.resources.filter_no_genres_found
-import moviematcher.composeapp.generated.resources.filter_search_genre
-import moviematcher.composeapp.generated.resources.ic_check
-import org.jetbrains.compose.resources.painterResource
+import moviematcher.composeapp.generated.resources.filter_search_genres
+import moviematcher.composeapp.generated.resources.filter_select_genres
+import moviematcher.composeapp.generated.resources.ic_search
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -84,7 +82,9 @@ fun FilterScreenContent(
 ) {
     MovieScaffold {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 8.dp),
         ) {
             FilterHeader(
                 searchQuery = (state as? FilterUdf.State.Success)?.searchQuery.orEmpty(),
@@ -125,10 +125,10 @@ fun FilterScreenContent(
                                         items = state.visibleGenres,
                                         key = { genre -> genre.genre.id },
                                     ) { genre ->
-                                        GenreRow(
+                                        GenreItem(
                                             genre = genre,
                                             enabled = !state.isSaving,
-                                            onClick = {
+                                            onToggleSelection = {
                                                 onAction(FilterUdf.Action.ToggleGenre(genreId = genre.genre.id))
                                             }
                                         )
@@ -186,29 +186,32 @@ private fun FilterHeader(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(
-                    start = 16.dp,
-                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 8.dp,
-                    end = 16.dp,
-                ),
-            verticalAlignment = Alignment.CenterVertically,
+    Column(modifier = modifier) {
+        Box(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            contentAlignment = Alignment.CenterStart
         ) {
             MovieBackButton(onClick = onBackClick)
-            MovieTextField(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 16.dp),
-                value = searchQuery,
-                onValueChange = onSearchQueryChange,
-                placeholder = stringResource(Res.string.filter_search_genre),
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(Res.string.filter_select_genres),
+                color = MovieTheme.colors.text.main,
+                style = MovieTheme.typography.title20,
+                textAlign = TextAlign.Center,
             )
         }
+        MovieTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(top = 16.dp),
+            value = searchQuery,
+            onValueChange = onSearchQueryChange,
+            placeholder = stringResource(Res.string.filter_search_genres),
+            leadingIconRes = Res.drawable.ic_search,
+        )
         HorizontalDivider(
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = 16.dp),
             thickness = 1.dp,
             color = MovieTheme.colors.stroke,
         )
@@ -216,10 +219,10 @@ private fun FilterHeader(
 }
 
 @Composable
-private fun GenreRow(
+private fun GenreItem(
     genre: SelectableGenre,
     enabled: Boolean,
-    onClick: () -> Unit,
+    onToggleSelection: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -228,55 +231,30 @@ private fun GenreRow(
             .background(MovieTheme.colors.surface.main)
             .clickable(
                 enabled = enabled,
-                onClick = onClick,
+                onClick = onToggleSelection,
             )
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        SelectionIndicator(selected = genre.isSelected)
+        Checkbox(
+            checked = genre.isSelected,
+            onCheckedChange = {
+                onToggleSelection()
+            },
+            colors = CheckboxDefaults.colors(
+                checkedColor = MovieTheme.colors.primary,
+                uncheckedColor = MovieTheme.colors.primaryDisabled,
+                checkmarkColor = MovieTheme.colors.text.onAccent,
+            ),
+        )
         Text(
             modifier = Modifier
-                .padding(start = 12.dp)
+                .padding(start = 4.dp)
                 .weight(1f),
             text = genre.genre.name,
             style = MovieTheme.typography.body16,
             color = MovieTheme.colors.text.main,
         )
-    }
-}
-
-@Composable
-private fun SelectionIndicator(selected: Boolean) {
-    Box(
-        modifier = Modifier
-            .size(24.dp)
-            .clip(CircleShape)
-            .background(
-                color = if (selected) {
-                    MovieTheme.colors.primary
-                } else {
-                    MovieTheme.colors.surface.variant
-                }
-            )
-            .border(
-                width = 1.dp,
-                color = if (selected) {
-                    MovieTheme.colors.primary
-                } else {
-                    MovieTheme.colors.stroke
-                },
-                shape = CircleShape,
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
-        if (selected) {
-            Icon(
-                modifier = Modifier.size(14.dp),
-                painter = painterResource(Res.drawable.ic_check),
-                contentDescription = null,
-                tint = MovieTheme.colors.text.onAccent,
-            )
-        }
     }
 }
 
