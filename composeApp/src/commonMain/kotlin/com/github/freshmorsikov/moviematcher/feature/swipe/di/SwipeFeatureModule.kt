@@ -32,6 +32,7 @@ val swipeFeatureModule = module {
     }
     factory {
         GetPairedFlowUseCase(
+            getRoomFlowCaseCase = get(),
             userRepository = get(),
         )
     }

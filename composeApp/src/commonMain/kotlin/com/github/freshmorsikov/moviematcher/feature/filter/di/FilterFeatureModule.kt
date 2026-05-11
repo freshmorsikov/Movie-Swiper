@@ -13,7 +13,8 @@ val filterFeatureModule = module {
     }
     factory {
         SaveRoomGenreFilterUseCase(
-            userRepository = get(),
+            getRoomFlowCaseCase = get(),
+            roomRepository = get(),
         )
     }
     factory {

@@ -17,15 +17,6 @@ class RoomRemoteDataSource(
     private val supabaseClient: SupabaseClient
 ) {
 
-    suspend fun getRoomById(roomId: String): RoomEntity? {
-        return safeCall {
-            supabaseClient.from(table = ROOM_TABLE)
-                .select {
-                    filter { RoomEntity::id eq roomId }
-                }.decodeSingleOrNull<RoomEntity>()
-        }
-    }
-
     @OptIn(SupabaseExperimental::class)
     fun getRoomFlowById(roomId: String): Flow<RoomEntity?> {
         return safeFlow {
