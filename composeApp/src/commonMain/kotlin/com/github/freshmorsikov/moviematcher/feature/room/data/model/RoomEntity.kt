@@ -1,7 +1,7 @@
-package com.github.freshmorsikov.moviematcher.core.data.api.supabase.model
+package com.github.freshmorsikov.moviematcher.feature.room.data.model
 
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class InsertRoom(

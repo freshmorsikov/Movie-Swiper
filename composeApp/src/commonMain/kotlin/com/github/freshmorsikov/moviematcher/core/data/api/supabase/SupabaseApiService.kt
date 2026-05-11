@@ -4,11 +4,8 @@ import com.github.freshmorsikov.moviematcher.core.data.api.safeCall
 import com.github.freshmorsikov.moviematcher.core.data.api.safeFlow
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertMatched
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertReaction
-import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertRoom
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.MatchedEntity
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.ReactionEntity
-import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.RoomEntity
-import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.UpdateRoomGenreFilter
 import com.github.freshmorsikov.moviematcher.feature.user.data.model.IncrementCounterResponse
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseExperimental
@@ -17,12 +14,10 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.filter.FilterOperation
 import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.selectAsFlow
-import io.github.jan.supabase.realtime.selectSingleValueAsFlow
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.json.Json
 
-private const val ROOM_TABLE = "room"
 private const val MATCHED_TABLE = "matched"
 private const val REACTION_TABLE = "reaction"
 private const val INCREMENT_COUNTER_FUNCTION = "increment-counter"
@@ -40,66 +35,6 @@ class SupabaseApiService(
         return safeCall {
             val response = supabaseClient.functions.invoke(function = INCREMENT_COUNTER_FUNCTION)
             json.decodeFromString<IncrementCounterResponse>(response.bodyAsText()).value
-        }
-    }
-
-    // ROOM
-
-    suspend fun getRoomById(roomId: String): RoomEntity? {
-        return safeCall {
-            supabaseClient.from(table = ROOM_TABLE)
-                .select {
-                    filter { RoomEntity::id eq roomId }
-                }.decodeSingleOrNull<RoomEntity>()
-        }
-    }
-
-    @OptIn(SupabaseExperimental::class)
-    fun getRoomFlowById(roomId: String): Flow<RoomEntity?> {
-        return safeFlow {
-            supabaseClient.from(table = ROOM_TABLE)
-                .selectSingleValueAsFlow(RoomEntity::id) {
-                    RoomEntity::id eq roomId
-                }
-        }
-    }
-
-    suspend fun getRoomByCode(code: String): RoomEntity? {
-        return safeCall {
-            supabaseClient.from(table = ROOM_TABLE)
-                .select {
-                    filter { RoomEntity::code eq code }
-                }.decodeSingleOrNull<RoomEntity>()
-        }
-    }
-
-    suspend fun createRoom(code: String): RoomEntity? {
-        return safeCall {
-            supabaseClient.from(table = ROOM_TABLE)
-                .insert(
-                    value = InsertRoom(
-                        code = code,
-                        genreFilter = emptyList(),
-                    )
-                ) {
-                    select()
-                }.decodeSingle<RoomEntity>()
-        }
-    }
-
-    suspend fun updateRoomGenreFilter(
-        roomId: String,
-        genreFilter: List<Long>,
-    ) {
-        safeCall {
-            supabaseClient.from(table = ROOM_TABLE)
-                .update(
-                    value = UpdateRoomGenreFilter(
-                        genreFilter = genreFilter,
-                    )
-                ) {
-                    filter { RoomEntity::id eq roomId }
-                }
         }
     }
 

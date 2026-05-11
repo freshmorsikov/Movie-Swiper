@@ -1,8 +1,11 @@
 package com.github.freshmorsikov.moviematcher.feature.user.data
 
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.SupabaseApiService
-import com.github.freshmorsikov.moviematcher.feature.user.data.mapper.toUser
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
+import com.github.freshmorsikov.moviematcher.feature.room.data.RoomRemoteDataSource
+import com.github.freshmorsikov.moviematcher.feature.room.data.mapper.toRoom
+import com.github.freshmorsikov.moviematcher.feature.room.data.model.RoomEntity
+import com.github.freshmorsikov.moviematcher.feature.user.data.mapper.toUser
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Room
 import com.github.freshmorsikov.moviematcher.feature.user.domain.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,6 +23,7 @@ private const val SHOW_PAIR_STATUS_KEY = "SHOW_PAIR_STATUS_KEY"
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserRepository(
     private val userRemoteDataSource: UserRemoteDataSource,
+    private val roomRemoteDataSource: RoomRemoteDataSource,
     private val supabaseApiService: SupabaseApiService,
     private val keyValueStore: KeyValueStore,
 ) {
@@ -58,27 +62,16 @@ class UserRepository(
 
     private suspend fun getRoomByUserId(userId: String): Room? {
         val user = userRemoteDataSource.getUserById(userId = userId) ?: return null
-        val room = supabaseApiService.getRoomById(roomId = user.room) ?: return null
-        return Room(
-            id = room.id,
-            code = room.code,
-            genreFilter = room.genreFilter.orEmpty(),
-        )
+        return roomRemoteDataSource.getRoomById(roomId = user.room)?.toRoom()
     }
 
     private fun getRoomFlowByUserId(userId: String): Flow<Room> {
         return userRemoteDataSource.getUserFlowById(userId = userId)
             .filterNotNull()
             .flatMapLatest { user ->
-                supabaseApiService.getRoomFlowById(roomId = user.room)
+                roomRemoteDataSource.getRoomFlowById(roomId = user.room)
                     .filterNotNull()
-                    .map { room ->
-                        Room(
-                            id = room.id,
-                            code = room.code,
-                            genreFilter = room.genreFilter.orEmpty(),
-                        )
-                    }
+                    .map(RoomEntity::toRoom)
             }
     }
 
@@ -118,7 +111,7 @@ class UserRepository(
         code: String,
         name: String,
     ) {
-        val roomId = supabaseApiService.createRoom(code = code)?.id ?: return
+        val roomId = roomRemoteDataSource.createRoom(code = code)?.id ?: return
         val userId = userRemoteDataSource.createUser(
             roomId = roomId,
             name = name
@@ -144,7 +137,7 @@ class UserRepository(
         userId: String,
         code: String
     ): Boolean {
-        val room = supabaseApiService.getRoomByCode(code = code) ?: return false
+        val room = roomRemoteDataSource.getRoomByCode(code = code) ?: return false
 
         userRemoteDataSource.updateUserRoom(
             userId = userId,
@@ -157,7 +150,7 @@ class UserRepository(
     suspend fun updateRoomGenreFilter(genreFilter: List<Long>) {
         val userId = getUserIdOrNull() ?: return
         val room = getRoomByUserId(userId = userId) ?: return
-        supabaseApiService.updateRoomGenreFilter(
+        roomRemoteDataSource.updateRoomGenreFilter(
             roomId = room.id,
             genreFilter = genreFilter,
         )
