@@ -1,5 +1,6 @@
 package com.github.freshmorsikov.moviematcher.shared.data
 
+import app.cash.sqldelight.Query
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.github.freshmorsikov.moviematcher.GenreEntity
@@ -28,6 +29,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 private const val PAGE_KEY = "PAGE_KEY"
+private const val PAGE_KEY_SEPARATOR = "_"
 
 class MovieRepository(
     private val movieEntityQueries: MovieEntityQueries,
@@ -74,8 +76,24 @@ class MovieRepository(
             }
     }
 
-    fun getMovieListFlowByStatus(status: MovieStatus): Flow<List<Movie>> {
-        return movieWithGenreViewQueries.getMoviesWithGenreByStatus(status = status.name)
+    fun getMovieListFlow(
+        status: MovieStatus,
+        genreFilter: List<Long> = emptyList(),
+    ): Flow<List<Movie>> {
+        val query = if (genreFilter.isEmpty()) {
+            movieWithGenreViewQueries.getMoviesWithGenreByStatus(status = status.name)
+        } else {
+            movieWithGenreViewQueries.getMoviesWithGenreByStatusAndGenreIds(
+                status = status.name,
+                genreIds = genreFilter,
+            )
+        }
+
+        return getMovieListFlowByQuery(query = query)
+    }
+
+    private fun getMovieListFlowByQuery(query: Query<MovieWithGenreView>): Flow<List<Movie>> {
+        return query
             .asFlow()
             .mapToList(Dispatchers.Default)
             .map { movieWithGenreList ->
@@ -87,48 +105,65 @@ class MovieRepository(
         return movieEntityQueries.getMovieCountByStatus(status = status.name).executeAsOne()
     }
 
+    fun getMovieCountByStatusAndGenreFilter(
+        status: MovieStatus,
+        genreFilter: List<Long>,
+    ): Long {
+        if (genreFilter.isEmpty()) {
+            return getMovieCountByStatus(status = status)
+        }
+
+        return movieEntityQueries.getMovieCountByStatusAndGenreIds(
+            status = status.name,
+            genreIds = genreFilter,
+        ).executeAsOne()
+    }
+
     @OptIn(ExperimentalTime::class)
-    suspend fun loadMoreMoviesByStatus() {
-        val page = keyValueStore.getInt(PAGE_KEY)?.let { cachedPage ->
+    suspend fun loadMoreMoviesByStatus(genreFilter: List<Long>) {
+        val pageKey = genreFilter.toPageKey()
+        val page = keyValueStore.getInt(pageKey)?.let { cachedPage ->
             cachedPage + 1
         } ?: 1
-        theMovieDbApiService.getMovieList(page = page)
-            .onSuccess { movieResponse ->
-                if (page == 1) {
-                    analyticsManager.sendEvent(event = FetchMoviesEvent)
-                }
-                keyValueStore.putInt(PAGE_KEY, page)
-                movieResponse.results.onEach { movie ->
-                    val movieEntity = MovieEntity(
-                        id = movie.id,
-                        title = movie.title,
-                        originalTitle = movie.originalTitle,
-                        posterPath = movie.posterPath,
-                        releaseDate = movie.releaseDate,
-                        voteAverage = movie.voteAverage,
-                        voteCount = movie.voteCount.toLong(),
-                        popularity = movie.popularity,
-                        overview = null,
-                        runtime = null,
-                        budget = null,
-                        revenue = null,
-                        status = MovieStatus.Undefined.name,
-                        uploadTimestamp = Clock.System.now().epochSeconds
+        theMovieDbApiService.getMovieList(
+            page = page,
+            genreFilter = genreFilter,
+        ).onSuccess { movieResponse ->
+            if (page == 1) {
+                analyticsManager.sendEvent(event = FetchMoviesEvent)
+            }
+            keyValueStore.putInt(pageKey, page)
+            movieResponse.results.onEach { movie ->
+                val movieEntity = MovieEntity(
+                    id = movie.id,
+                    title = movie.title,
+                    originalTitle = movie.originalTitle,
+                    posterPath = movie.posterPath,
+                    releaseDate = movie.releaseDate,
+                    voteAverage = movie.voteAverage,
+                    voteCount = movie.voteCount.toLong(),
+                    popularity = movie.popularity,
+                    overview = null,
+                    runtime = null,
+                    budget = null,
+                    revenue = null,
+                    status = MovieStatus.Undefined.name,
+                    uploadTimestamp = Clock.System.now().epochSeconds
+                )
+                movieEntityQueries.insert(movieEntity = movieEntity)
+                movie.genreIds.onEach { genreId ->
+                    val movieGenreReference = MovieGenreReference(
+                        movieReference = movie.id,
+                        genreReference = genreId
                     )
-                    movieEntityQueries.insert(movieEntity = movieEntity)
-                    movie.genreIds.onEach { genreId ->
-                        val movieGenreReference = MovieGenreReference(
-                            movieReference = movie.id,
-                            genreReference = genreId
-                        )
-                        movieGenreReferenceQueries.insert(movieGenreReference = movieGenreReference)
-                    }
-                }
-            }.onFailure {
-                if (page == 1) {
-                    analyticsManager.sendEvent(event = FetchMoviesFailedEvent)
+                    movieGenreReferenceQueries.insert(movieGenreReference = movieGenreReference)
                 }
             }
+        }.onFailure {
+            if (page == 1) {
+                analyticsManager.sendEvent(event = FetchMoviesFailedEvent)
+            }
+        }
     }
 
     fun updateMovieStatus(
@@ -200,4 +235,12 @@ class MovieRepository(
         )
     }
 
+}
+
+private fun List<Long>.toPageKey(): String {
+    if (isEmpty()) {
+        return PAGE_KEY
+    }
+
+    return PAGE_KEY + PAGE_KEY_SEPARATOR + joinToString(separator = PAGE_KEY_SEPARATOR)
 }
