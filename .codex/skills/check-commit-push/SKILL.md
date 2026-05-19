@@ -1,13 +1,13 @@
 ---
-name: commit-push
+name: check-commit-push
 description: Verify repository Definition of Done, inspect local changes, commit only intended work, and push the current branch. Use when the user asks Codex to commit, commit and push, push changes, ship the current work, or finish a completed code change in this project.
 ---
 
-# Commit Push
+# Check Commit Push
 
 ## Workflow
 
-Use this workflow to turn completed local work into a pushed commit without sweeping in unrelated workspace state.
+Use this workflow to turn completed local work into a pushed commit without sweeping in unrelated workspace state. This skill owns the commit and push procedure; repository-specific rules and checks belong in `AGENTS.md` or nested instruction files.
 
 1. Read the active repository instructions before committing.
    - Check `AGENTS.md` and any nested instruction files that apply to changed files.
@@ -20,8 +20,8 @@ Use this workflow to turn completed local work into a pushed commit without swee
    - Do not revert, delete, or modify unrelated changes.
 
 3. Verify Definition of Done.
-   - Run the required checks from the repository instructions, unless they were already run after the final code change in the same turn.
-   - For this repository, the required build check is `./gradlew :composeApp:assembleDebug`.
+   - Run the required checks from the active repository instructions, unless they were already run after the final code change in the same turn.
+   - Treat the repository instructions as the source of truth for verification commands; do not hardcode project-specific checks in this skill.
    - If a required check cannot run, explain the blocker before committing unless the user explicitly asks to commit anyway.
 
 4. Stage only intended files.
