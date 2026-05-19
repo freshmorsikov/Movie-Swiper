@@ -36,8 +36,8 @@ fun MovieTextField(
                 style = MovieTheme.typography.body16,
             )
         },
-        leadingIcon = {
-            leadingIconRes?.let { res ->
+        leadingIcon = leadingIconRes?.let { res ->
+            {
                 Icon(
                     modifier = Modifier.size(16.dp),
                     painter = painterResource(resource = res),
