@@ -42,18 +42,27 @@ class MovieRepository(
 ) {
 
     suspend fun getGenreList(): List<Genre> {
-        val localGenreList = genreEntityQueries.getGenreList().executeAsList()
+        val localGenreList = getLocalGenreList()
         if (localGenreList.isNotEmpty()) {
-            return localGenreList.map(GenreEntity::toGenre)
+            return localGenreList
         }
 
+        return getRemoteGenreList()
+    }
+
+    private fun getLocalGenreList(): List<Genre> {
+        return genreEntityQueries.getGenreList()
+            .executeAsList()
+            .map(GenreEntity::toGenre)
+    }
+
+    private suspend fun getRemoteGenreList(): List<Genre> {
         var remoteGenreList: List<Genre>? = null
         theMovieDbApiService.getGenreList()
             .onSuccess { genreList ->
                 remoteGenreList = genreList.genres.map(GenreResponse::toGenre)
                 genreList.genres.forEach { genre ->
-                    val genreEntity = genre.toGenreEntity()
-                    genreEntityQueries.insert(genreEntity)
+                    genreEntityQueries.insert(genre.toGenreEntity())
                 }
             }
 
