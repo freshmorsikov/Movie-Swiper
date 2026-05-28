@@ -1,0 +1,45 @@
+name: Create release on PR merge
+
+on:
+  pull_request_target:
+    branches:
+      - main
+    types:
+      - closed
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  create-release:
+    name: Create release
+    if: ${{ github.event.pull_request.merged == true }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create release from merged PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const tagName = `v${pr.title}`;
+            const releaseTitle = pr.title;
+            const releaseBody = pr.body || '';
+
+            if (!/^v\d+\.\d+\.\d+$/.test(tagName)) {
+              core.setFailed(
+                `Cannot create release tag "${tagName}". Rename the PR so "v{PR title}" matches vX.Y.Z.`,
+              );
+              return;
+            }
+
+            await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tagName,
+              target_commitish: pr.merge_commit_sha,
+              name: releaseTitle,
+              body: releaseBody,
+              generate_release_notes: false,
+            });
