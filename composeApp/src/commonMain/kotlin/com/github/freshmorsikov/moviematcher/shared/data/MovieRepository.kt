@@ -1,5 +1,6 @@
 package com.github.freshmorsikov.moviematcher.shared.data
 
+import app.cash.sqldelight.Query
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.github.freshmorsikov.moviematcher.GenreEntity
@@ -11,8 +12,12 @@ import com.github.freshmorsikov.moviematcher.MovieGenreReferenceQueries
 import com.github.freshmorsikov.moviematcher.MovieWithGenreView
 import com.github.freshmorsikov.moviematcher.MovieWithGenreViewQueries
 import com.github.freshmorsikov.moviematcher.core.analytics.AnalyticsManager
-import com.github.freshmorsikov.moviematcher.core.data.api.ApiService
+import com.github.freshmorsikov.moviematcher.core.data.api.TheMovieDbApiService
+import com.github.freshmorsikov.moviematcher.core.data.api.model.GenreResponse
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
+import com.github.freshmorsikov.moviematcher.feature.movie.data.mapper.toGenre
+import com.github.freshmorsikov.moviematcher.feature.movie.data.mapper.toGenreEntity
+import com.github.freshmorsikov.moviematcher.feature.movie.domain.model.Genre
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.FetchMoviesEvent
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.FetchMoviesFailedEvent
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
@@ -24,6 +29,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 private const val PAGE_KEY = "PAGE_KEY"
+private const val PAGE_KEY_SEPARATOR = "_"
 
 class MovieRepository(
     private val movieEntityQueries: MovieEntityQueries,
@@ -31,25 +37,40 @@ class MovieRepository(
     private val movieWithGenreViewQueries: MovieWithGenreViewQueries,
     private val movieGenreReferenceQueries: MovieGenreReferenceQueries,
     private val keyValueStore: KeyValueStore,
-    private val apiService: ApiService,
+    private val theMovieDbApiService: TheMovieDbApiService,
     private val analyticsManager: AnalyticsManager,
 ) {
 
-    suspend fun loadGenreList() {
-        apiService.getGenreList()
+    suspend fun getGenreList(): List<Genre> {
+        val localGenreList = getLocalGenreList()
+        if (localGenreList.isNotEmpty()) {
+            return localGenreList
+        }
+
+        return getRemoteGenreList()
+    }
+
+    private fun getLocalGenreList(): List<Genre> {
+        return genreEntityQueries.getGenreList()
+            .executeAsList()
+            .map(GenreEntity::toGenre)
+    }
+
+    private suspend fun getRemoteGenreList(): List<Genre> {
+        var remoteGenreList: List<Genre>? = null
+        theMovieDbApiService.getGenreList()
             .onSuccess { genreList ->
+                remoteGenreList = genreList.genres.map(GenreResponse::toGenre)
                 genreList.genres.forEach { genre ->
-                    val genreEntity = GenreEntity(
-                        id = genre.id,
-                        genreName = genre.name,
-                    )
-                    genreEntityQueries.insert(genreEntity)
+                    genreEntityQueries.insert(genre.toGenreEntity())
                 }
             }
+
+        return remoteGenreList.orEmpty()
     }
 
     suspend fun loadMovieDetailsById(id: Long) {
-        apiService.getMovieDetailsById(movieId = id)
+        theMovieDbApiService.getMovieDetailsById(movieId = id)
             .onSuccess { movieDetails ->
                 movieEntityQueries.updateMovieDetails(
                     voteAverage = movieDetails.voteAverage,
@@ -64,8 +85,24 @@ class MovieRepository(
             }
     }
 
-    fun getMovieListFlowByStatus(status: MovieStatus): Flow<List<Movie>> {
-        return movieWithGenreViewQueries.getMoviesWithGenreByStatus(status = status.name)
+    fun getMovieListFlow(
+        status: MovieStatus,
+        genreFilter: List<Long> = emptyList(),
+    ): Flow<List<Movie>> {
+        val query = if (genreFilter.isEmpty()) {
+            movieWithGenreViewQueries.getMoviesWithGenreByStatus(status = status.name)
+        } else {
+            movieWithGenreViewQueries.getMoviesWithGenreByStatusAndGenreIds(
+                status = status.name,
+                genreIds = genreFilter,
+            )
+        }
+
+        return getMovieListFlowByQuery(query = query)
+    }
+
+    private fun getMovieListFlowByQuery(query: Query<MovieWithGenreView>): Flow<List<Movie>> {
+        return query
             .asFlow()
             .mapToList(Dispatchers.Default)
             .map { movieWithGenreList ->
@@ -77,48 +114,65 @@ class MovieRepository(
         return movieEntityQueries.getMovieCountByStatus(status = status.name).executeAsOne()
     }
 
+    fun getMovieCountByStatusAndGenreFilter(
+        status: MovieStatus,
+        genreFilter: List<Long>,
+    ): Long {
+        if (genreFilter.isEmpty()) {
+            return getMovieCountByStatus(status = status)
+        }
+
+        return movieEntityQueries.getMovieCountByStatusAndGenreIds(
+            status = status.name,
+            genreIds = genreFilter,
+        ).executeAsOne()
+    }
+
     @OptIn(ExperimentalTime::class)
-    suspend fun loadMoreMoviesByStatus() {
-        val page = keyValueStore.getInt(PAGE_KEY)?.let { cachedPage ->
+    suspend fun loadMoreMoviesByStatus(genreFilter: List<Long>) {
+        val pageKey = genreFilter.toPageKey()
+        val page = keyValueStore.getInt(pageKey)?.let { cachedPage ->
             cachedPage + 1
         } ?: 1
-        apiService.getMovieList(page = page)
-            .onSuccess { movieResponse ->
-                if (page == 1) {
-                    analyticsManager.sendEvent(event = FetchMoviesEvent)
-                }
-                keyValueStore.putInt(PAGE_KEY, page)
-                movieResponse.results.onEach { movie ->
-                    val movieEntity = MovieEntity(
-                        id = movie.id,
-                        title = movie.title,
-                        originalTitle = movie.originalTitle,
-                        posterPath = movie.posterPath,
-                        releaseDate = movie.releaseDate,
-                        voteAverage = movie.voteAverage,
-                        voteCount = movie.voteCount.toLong(),
-                        popularity = movie.popularity,
-                        overview = null,
-                        runtime = null,
-                        budget = null,
-                        revenue = null,
-                        status = MovieStatus.Undefined.name,
-                        uploadTimestamp = Clock.System.now().epochSeconds
+        theMovieDbApiService.getMovieList(
+            page = page,
+            genreFilter = genreFilter,
+        ).onSuccess { movieResponse ->
+            if (page == 1) {
+                analyticsManager.sendEvent(event = FetchMoviesEvent)
+            }
+            keyValueStore.putInt(pageKey, page)
+            movieResponse.results.onEach { movie ->
+                val movieEntity = MovieEntity(
+                    id = movie.id,
+                    title = movie.title,
+                    originalTitle = movie.originalTitle,
+                    posterPath = movie.posterPath,
+                    releaseDate = movie.releaseDate,
+                    voteAverage = movie.voteAverage,
+                    voteCount = movie.voteCount.toLong(),
+                    popularity = movie.popularity,
+                    overview = null,
+                    runtime = null,
+                    budget = null,
+                    revenue = null,
+                    status = MovieStatus.Undefined.name,
+                    uploadTimestamp = Clock.System.now().epochSeconds
+                )
+                movieEntityQueries.insert(movieEntity = movieEntity)
+                movie.genreIds.onEach { genreId ->
+                    val movieGenreReference = MovieGenreReference(
+                        movieReference = movie.id,
+                        genreReference = genreId
                     )
-                    movieEntityQueries.insert(movieEntity = movieEntity)
-                    movie.genreIds.onEach { genreId ->
-                        val movieGenreReference = MovieGenreReference(
-                            movieReference = movie.id,
-                            genreReference = genreId
-                        )
-                        movieGenreReferenceQueries.insert(movieGenreReference = movieGenreReference)
-                    }
-                }
-            }.onFailure {
-                if (page == 1) {
-                    analyticsManager.sendEvent(event = FetchMoviesFailedEvent)
+                    movieGenreReferenceQueries.insert(movieGenreReference = movieGenreReference)
                 }
             }
+        }.onFailure {
+            if (page == 1) {
+                analyticsManager.sendEvent(event = FetchMoviesFailedEvent)
+            }
+        }
     }
 
     fun updateMovieStatus(
@@ -190,5 +244,12 @@ class MovieRepository(
         )
     }
 
+}
 
+private fun List<Long>.toPageKey(): String {
+    if (isEmpty()) {
+        return PAGE_KEY
+    }
+
+    return PAGE_KEY + PAGE_KEY_SEPARATOR + joinToString(separator = PAGE_KEY_SEPARATOR)
 }

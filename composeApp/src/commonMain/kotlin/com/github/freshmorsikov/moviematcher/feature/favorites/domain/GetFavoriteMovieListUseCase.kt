@@ -10,7 +10,7 @@ class GetFavoriteMovieListUseCase(
 ) {
 
     operator fun invoke(): Flow<List<Movie>> {
-        return movieRepository.getMovieListFlowByStatus(status = MovieStatus.Liked)
+        return movieRepository.getMovieListFlow(status = MovieStatus.Liked)
     }
 
 }

@@ -25,6 +25,16 @@ SELECT COUNT(*)
 FROM movieEntity
 WHERE status = :status;
 
+getMovieCountByStatusAndGenreIds:
+SELECT COUNT(*)
+FROM movieEntity
+WHERE status = :status
+AND id IN (
+    SELECT movieReference
+    FROM movieGenreReference
+    WHERE genreReference IN :genreIds
+);
+
 updateMovieStatus:
 UPDATE movieEntity
 SET status = :status

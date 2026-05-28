@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +33,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -51,6 +54,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -76,13 +80,14 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.ic_chevron_right
+import moviematcher.composeapp.generated.resources.ic_filter
 import moviematcher.composeapp.generated.resources.sharing_message
 import moviematcher.composeapp.generated.resources.sharing_title
 import moviematcher.composeapp.generated.resources.swipe_create_pair
+import moviematcher.composeapp.generated.resources.swipe_filter
 import moviematcher.composeapp.generated.resources.swipe_invite
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -100,6 +105,9 @@ fun SwipeScreen(
     SwipeScreenContent(
         state = state,
         onAction = viewModel::onAction,
+        onFilterClick = {
+            navController.navigate(NavigationRoute.Filter)
+        },
         onMovieClick = { movieId ->
             navController.navigate(
                 NavigationRoute.MovieDetails(movieId = movieId)
@@ -125,10 +133,11 @@ fun SwipeScreen(
 fun SwipeScreenContent(
     state: SwipeUdf.State,
     onAction: (SwipeUdf.Action) -> Unit,
+    onFilterClick: () -> Unit,
     onMovieClick: (Long) -> Unit,
 ) {
     MovieScaffold(contentWindowInsets = WindowInsets.none) {
-        Column {
+        Column(modifier = Modifier.fillMaxSize()) {
             InviteBanner(
                 visible = state.inviteBannerVisible,
                 onAction = onAction,
@@ -138,6 +147,64 @@ fun SwipeScreenContent(
                 onAction = onAction,
                 onMovieClick = onMovieClick,
             )
+        }
+        FilterButton(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            count = state.filterCount,
+            onClick = onFilterClick,
+        )
+    }
+}
+
+@Composable
+private fun FilterButton(
+    count: Int?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Button(
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MovieTheme.colors.surface.main,
+            contentColor = MovieTheme.colors.text.main,
+        ),
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier.padding(vertical = 4.dp),
+            horizontalArrangement = spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(Res.drawable.ic_filter),
+                contentDescription = null,
+            )
+            Text(
+                text = stringResource(Res.string.swipe_filter),
+                style = MovieTheme.typography.label16,
+            )
+            if (count != null) {
+                Box(
+                    modifier = Modifier
+                        .defaultMinSize(
+                            minWidth = 24.dp,
+                            minHeight = 24.dp,
+                        )
+                        .clip(shape = RoundedCornerShape(12.dp))
+                        .background(color = MovieTheme.colors.primary)
+                        .padding(4.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = count.toString(),
+                        style = MovieTheme.typography.label12,
+                        color = MovieTheme.colors.text.onAccent,
+                    )
+                }
+            }
         }
     }
 }
@@ -512,9 +579,11 @@ private fun SwipeScreenDataPreview() {
                 inviteBannerVisible = true,
                 movies = List(3) { i ->
                     Movie.mock
-                }
+                },
+                filterCount = 4,
             ),
             onAction = {},
+            onFilterClick = {},
             onMovieClick = {},
         )
     }
@@ -528,9 +597,11 @@ private fun SwipeScreenLoadingPreview() {
             state = SwipeUdf.State(
                 code = null,
                 inviteBannerVisible = false,
-                movies = null
+                movies = null,
+                filterCount = 0,
             ),
             onAction = {},
+            onFilterClick = {},
             onMovieClick = {},
         )
     }

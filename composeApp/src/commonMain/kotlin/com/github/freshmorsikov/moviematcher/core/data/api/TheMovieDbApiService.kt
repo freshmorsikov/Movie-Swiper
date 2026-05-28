@@ -17,9 +17,14 @@ import io.ktor.http.path
 
 expect val engine: HttpClientEngine
 
-class ApiService(private val httpClient: HttpClient) {
+private const val GENRE_FILTER_SEPARATOR = "|"
 
-    suspend fun getMovieList(page: Int): Result<PageResponse<MovieResponse>> {
+class TheMovieDbApiService(private val httpClient: HttpClient) {
+
+    suspend fun getMovieList(
+        page: Int,
+        genreFilter: List<Long>,
+    ): Result<PageResponse<MovieResponse>> {
         return safeApiCall {
             httpClient.get {
                 url {
@@ -32,6 +37,12 @@ class ApiService(private val httpClient: HttpClient) {
                     parameter("primary_release_date.lte", "2025-01-01")
                     parameter("vote_average.gte", 6)
                     parameter("vote_count.gte", 200)
+                    if (genreFilter.isNotEmpty()) {
+                        parameter(
+                            key = "with_genres",
+                            value = genreFilter.joinToString(separator = GENRE_FILTER_SEPARATOR)
+                        )
+                    }
                 }
             }
         }

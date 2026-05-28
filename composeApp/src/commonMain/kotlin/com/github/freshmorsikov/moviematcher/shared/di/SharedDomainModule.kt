@@ -7,6 +7,7 @@ import org.koin.dsl.module
 val sharedDomainModule = module {
     factory {
         GetRoomFlowCaseCase(
+            roomRepository = get(),
             userRepository = get(),
         )
     }

@@ -30,6 +30,7 @@ import com.github.freshmorsikov.moviematcher.app.snackbar.MatchSnackbarVisuals
 import com.github.freshmorsikov.moviematcher.app.snackbar.MovieSnackbarHost
 import com.github.freshmorsikov.moviematcher.feature.details.MovieDetailsScreen
 import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
+import com.github.freshmorsikov.moviematcher.feature.filter.FilterScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.ui.MatchesScreen
 import com.github.freshmorsikov.moviematcher.feature.name.NameScreen
 import com.github.freshmorsikov.moviematcher.feature.no_connection.NoConnectionScreen
@@ -149,6 +150,9 @@ fun NavigationContainer(
         }
         composable<NavigationRoute.Matches> {
             MatchesScreen(navController = navController)
+        }
+        composable<NavigationRoute.Filter> {
+            FilterScreen(navController = navController)
         }
         composable<NavigationRoute.Pairing> {
             PairingScreen(navController = navController)

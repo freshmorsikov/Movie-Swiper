@@ -179,7 +179,10 @@ private fun BottomNavigationBarContent(
                             navController.navigate(route) {
                                 popUpTo(itemList.current.route) {
                                     inclusive = true
+                                    saveState = true
                                 }
+                                launchSingleTop = true
+                                restoreState = true
                             }
                         }
                     },

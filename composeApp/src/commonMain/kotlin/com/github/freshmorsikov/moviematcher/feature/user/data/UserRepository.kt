@@ -1,9 +1,10 @@
 package com.github.freshmorsikov.moviematcher.feature.user.data
 
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.SupabaseApiService
-import com.github.freshmorsikov.moviematcher.feature.user.data.mapper.toUser
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
-import com.github.freshmorsikov.moviematcher.shared.domain.model.Room
+import com.github.freshmorsikov.moviematcher.feature.room.data.RoomRemoteDataSource
+import com.github.freshmorsikov.moviematcher.feature.user.data.mapper.toUser
+import com.github.freshmorsikov.moviematcher.feature.user.data.model.UserEntity
 import com.github.freshmorsikov.moviematcher.feature.user.domain.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +12,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 
 private const val USER_ID_KEY = "USER_ID_KEY"
 private const val USER_NAME_KEY = "USER_NAME_KEY"
@@ -21,25 +21,23 @@ private const val SHOW_PAIR_STATUS_KEY = "SHOW_PAIR_STATUS_KEY"
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserRepository(
     private val userRemoteDataSource: UserRemoteDataSource,
+    private val roomRemoteDataSource: RoomRemoteDataSource,
     private val supabaseApiService: SupabaseApiService,
     private val keyValueStore: KeyValueStore,
 ) {
 
-    fun getPairedFlow(): Flow<Boolean> {
-        return getRoomFlow()
-            .filterNotNull()
-            .flatMapLatest { room ->
-                userRemoteDataSource.getUsersFlowByRoomId(roomId = room.id).map { users ->
-                    users.size > 1
-                }
+    fun getPairedFlow(roomId: String): Flow<Boolean> {
+        return userRemoteDataSource.getUsersFlowByRoomId(roomId = roomId)
+            .map { users ->
+                users.size > 1
             }
     }
 
-    fun getRoomFlow(): Flow<Room> {
+    fun getUserFlow(): Flow<User> {
         return keyValueStore.getStringFlow(USER_ID_KEY)
             .filterNotNull()
             .flatMapLatest { userId ->
-                getRoomFlowByUserId(userId = userId)
+                getUserFlowById(userId = userId)
             }
     }
 
@@ -47,35 +45,24 @@ class UserRepository(
         return keyValueStore.getStringFlow(USER_ID_KEY)
             .filterNotNull()
             .flatMapLatest { userId ->
-                getRoomFlowByUserId(userId = userId)
-                    .flatMapLatest { room ->
-                        userRemoteDataSource.getUsersFlowByRoomId(roomId = room.id)
-                            .map { users ->
-                                users.firstOrNull { user -> user.id != userId }?.toUser()
-                            }
-                    }
+                getPairedUserFlowByUserId(userId = userId)
             }
     }
 
-    private suspend fun getRoomByUserId(userId: String): Room? {
-        val user = userRemoteDataSource.getUserById(userId = userId) ?: return null
-        val room = supabaseApiService.getRoomById(roomId = user.room) ?: return null
-        return Room(
-            id = room.id,
-            code = room.code,
-        )
-    }
-
-    private suspend fun getRoomFlowByUserId(userId: String): Flow<Room> {
+    private fun getPairedUserFlowByUserId(userId: String): Flow<User?> {
         return userRemoteDataSource.getUserFlowById(userId = userId)
             .filterNotNull()
-            .mapNotNull { user ->
-                val room = supabaseApiService.getRoomById(roomId = user.room) ?: return@mapNotNull null
-                Room(
-                    id = room.id,
-                    code = room.code,
-                )
+            .flatMapLatest { user ->
+                userRemoteDataSource.getUsersFlowByRoomId(roomId = user.room)
+            }.map { users ->
+                users.firstOrNull { user -> user.id != userId }?.toUser()
             }
+    }
+
+    private fun getUserFlowById(userId: String): Flow<User> {
+        return userRemoteDataSource.getUserFlowById(userId = userId)
+            .filterNotNull()
+            .map(UserEntity::toUser)
     }
 
     suspend fun getUserIdOrNull(): String? {
@@ -102,8 +89,8 @@ class UserRepository(
 
     suspend fun getPairedUser(): User? {
         val userId = getUserId()
-        val room = getRoomByUserId(userId = userId) ?: return null
-        val users = userRemoteDataSource.getUsersByRoomId(roomId = room.id)
+        val user = userRemoteDataSource.getUserById(userId = userId) ?: return null
+        val users = userRemoteDataSource.getUsersByRoomId(roomId = user.room)
 
         return users.find { user ->
             user.id != userId
@@ -114,7 +101,7 @@ class UserRepository(
         code: String,
         name: String,
     ) {
-        val roomId = supabaseApiService.createRoom(code = code)?.id ?: return
+        val roomId = roomRemoteDataSource.createRoom(code = code)?.id ?: return
         val userId = userRemoteDataSource.createUser(
             roomId = roomId,
             name = name
@@ -140,7 +127,7 @@ class UserRepository(
         userId: String,
         code: String
     ): Boolean {
-        val room = supabaseApiService.getRoomByCode(code = code) ?: return false
+        val room = roomRemoteDataSource.getRoomByCode(code = code) ?: return false
 
         userRemoteDataSource.updateUserRoom(
             userId = userId,

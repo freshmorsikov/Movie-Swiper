@@ -14,11 +14,20 @@
     <string name="name_hi">Nice to meet you</string>
 
     <string name="swipe_create_pair">Create a pair to find a match</string>
+    <string name="swipe_filter">Filter</string>
     <string name="swipe_invite">Invite</string>
     <string name="swipe_linking">Linking</string>
     <string name="swipe_paired">Paired with</string>
     <string name="user_pair_you">You</string>
     <string name="user_pair_friend">Friend</string>
+
+    <string name="filter_title">Filters</string>
+    <string name="filter_select_genres">Search genres</string>
+    <string name="filter_search_genres">Search genres</string>
+    <string name="filter_no_genres_available">No genres available</string>
+    <string name="filter_no_genres_found">No genres found</string>
+    <string name="filter_cancel">Cancel</string>
+    <string name="filter_apply">Apply</string>
 
     <string name="favorites_your_favorite_movies">Your favorite movies will live here!</string>
     <string name="favorites_do_you_have">Do you have any, nya?</string>

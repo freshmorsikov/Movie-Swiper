@@ -10,6 +10,17 @@ FROM movieWithGenreView
 WHERE status = :status
 ORDER BY uploadTimestamp DESC, popularity ASC;
 
+getMoviesWithGenreByStatusAndGenreIds:
+SELECT *
+FROM movieWithGenreView
+WHERE status = :status
+AND id IN (
+    SELECT movieReference
+    FROM movieGenreReference
+    WHERE genreReference IN :genreIds
+)
+ORDER BY uploadTimestamp DESC, popularity ASC;
+
 getMoviesWithGenreByIds:
 SELECT *
 FROM movieWithGenreView

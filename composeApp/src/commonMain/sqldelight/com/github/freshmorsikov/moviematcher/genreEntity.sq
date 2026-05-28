@@ -7,3 +7,8 @@ insert:
 INSERT OR IGNORE
 INTO genreEntity
 VALUES ?;
+
+getGenreList:
+SELECT *
+FROM genreEntity
+ORDER BY genreName ASC;

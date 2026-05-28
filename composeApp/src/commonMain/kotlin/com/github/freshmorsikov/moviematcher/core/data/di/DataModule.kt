@@ -1,9 +1,9 @@
 package com.github.freshmorsikov.moviematcher.core.data.di
 
 import com.github.freshmorsikov.moviematcher.Database
-import com.github.freshmorsikov.moviematcher.core.data.api.ApiService
 import com.github.freshmorsikov.moviematcher.core.data.api.BASE_URL
 import com.github.freshmorsikov.moviematcher.core.data.api.NetworkLogger
+import com.github.freshmorsikov.moviematcher.core.data.api.TheMovieDbApiService
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.SupabaseApiService
 import com.github.freshmorsikov.moviematcher.core.data.api.engine
 import com.github.freshmorsikov.moviematcher.core.data.local.KeyValueStore
@@ -70,7 +70,7 @@ val dataModule = module {
         SupabaseApiService(supabaseClient = get())
     }
     single {
-        ApiService(httpClient = get())
+        TheMovieDbApiService(httpClient = get())
     }
     single {
         HttpClient(engine) {

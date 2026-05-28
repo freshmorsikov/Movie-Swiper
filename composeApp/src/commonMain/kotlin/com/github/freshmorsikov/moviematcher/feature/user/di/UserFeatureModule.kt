@@ -13,9 +13,10 @@ val userFeatureModule = module {
     }
     single {
         UserRepository(
-           userRemoteDataSource = get(),
-           supabaseApiService = get(),
-           keyValueStore = get(),
+            userRemoteDataSource = get(),
+            roomRemoteDataSource = get(),
+            supabaseApiService = get(),
+            keyValueStore = get(),
         )
     }
     factory {

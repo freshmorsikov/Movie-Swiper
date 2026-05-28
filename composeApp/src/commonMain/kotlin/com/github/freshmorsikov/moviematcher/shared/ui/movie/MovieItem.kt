@@ -1,7 +1,6 @@
 package com.github.freshmorsikov.moviematcher.shared.ui.movie
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -34,11 +33,10 @@ fun MovieItem(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = modifier.clickable(
-            onClick = {
-                onClick(movie.id)
-            }
-        ),
+        modifier = modifier,
+        onClick = {
+            onClick(movie.id)
+        },
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
