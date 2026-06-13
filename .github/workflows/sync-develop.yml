@@ -1,0 +1,69 @@
+name: Sync develop
+
+on:
+  pull_request_target:
+    branches:
+      - main
+    types:
+      - closed
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-develop-sync-pr:
+    name: Create sync PR
+    if: ${{ github.event.pull_request.merged == true }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create main to develop PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const head = 'main';
+            const base = 'develop';
+            const mergedPullRequest = context.payload.pull_request;
+
+            const { data: comparison } = await github.rest.repos.compareCommitsWithBasehead({
+              owner,
+              repo,
+              basehead: `${base}...${head}`,
+            });
+
+            if (comparison.ahead_by === 0) {
+              core.info(`${head} is not ahead of ${base}; no sync PR needed.`);
+              return;
+            }
+
+            const { data: existingPullRequests } = await github.rest.pulls.list({
+              owner,
+              repo,
+              state: 'open',
+              base,
+              head: `${owner}:${head}`,
+              per_page: 1,
+            });
+
+            if (existingPullRequests.length > 0) {
+              core.info(`Sync PR already exists: ${existingPullRequests[0].html_url}`);
+              return;
+            }
+
+            const { data: syncPullRequest } = await github.rest.pulls.create({
+              owner,
+              repo,
+              title: `Sync ${head} into ${base}`,
+              head,
+              base,
+              body: [
+                `Keeps \`${base}\` up to date with \`${head}\`.`,
+                '',
+                `Triggered by merged PR #${mergedPullRequest.number}: ${mergedPullRequest.title}`,
+              ].join('\n'),
+            });
+
+            core.info(`Created sync PR: ${syncPullRequest.html_url}`);
