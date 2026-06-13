@@ -14,7 +14,7 @@ Use this workflow to turn branch history into a short user-facing change list. P
    - Run `git status --short --branch` to see the active branch and unrelated local files.
    - Run `git log --oneline origin/main..origin/develop` for commit intent.
    - Run `git diff --stat origin/main..origin/develop` and `git diff --name-status origin/main..origin/develop` for scope.
-   - When the remote refs look stale or missing, inspect branches with `git branch -a --list '*main*' '*dev*' '*develop*'`, choose the closest available `main` and `develop` refs, and continue.
+   - When the remote refs look stale or missing, inspect branches with `git branch -a --list`, choose the closest available `main` and `develop` refs, and continue.
    - Ignore untracked build outputs and local artifacts.
 
 2. Read targeted diffs.
