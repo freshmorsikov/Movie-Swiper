@@ -41,19 +41,19 @@ import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.getPlatform
 import kotlinx.serialization.InternalSerializationApi
 import moviematcher.composeapp.generated.resources.Res
-import moviematcher.composeapp.generated.resources.ic_heart
 import moviematcher.composeapp.generated.resources.ic_match
 import moviematcher.composeapp.generated.resources.ic_swipe
-import moviematcher.composeapp.generated.resources.navigation_favorites
+import moviematcher.composeapp.generated.resources.ic_watchlists
 import moviematcher.composeapp.generated.resources.navigation_matches
 import moviematcher.composeapp.generated.resources.navigation_swipe
+import moviematcher.composeapp.generated.resources.navigation_watchlists
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 private val bottomRoutes: List<NavigationRoute.BottomNavigationRoute> = listOf(
-    NavigationRoute.Favorite,
+    NavigationRoute.Watchlists,
     NavigationRoute.Swipe,
     NavigationRoute.Matches,
 )
@@ -214,7 +214,7 @@ private fun platformBottomInsets(): Dp {
 private fun NavigationRoute.BottomNavigationRoute.icon(): DrawableResource {
     return when (this) {
         is NavigationRoute.Swipe -> Res.drawable.ic_swipe
-        NavigationRoute.Favorite -> Res.drawable.ic_heart
+        NavigationRoute.Watchlists -> Res.drawable.ic_watchlists
         NavigationRoute.Matches -> Res.drawable.ic_match
     }
 }
@@ -222,7 +222,7 @@ private fun NavigationRoute.BottomNavigationRoute.icon(): DrawableResource {
 private fun NavigationRoute.BottomNavigationRoute.text(): StringResource {
     return when (this) {
         is NavigationRoute.Swipe -> Res.string.navigation_swipe
-        NavigationRoute.Favorite -> Res.string.navigation_favorites
+        NavigationRoute.Watchlists -> Res.string.navigation_watchlists
         NavigationRoute.Matches -> Res.string.navigation_matches
     }
 }
@@ -248,7 +248,7 @@ private fun BottomNavigationBarPreview() {
             itemList = BottomNavigationItemList(
                 items = listOf(
                     BottomNavigationItem(
-                        route = NavigationRoute.Favorite,
+                        route = NavigationRoute.Watchlists,
                         isSelected = false,
                         badgeCount = null,
                     ),

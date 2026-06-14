@@ -37,6 +37,7 @@ import com.github.freshmorsikov.moviematcher.feature.no_connection.NoConnectionS
 import com.github.freshmorsikov.moviematcher.feature.pairing.EntryScreen
 import com.github.freshmorsikov.moviematcher.feature.pairing.PairingScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
+import com.github.freshmorsikov.moviematcher.feature.watchlists.WatchlistsScreen
 import com.github.freshmorsikov.moviematcher.util.Constants.LINK_BASE_PATH
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import kotlinx.coroutines.launch
@@ -144,6 +145,9 @@ fun NavigationContainer(
         }
         composable<NavigationRoute.Swipe> {
             SwipeScreen(navController = navController)
+        }
+        composable<NavigationRoute.Watchlists> {
+            WatchlistsScreen()
         }
         composable<NavigationRoute.Favorite> {
             FavoriteScreen(navController = navController)

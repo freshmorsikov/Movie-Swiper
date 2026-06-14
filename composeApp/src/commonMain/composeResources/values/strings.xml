@@ -4,7 +4,7 @@
     <string name="match_snackbar_message">You've found a new match. Enjoy!</string>
 
     <string name="navigation_swipe">Swipe</string>
-    <string name="navigation_favorites">Favorites</string>
+    <string name="navigation_watchlists">Watchlists</string>
     <string name="navigation_matches">Matches</string>
 
     <string name="name">Popi</string>
@@ -31,6 +31,16 @@
 
     <string name="favorites_your_favorite_movies">Your favorite movies will live here!</string>
     <string name="favorites_do_you_have">Do you have any, nya?</string>
+
+    <string name="watchlists_title">Watchlists</string>
+    <string name="watchlist_liked">Liked</string>
+    <string name="watchlist_disliked">Disliked</string>
+    <string name="watchlist_matches">Matches</string>
+    <string name="watchlist_watched">Watched</string>
+    <plurals name="watchlist_movie_count">
+        <item quantity="one">%1$d movie</item>
+        <item quantity="other">%1$d movies</item>
+    </plurals>
 
     <string name="matches_pair_up">Pair up to start matching</string>
     <string name="matches_create_or_join">Create a pair or join with a code.</string>

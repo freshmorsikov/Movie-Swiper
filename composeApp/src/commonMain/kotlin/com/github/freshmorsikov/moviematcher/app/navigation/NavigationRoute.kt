@@ -24,7 +24,10 @@ interface NavigationRoute {
     data object Swipe : BottomNavigationRoute
 
     @Serializable
-    data object Favorite : BottomNavigationRoute
+    data object Watchlists : BottomNavigationRoute
+
+    @Serializable
+    data object Favorite : NavigationRoute
 
     @Serializable
     data object Matches : BottomNavigationRoute

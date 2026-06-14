@@ -15,6 +15,7 @@ import com.github.freshmorsikov.moviematcher.feature.pairing.di.pairingFeatureMo
 import com.github.freshmorsikov.moviematcher.feature.room.di.roomFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.swipe.di.swipeFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.user.di.userFeatureModule
+import com.github.freshmorsikov.moviematcher.feature.watchlists.di.watchlistsFeatureModule
 import com.github.freshmorsikov.moviematcher.shared.di.sharedDataModule
 import com.github.freshmorsikov.moviematcher.shared.di.sharedDomainModule
 import com.github.freshmorsikov.moviematcher.util.sharingModule
@@ -40,6 +41,7 @@ fun initKoin(platformModule: Module = module {}) {
             favoritesFeatureModule,
             filterFeatureModule,
             matchesFeatureModule,
+            watchlistsFeatureModule,
             pairingFeatureModule,
             movieDetailsFeatureModule,
             roomFeatureModule,
