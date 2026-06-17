@@ -1,0 +1,79 @@
+<resources>
+
+    <string name="match_snackbar_title">Glückwunsch</string>
+    <string name="match_snackbar_message">Du hast ein neues Match gefunden. Viel Spaß!</string>
+
+    <string name="navigation_swipe">Swipen</string>
+    <string name="navigation_watchlists">Filmlisten</string>
+    <string name="navigation_matches">Matches</string>
+
+    <string name="name">Popi</string>
+    <string name="name_hi_i_am">Hi, ich bin %1$s 👋</string>
+    <string name="name_what_is_your_name">Wie heißt du?</string>
+    <string name="name_your_name">Dein Name</string>
+    <string name="name_hi">Freut mich</string>
+
+    <string name="swipe_create_pair">Lade jemanden ein, um Matches zu finden</string>
+    <string name="swipe_filter">Filter</string>
+    <string name="swipe_invite">Einladen</string>
+    <string name="swipe_linking">Verbinden</string>
+    <string name="swipe_paired">Verbunden mit</string>
+    <string name="user_pair_you">Du</string>
+    <string name="user_pair_friend">Freund</string>
+
+    <string name="filter_title">Filter</string>
+    <string name="filter_select_genres">Genres auswählen</string>
+    <string name="filter_search_genres">Genres suchen</string>
+    <string name="filter_no_genres_available">Keine Genres verfügbar</string>
+    <string name="filter_no_genres_found">Keine Genres gefunden</string>
+    <string name="filter_cancel">Abbrechen</string>
+    <string name="filter_apply">Anwenden</string>
+
+    <string name="favorites_your_favorite_movies">Deine Lieblingsfilme landen hier!</string>
+    <string name="favorites_do_you_have">Hast du schon welche, nya?</string>
+
+    <string name="watchlists_title">Filmlisten</string>
+    <string name="watchlist_liked">Gemocht</string>
+    <string name="watchlist_disliked">Abgelehnt</string>
+    <string name="watchlist_matches">Matches</string>
+    <string name="watchlist_watched">Gesehen</string>
+    <plurals name="watchlist_movie_count">
+        <item quantity="one">%1$d Film</item>
+        <item quantity="other">%1$d Filme</item>
+    </plurals>
+
+    <string name="matches_pair_up">Verbinde dich, um Matches zu finden</string>
+    <string name="matches_create_or_join">Erstelle eine Verbindung oder tritt mit einem Code bei.</string>
+    <string name="matches_create_pair">Verbindung erstellen</string>
+    <string name="matches_join_with_code">Mit Code beitreten</string>
+    <string name="matches_paired_with">Verbunden mit</string>
+    <string name="matches_info_title">Deine Matches erscheinen hier ganz bald!</string>
+    <string name="matches_info_text">Ich bin schon sooo gespannt</string>
+
+    <string name="code_send">Schick den CODE an deinen Freund</string>
+    <string name="code_share">Teilen</string>
+    <string name="code_copy">Kopieren</string>
+
+    <string name="join_enter_code">Gib hier den CODE deines Freundes ein</string>
+    <string name="join_save">Speichern</string>
+
+    <string name="pairing_success_title">Juhu, ihr seid verbunden!</string>
+    <string name="pairing_success_text">Jetzt ist es Zeit, gemeinsam Lieblingsfilme zu entdecken</string>
+    <string name="pairing_error_title">Oh-oh, beim Verbinden ist etwas schiefgelaufen...</string>
+    <string name="pairing_error_text">Versuchen wir es noch einmal, okay?</string>
+    <string name="pairing_find_matches">Matches finden</string>
+    <string name="pairing_close">Schließen</string>
+
+    <string name="no_connection_title">Keine Internetverbindung</string>
+    <string name="no_connection_subtitle">Bitte prüfe deine Verbindung und versuche es erneut</string>
+    <string name="no_connection_retry">Erneut versuchen</string>
+
+    <string name="sharing_title">Teilen</string>
+    <string name="sharing_message">Lass uns einen Film finden, den wir beide mögen:</string>
+
+    <string name="movie_details_overview">Übersicht</string>
+    <string name="movie_details_cast">Besetzung</string>
+    <string name="movie_details_budget">Budget</string>
+    <string name="movie_details_revenue">Einspielergebnis</string>
+
+</resources>
