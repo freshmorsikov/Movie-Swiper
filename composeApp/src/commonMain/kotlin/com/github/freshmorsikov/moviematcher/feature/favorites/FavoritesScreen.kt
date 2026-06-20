@@ -16,8 +16,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
@@ -33,11 +38,10 @@ import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieItem
 import moviematcher.composeapp.generated.resources.Res
 import moviematcher.composeapp.generated.resources.favorites_do_you_have
-import moviematcher.composeapp.generated.resources.favorites_your_favorite_movies
+import moviematcher.composeapp.generated.resources.favorites_your_movies
 import moviematcher.composeapp.generated.resources.popcorny_puzzled
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -100,11 +104,20 @@ private fun FavoriteScreenContent(
                             painter = painterResource(Res.drawable.popcorny_puzzled),
                             contentDescription = null,
                         )
+                        val watchlistTitle = stringResource(watchlistType.titleResource())
+                        val emptyTitle = stringResource(
+                            Res.string.favorites_your_movies,
+                            watchlistTitle,
+                        )
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 16.dp),
-                            text = stringResource(Res.string.favorites_your_favorite_movies),
+                            text = highlightArgument(
+                                text = emptyTitle,
+                                argument = watchlistTitle,
+                                argumentStyle = SpanStyle(color = MovieTheme.colors.text.main),
+                            ),
                             style = MovieTheme.typography.title16,
                             color = MovieTheme.colors.text.variant,
                             textAlign = TextAlign.Center
@@ -145,6 +158,25 @@ private fun FavoriteScreenContent(
                     }
                 }
             }
+        }
+    }
+}
+
+private fun highlightArgument(
+    text: String,
+    argument: String,
+    argumentStyle: SpanStyle,
+): AnnotatedString {
+    return buildAnnotatedString {
+        val argumentStartIndex = text.indexOf(argument)
+        if (argumentStartIndex == -1) {
+            append(text)
+        } else {
+            append(text.substring(startIndex = 0, endIndex = argumentStartIndex))
+            withStyle(style = argumentStyle) {
+                append(argument)
+            }
+            append(text.substring(startIndex = argumentStartIndex + argument.length))
         }
     }
 }
