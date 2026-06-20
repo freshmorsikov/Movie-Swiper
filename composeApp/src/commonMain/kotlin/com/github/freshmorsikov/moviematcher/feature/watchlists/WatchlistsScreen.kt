@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,13 +45,8 @@ import com.github.freshmorsikov.moviematcher.feature.watchlists.presentation.Wat
 import com.github.freshmorsikov.moviematcher.feature.watchlists.presentation.WatchlistsViewModel
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import moviematcher.composeapp.generated.resources.Res
-import moviematcher.composeapp.generated.resources.watchlist_disliked
-import moviematcher.composeapp.generated.resources.watchlist_liked
-import moviematcher.composeapp.generated.resources.watchlist_matches
 import moviematcher.composeapp.generated.resources.watchlist_movie_count
-import moviematcher.composeapp.generated.resources.watchlist_watched
 import moviematcher.composeapp.generated.resources.watchlists_title
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -113,6 +109,7 @@ private fun WatchlistsGrid(
                 text = stringResource(Res.string.watchlists_title),
                 style = MovieTheme.typography.title20,
                 color = MovieTheme.colors.text.main,
+                textAlign = TextAlign.Center,
             )
         }
         items(
@@ -283,15 +280,6 @@ private fun movieCountText(movieCount: Int): String {
         quantity = movieCount,
         movieCount,
     )
-}
-
-private fun WatchlistType.titleResource(): StringResource {
-    return when (this) {
-        WatchlistType.Liked -> Res.string.watchlist_liked
-        WatchlistType.Disliked -> Res.string.watchlist_disliked
-        WatchlistType.Matches -> Res.string.watchlist_matches
-        WatchlistType.Watched -> Res.string.watchlist_watched
-    }
 }
 
 @Preview
