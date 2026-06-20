@@ -30,6 +30,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.github.freshmorsikov.moviematcher.app.navigation.NavigationRoute
 import coil3.compose.AsyncImage
 import com.github.freshmorsikov.moviematcher.core.data.api.IMAGE_BASE_URL
 import com.github.freshmorsikov.moviematcher.core.ui.LoadingContent
@@ -55,16 +57,23 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun WatchlistsScreen(
+    navController: NavController,
     viewModel: WatchlistsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    WatchlistsContent(state = state)
+    WatchlistsContent(
+        state = state,
+        onWatchlistClick = { watchlistType ->
+            navController.navigate(NavigationRoute.Favorite(watchlistType = watchlistType))
+        },
+    )
 }
 
 @Composable
 private fun WatchlistsContent(
     state: WatchlistsUdf.State,
+    onWatchlistClick: (WatchlistType) -> Unit,
 ) {
     MovieScaffold {
         when (state) {
@@ -73,7 +82,10 @@ private fun WatchlistsContent(
             }
 
             is WatchlistsUdf.State.Data -> {
-                WatchlistsGrid(watchlists = state.watchlists)
+                WatchlistsGrid(
+                    watchlists = state.watchlists,
+                    onWatchlistClick = onWatchlistClick,
+                )
             }
         }
     }
@@ -82,6 +94,7 @@ private fun WatchlistsContent(
 @Composable
 private fun WatchlistsGrid(
     watchlists: List<Watchlist>,
+    onWatchlistClick: (WatchlistType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
@@ -106,7 +119,10 @@ private fun WatchlistsGrid(
             items = watchlists,
             key = { watchlist -> watchlist.type.name },
         ) { watchlist ->
-            WatchlistCard(watchlist = watchlist)
+            WatchlistCard(
+                watchlist = watchlist,
+                onClick = { onWatchlistClick(watchlist.type) },
+            )
         }
     }
 }
@@ -114,9 +130,11 @@ private fun WatchlistsGrid(
 @Composable
 private fun WatchlistCard(
     watchlist: Watchlist,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
@@ -304,7 +322,8 @@ private fun WatchlistsContentPreview() {
                         previewMovies = emptyList(),
                     ),
                 )
-            )
+            ),
+            onWatchlistClick = {},
         )
     }
 }

@@ -1,9 +1,6 @@
 package com.github.freshmorsikov.moviematcher.feature.watchlists.domain
 
-import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetMatchedListFlowUseCase
-import com.github.freshmorsikov.moviematcher.shared.data.MovieRepository
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
-import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
@@ -15,16 +12,15 @@ import kotlin.collections.take
 private const val PREVIEW_MOVIE_LIMIT = 3
 
 class GetMovieWatchlistsFlowUseCase(
-    private val movieRepository: MovieRepository,
-    private val getMatchedListFlowUseCase: GetMatchedListFlowUseCase,
+    private val getMovieListFlowUseCase: GetMovieListFlowUseCase,
 ) {
 
     operator fun invoke(): Flow<List<Watchlist>> {
-        val likedMovies = movieRepository.getMovieListFlow(status = MovieStatus.Liked)
+        val likedMovies = getMovieListFlowUseCase(watchlistType = WatchlistType.Liked)
             .onStart { emit(emptyList()) }
-        val dislikedMovies = movieRepository.getMovieListFlow(status = MovieStatus.Disliked)
+        val dislikedMovies = getMovieListFlowUseCase(watchlistType = WatchlistType.Disliked)
             .onStart { emit(emptyList()) }
-        val matchedMovies = getMatchedListFlowUseCase()
+        val matchedMovies = getMovieListFlowUseCase(watchlistType = WatchlistType.Matches)
             .onStart { emit(emptyList()) }
 
         return combine(

@@ -147,10 +147,14 @@ fun NavigationContainer(
             SwipeScreen(navController = navController)
         }
         composable<NavigationRoute.Watchlists> {
-            WatchlistsScreen()
+            WatchlistsScreen(navController = navController)
         }
-        composable<NavigationRoute.Favorite> {
-            FavoriteScreen(navController = navController)
+        composable<NavigationRoute.Favorite> { backStackEntry ->
+            val route: NavigationRoute.Favorite = backStackEntry.toRoute()
+            FavoriteScreen(
+                navController = navController,
+                watchlistType = route.watchlistType,
+            )
         }
         composable<NavigationRoute.Matches> {
             MatchesScreen(navController = navController)

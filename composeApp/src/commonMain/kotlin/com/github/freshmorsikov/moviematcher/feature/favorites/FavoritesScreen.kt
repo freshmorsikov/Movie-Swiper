@@ -25,6 +25,7 @@ import com.github.freshmorsikov.moviematcher.core.ui.paddingWithSystemTopBar
 import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
 import com.github.freshmorsikov.moviematcher.feature.favorites.presentation.FavoritesUdf
 import com.github.freshmorsikov.moviematcher.feature.favorites.presentation.FavoritesViewModel
+import com.github.freshmorsikov.moviematcher.feature.watchlists.domain.WatchlistType
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieItem
 import moviematcher.composeapp.generated.resources.Res
@@ -35,11 +36,15 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun FavoriteScreen(
     navController: NavController,
-    viewModel: FavoritesViewModel = koinViewModel()
+    watchlistType: WatchlistType,
+    viewModel: FavoritesViewModel = koinViewModel(
+        parameters = { parametersOf(watchlistType) }
+    )
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     FavoriteScreenContent(

@@ -2,18 +2,20 @@ package com.github.freshmorsikov.moviematcher.feature.favorites.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
-import com.github.freshmorsikov.moviematcher.feature.favorites.domain.GetFavoriteMovieListUseCase
+import com.github.freshmorsikov.moviematcher.feature.watchlists.domain.GetMovieListFlowUseCase
+import com.github.freshmorsikov.moviematcher.feature.watchlists.domain.WatchlistType
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class FavoritesViewModel(
-    getFavoriteMovieListUseCase: GetFavoriteMovieListUseCase
+    watchlistType: WatchlistType,
+    getMovieListFlowUseCase: GetMovieListFlowUseCase,
 ) : UdfViewModel<FavoritesUdf.State, FavoritesUdf.Action, FavoritesUdf.Event>(
     initState = { FavoritesUdf.State.Loading }
 ) {
 
     init {
-        getFavoriteMovieListUseCase().onEach { movieList ->
+        getMovieListFlowUseCase(watchlistType = watchlistType).onEach { movieList ->
             onAction(FavoritesUdf.Action.UpdateMovieList(movieList = movieList))
         }.launchIn(viewModelScope)
     }
