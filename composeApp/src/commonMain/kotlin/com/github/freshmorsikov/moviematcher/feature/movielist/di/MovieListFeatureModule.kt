@@ -1,13 +1,13 @@
-package com.github.freshmorsikov.moviematcher.feature.favorites.di
+package com.github.freshmorsikov.moviematcher.feature.movielist.di
 
-import com.github.freshmorsikov.moviematcher.feature.favorites.presentation.FavoritesViewModel
+import com.github.freshmorsikov.moviematcher.feature.movielist.presentation.MovieListViewModel
 import com.github.freshmorsikov.moviematcher.feature.watchlists.domain.WatchlistType
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
-val favoritesFeatureModule = module {
+val movieListFeatureModule = module {
     viewModel { (watchlistType: WatchlistType) ->
-        FavoritesViewModel(
+        MovieListViewModel(
             watchlistType = watchlistType,
             getMovieListFlowUseCase = get(),
         )

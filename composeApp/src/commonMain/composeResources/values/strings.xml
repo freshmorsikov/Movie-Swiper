@@ -29,8 +29,8 @@
     <string name="filter_cancel">Cancel</string>
     <string name="filter_apply">Apply</string>
 
-    <string name="favorites_your_movies">Your %1$s movies will live here!</string>
-    <string name="favorites_do_you_have">Do you have any, nya?</string>
+    <string name="movie_list_your_movies">Your %1$s movies will live here!</string>
+    <string name="movie_list_do_you_have">Do you have any, nya?</string>
 
     <string name="watchlists_title">Watchlists</string>
     <string name="watchlist_liked">Liked</string>

@@ -1,4 +1,4 @@
-package com.github.freshmorsikov.moviematcher.feature.favorites.presentation
+package com.github.freshmorsikov.moviematcher.feature.movielist.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
@@ -7,26 +7,26 @@ import com.github.freshmorsikov.moviematcher.feature.watchlists.domain.Watchlist
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class FavoritesViewModel(
+class MovieListViewModel(
     watchlistType: WatchlistType,
     getMovieListFlowUseCase: GetMovieListFlowUseCase,
-) : UdfViewModel<FavoritesUdf.State, FavoritesUdf.Action, FavoritesUdf.Event>(
-    initState = { FavoritesUdf.State.Loading }
+) : UdfViewModel<MovieListUdf.State, MovieListUdf.Action, MovieListUdf.Event>(
+    initState = { MovieListUdf.State.Loading }
 ) {
 
     init {
         getMovieListFlowUseCase(watchlistType = watchlistType).onEach { movieList ->
-            onAction(FavoritesUdf.Action.UpdateMovieList(movieList = movieList))
+            onAction(MovieListUdf.Action.UpdateMovieList(movieList = movieList))
         }.launchIn(viewModelScope)
     }
 
-    override fun reduce(action: FavoritesUdf.Action): FavoritesUdf.State {
+    override fun reduce(action: MovieListUdf.Action): MovieListUdf.State {
         return when (action) {
-            is FavoritesUdf.Action.UpdateMovieList -> {
+            is MovieListUdf.Action.UpdateMovieList -> {
                 if (action.movieList.isEmpty()) {
-                    FavoritesUdf.State.Empty
+                    MovieListUdf.State.Empty
                 } else {
-                    FavoritesUdf.State.Data(movieList = action.movieList)
+                    MovieListUdf.State.Data(movieList = action.movieList)
                 }
             }
         }

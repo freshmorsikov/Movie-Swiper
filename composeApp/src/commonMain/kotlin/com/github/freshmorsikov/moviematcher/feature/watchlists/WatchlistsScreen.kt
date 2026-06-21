@@ -61,7 +61,7 @@ fun WatchlistsScreen(
     WatchlistsContent(
         state = state,
         onWatchlistClick = { watchlistType ->
-            navController.navigate(NavigationRoute.Favorite(watchlistType = watchlistType))
+            navController.navigate(NavigationRoute.MovieList(watchlistType = watchlistType))
         },
     )
 }

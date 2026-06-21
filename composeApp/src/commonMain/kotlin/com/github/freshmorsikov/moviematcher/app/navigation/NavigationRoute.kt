@@ -28,7 +28,7 @@ interface NavigationRoute {
     data object Watchlists : BottomNavigationRoute
 
     @Serializable
-    data class Favorite(val watchlistType: WatchlistType) : NavigationRoute
+    data class MovieList(val watchlistType: WatchlistType) : NavigationRoute
 
     @Serializable
     data object Matches : BottomNavigationRoute

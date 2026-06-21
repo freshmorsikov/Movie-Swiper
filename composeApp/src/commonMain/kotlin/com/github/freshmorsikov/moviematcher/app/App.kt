@@ -29,9 +29,9 @@ import com.github.freshmorsikov.moviematcher.app.presentation.AppViewModel
 import com.github.freshmorsikov.moviematcher.app.snackbar.MatchSnackbarVisuals
 import com.github.freshmorsikov.moviematcher.app.snackbar.MovieSnackbarHost
 import com.github.freshmorsikov.moviematcher.feature.details.MovieDetailsScreen
-import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
 import com.github.freshmorsikov.moviematcher.feature.filter.FilterScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.ui.MatchesScreen
+import com.github.freshmorsikov.moviematcher.feature.movielist.MovieListScreen
 import com.github.freshmorsikov.moviematcher.feature.name.NameScreen
 import com.github.freshmorsikov.moviematcher.feature.no_connection.NoConnectionScreen
 import com.github.freshmorsikov.moviematcher.feature.pairing.EntryScreen
@@ -149,9 +149,9 @@ fun NavigationContainer(
         composable<NavigationRoute.Watchlists> {
             WatchlistsScreen(navController = navController)
         }
-        composable<NavigationRoute.Favorite> { backStackEntry ->
-            val route: NavigationRoute.Favorite = backStackEntry.toRoute()
-            FavoriteScreen(
+        composable<NavigationRoute.MovieList> { backStackEntry ->
+            val route: NavigationRoute.MovieList = backStackEntry.toRoute()
+            MovieListScreen(
                 navController = navController,
                 watchlistType = route.watchlistType,
             )

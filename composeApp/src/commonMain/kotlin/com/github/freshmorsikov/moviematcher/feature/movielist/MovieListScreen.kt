@@ -1,4 +1,4 @@
-package com.github.freshmorsikov.moviematcher.feature.favorites
+package com.github.freshmorsikov.moviematcher.feature.movielist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -30,15 +30,15 @@ import com.github.freshmorsikov.moviematcher.core.ui.MovieBackButton
 import com.github.freshmorsikov.moviematcher.core.ui.MovieScaffold
 import com.github.freshmorsikov.moviematcher.core.ui.paddingWithSystemTopBar
 import com.github.freshmorsikov.moviematcher.core.ui.theme.MovieTheme
-import com.github.freshmorsikov.moviematcher.feature.favorites.presentation.FavoritesUdf
-import com.github.freshmorsikov.moviematcher.feature.favorites.presentation.FavoritesViewModel
+import com.github.freshmorsikov.moviematcher.feature.movielist.presentation.MovieListUdf
+import com.github.freshmorsikov.moviematcher.feature.movielist.presentation.MovieListViewModel
 import com.github.freshmorsikov.moviematcher.feature.watchlists.domain.WatchlistType
 import com.github.freshmorsikov.moviematcher.feature.watchlists.titleResource
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieItem
 import moviematcher.composeapp.generated.resources.Res
-import moviematcher.composeapp.generated.resources.favorites_do_you_have
-import moviematcher.composeapp.generated.resources.favorites_your_movies
+import moviematcher.composeapp.generated.resources.movie_list_do_you_have
+import moviematcher.composeapp.generated.resources.movie_list_your_movies
 import moviematcher.composeapp.generated.resources.popcorny_puzzled
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -46,15 +46,15 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-fun FavoriteScreen(
+fun MovieListScreen(
     navController: NavController,
     watchlistType: WatchlistType,
-    viewModel: FavoritesViewModel = koinViewModel(
+    viewModel: MovieListViewModel = koinViewModel(
         parameters = { parametersOf(watchlistType) }
     )
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    FavoriteScreenContent(
+    MovieListScreenContent(
         watchlistType = watchlistType,
         state = state,
         onBackClick = {
@@ -69,22 +69,22 @@ fun FavoriteScreen(
 }
 
 @Composable
-private fun FavoriteScreenContent(
+private fun MovieListScreenContent(
     watchlistType: WatchlistType,
-    state: FavoritesUdf.State,
+    state: MovieListUdf.State,
     onBackClick: () -> Unit,
     onMovieClick: (Long) -> Unit,
 ) {
     MovieScaffold {
         when (state) {
-            FavoritesUdf.State.Loading -> {}
-            FavoritesUdf.State.Empty -> {
+            MovieListUdf.State.Loading -> {}
+            MovieListUdf.State.Empty -> {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingWithSystemTopBar(all = 16.dp)),
                 ) {
-                    FavoriteScreenTitle(
+                    MovieListScreenTitle(
                         watchlistType = watchlistType,
                         onBackClick = onBackClick,
                         modifier = Modifier
@@ -106,7 +106,7 @@ private fun FavoriteScreenContent(
                         )
                         val watchlistTitle = stringResource(watchlistType.titleResource())
                         val emptyTitle = stringResource(
-                            Res.string.favorites_your_movies,
+                            Res.string.movie_list_your_movies,
                             watchlistTitle,
                         )
                         Text(
@@ -126,7 +126,7 @@ private fun FavoriteScreenContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 8.dp),
-                            text = stringResource(Res.string.favorites_do_you_have),
+                            text = stringResource(Res.string.movie_list_do_you_have),
                             style = MovieTheme.typography.body14,
                             color = MovieTheme.colors.text.variant,
                             textAlign = TextAlign.Center
@@ -135,14 +135,14 @@ private fun FavoriteScreenContent(
                 }
             }
 
-            is FavoritesUdf.State.Data -> {
+            is MovieListUdf.State.Data -> {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = paddingWithSystemTopBar(all = 16.dp),
                     verticalArrangement = spacedBy(8.dp)
                 ) {
                     item {
-                        FavoriteScreenTitle(
+                        MovieListScreenTitle(
                             watchlistType = watchlistType,
                             onBackClick = onBackClick,
                             modifier = Modifier
@@ -182,7 +182,7 @@ private fun highlightArgument(
 }
 
 @Composable
-private fun FavoriteScreenTitle(
+private fun MovieListScreenTitle(
     watchlistType: WatchlistType,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -204,11 +204,11 @@ private fun FavoriteScreenTitle(
 
 @Preview
 @Composable
-private fun FavoriteScreenContentPreview() {
+private fun MovieListScreenContentPreview() {
     MovieTheme {
-        FavoriteScreenContent(
+        MovieListScreenContent(
             watchlistType = WatchlistType.Liked,
-            state = FavoritesUdf.State.Data(
+            state = MovieListUdf.State.Data(
                 movieList = List(6) { Movie.mock }
             ),
             onBackClick = {},
@@ -219,11 +219,11 @@ private fun FavoriteScreenContentPreview() {
 
 @Preview
 @Composable
-private fun FavoriteScreenEmptyPreview() {
+private fun MovieListScreenEmptyPreview() {
     MovieTheme {
-        FavoriteScreenContent(
+        MovieListScreenContent(
             watchlistType = WatchlistType.Liked,
-            state = FavoritesUdf.State.Empty,
+            state = MovieListUdf.State.Empty,
             onBackClick = {},
             onMovieClick = {},
         )
