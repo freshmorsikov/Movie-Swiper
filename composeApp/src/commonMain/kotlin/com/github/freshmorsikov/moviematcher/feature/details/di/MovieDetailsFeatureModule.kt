@@ -15,6 +15,7 @@ val movieDetailsFeatureModule = module {
             getMovieFlowByIdUseCase = get(),
             loadMovieDetailsUseCase = get(),
             getActorsByMovieIdUseCase = get(),
+            updateMovieStatusUseCase = get(),
         )
     }
     factory {

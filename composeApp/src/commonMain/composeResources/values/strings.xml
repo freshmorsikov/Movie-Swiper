@@ -75,5 +75,7 @@
     <string name="movie_details_cast">Cast</string>
     <string name="movie_details_budget">Budget</string>
     <string name="movie_details_revenue">Revenue</string>
+    <string name="movie_details_like">Like movie</string>
+    <string name="movie_details_dislike">Dislike movie</string>
 
 </resources>

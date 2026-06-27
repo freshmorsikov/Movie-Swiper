@@ -1,9 +1,9 @@
-package com.github.freshmorsikov.moviematcher.feature.swipe.domain
+package com.github.freshmorsikov.moviematcher.shared.domain
 
+import com.github.freshmorsikov.moviematcher.feature.user.data.UserRepository
 import com.github.freshmorsikov.moviematcher.shared.data.MatchRepository
 import com.github.freshmorsikov.moviematcher.shared.data.MovieRepository
 import com.github.freshmorsikov.moviematcher.shared.data.ReactionRepository
-import com.github.freshmorsikov.moviematcher.feature.user.data.UserRepository
 import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 import com.github.freshmorsikov.moviematcher.shared.domain.model.ReactionAction
 
@@ -31,18 +31,29 @@ class UpdateMovieStatusUseCase(
                     action = action,
                 )
             }
-        if (movieStatus == MovieStatus.Liked) {
-            val pairedUser = userRepository.getPairedUser() ?: return
-            val hasLiked = reactionRepository.hasLikedReaction(
-                userId = pairedUser.id,
-                movieId = id
-            )
-            if (hasLiked) {
-                matchRepository.addToMatched(
+        val pairedUser = userRepository.getPairedUser() ?: return
+        when (movieStatus) {
+            MovieStatus.Liked -> {
+                val hasLiked = reactionRepository.hasLikedReaction(
+                    userId = pairedUser.id,
+                    movieId = id,
+                )
+                if (hasLiked) {
+                    matchRepository.addToMatched(
+                        roomId = pairedUser.room,
+                        movieId = id,
+                    )
+                }
+            }
+
+            MovieStatus.Disliked -> {
+                matchRepository.removeFromMatched(
                     roomId = pairedUser.room,
                     movieId = id,
                 )
             }
+
+            MovieStatus.Undefined -> {}
         }
     }
 

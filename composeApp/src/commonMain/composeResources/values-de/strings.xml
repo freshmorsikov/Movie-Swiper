@@ -75,5 +75,7 @@
     <string name="movie_details_cast">Besetzung</string>
     <string name="movie_details_budget">Budget</string>
     <string name="movie_details_revenue">Einspielergebnis</string>
+    <string name="movie_details_like">Film mögen</string>
+    <string name="movie_details_dislike">Film ablehnen</string>
 
 </resources>

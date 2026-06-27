@@ -27,4 +27,14 @@ class MatchRepository(
         )
     }
 
+    suspend fun removeFromMatched(
+        roomId: String,
+        movieId: Long,
+    ) {
+        supabaseApiService.deleteMatched(
+            roomId = roomId,
+            movieId = movieId,
+        )
+    }
+
 }

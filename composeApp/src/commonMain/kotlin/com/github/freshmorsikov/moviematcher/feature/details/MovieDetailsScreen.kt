@@ -16,12 +16,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,14 +42,21 @@ import com.github.freshmorsikov.moviematcher.feature.details.domain.model.Actor
 import com.github.freshmorsikov.moviematcher.feature.details.presentation.MovieDetailsUdf
 import com.github.freshmorsikov.moviematcher.feature.details.presentation.MovieDetailsViewModel
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
+import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieGenres
 import com.github.freshmorsikov.moviematcher.shared.ui.movie.MovieInfo
 import com.github.freshmorsikov.moviematcher.util.toAmountFormat
 import moviematcher.composeapp.generated.resources.Res
+import moviematcher.composeapp.generated.resources.ic_thumb_down
+import moviematcher.composeapp.generated.resources.ic_thumb_up
 import moviematcher.composeapp.generated.resources.movie_details_budget
 import moviematcher.composeapp.generated.resources.movie_details_cast
+import moviematcher.composeapp.generated.resources.movie_details_dislike
+import moviematcher.composeapp.generated.resources.movie_details_like
 import moviematcher.composeapp.generated.resources.movie_details_overview
 import moviematcher.composeapp.generated.resources.movie_details_revenue
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -62,6 +73,7 @@ fun MovieDetailsScreen(
 
     MovieDetailsScreenContent(
         state = state,
+        onAction = viewModel::onAction,
         onBackClick = {
             navController.popBackStack()
         },
@@ -71,6 +83,7 @@ fun MovieDetailsScreen(
 @Composable
 private fun MovieDetailsScreenContent(
     state: MovieDetailsUdf.State,
+    onAction: (MovieDetailsUdf.Action) -> Unit,
     onBackClick: () -> Unit,
 ) {
     MovieScaffold(background = MovieTheme.colors.surface.main) {
@@ -90,6 +103,7 @@ private fun MovieDetailsScreenContent(
                             bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
                         ),
                     state = state,
+                    onAction = onAction,
                 )
             }
         }
@@ -110,6 +124,7 @@ private fun LoadingMovieDetailsScreenContent() {
 @Composable
 private fun LoadedMovieDetailsScreenContent(
     state: MovieDetailsUdf.State.Data,
+    onAction: (MovieDetailsUdf.Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -145,6 +160,12 @@ private fun LoadedMovieDetailsScreenContent(
                     runtime = state.movie.runtime,
                 )
                 MovieGenres(state.movie.genres)
+                MovieStatusControls(
+                    movieStatus = state.movie.status,
+                    onMovieStatusClick = { movieStatus ->
+                        onAction(MovieDetailsUdf.Action.UpdateMovieStatus(movieStatus = movieStatus))
+                    },
+                )
             }
             OverviewBlock(
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -160,6 +181,72 @@ private fun LoadedMovieDetailsScreenContent(
                 revenue = state.movie.revenue,
             )
         }
+    }
+}
+
+@Composable
+private fun MovieStatusControls(
+    movieStatus: MovieStatus,
+    onMovieStatusClick: (MovieStatus) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        MovieStatusButton(
+            movieStatus = MovieStatus.Disliked,
+            selected = movieStatus == MovieStatus.Disliked,
+            iconRes = Res.drawable.ic_thumb_down,
+            selectedContainerColor = MovieTheme.colors.error,
+            contentDescription = stringResource(Res.string.movie_details_dislike),
+            onMovieStatusClick = onMovieStatusClick,
+        )
+        MovieStatusButton(
+            movieStatus = MovieStatus.Liked,
+            selected = movieStatus == MovieStatus.Liked,
+            iconRes = Res.drawable.ic_thumb_up,
+            selectedContainerColor = MovieTheme.colors.primary,
+            contentDescription = stringResource(Res.string.movie_details_like),
+            onMovieStatusClick = onMovieStatusClick,
+        )
+    }
+}
+
+@Composable
+private fun MovieStatusButton(
+    movieStatus: MovieStatus,
+    selected: Boolean,
+    iconRes: DrawableResource,
+    selectedContainerColor: Color,
+    contentDescription: String,
+    onMovieStatusClick: (MovieStatus) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    FilledIconButton(
+        modifier = modifier.size(48.dp),
+        colors = IconButtonDefaults.iconButtonColors(
+            containerColor = if (selected) {
+                selectedContainerColor
+            } else {
+                MovieTheme.colors.surface.variant
+            },
+            contentColor = if (selected) {
+                MovieTheme.colors.text.onAccent
+            } else {
+                MovieTheme.colors.icon.variant
+            },
+        ),
+        onClick = {
+            onMovieStatusClick(movieStatus)
+        },
+    ) {
+        Icon(
+            modifier = Modifier.size(24.dp),
+            painter = painterResource(iconRes),
+            contentDescription = contentDescription,
+        )
     }
 }
 
@@ -383,6 +470,7 @@ private fun MovieDetailsScreenPreview() {
                     Actor.mock
                 }
             ),
+            onAction = {},
             onBackClick = {},
         )
     }
