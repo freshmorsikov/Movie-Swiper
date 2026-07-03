@@ -20,7 +20,7 @@ val watchlistsFeatureModule = module {
     factory {
         GetMovieListFlowUseCase(
             movieRepository = get(),
-            getMatchedListFlowUseCase = get(),
+            getActiveMatchedMovieListFlowUseCase = get(),
         )
     }
 }
