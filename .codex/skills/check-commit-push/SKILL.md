@@ -16,7 +16,7 @@ Use this workflow to turn completed local work into a pushed commit without swee
 2. Find and classify changes.
    - Run `git status --short`.
    - Review diffs for tracked files with `git diff` and, if anything is already staged, `git diff --cached`.
-   - Treat untracked files as unrelated unless the user explicitly requested them or they are clearly part of the completed task.
+   - Treat untracked files as unrelated unless the user explicitly requested them, or they are clearly part of the completed task.
    - Do not revert, delete, or modify unrelated changes.
 
 3. Verify Definition of Done.
