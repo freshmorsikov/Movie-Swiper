@@ -39,7 +39,7 @@ class UpdateMovieStatusUseCase(
                     movieId = id,
                 )
                 if (hasLiked) {
-                    matchRepository.addToMatched(
+                    activateMatched(
                         roomId = pairedUser.room,
                         movieId = id,
                     )
@@ -47,13 +47,37 @@ class UpdateMovieStatusUseCase(
             }
 
             MovieStatus.Disliked -> {
-                matchRepository.removeFromMatched(
+                matchRepository.updateMatchedActive(
                     roomId = pairedUser.room,
                     movieId = id,
+                    active = false,
                 )
             }
 
             MovieStatus.Undefined -> {}
+        }
+    }
+
+    private suspend fun activateMatched(
+        roomId: String,
+        movieId: Long,
+    ) {
+        val matched = matchRepository.getMatched(
+            roomId = roomId,
+            movieId = movieId,
+        )
+        if (matched == null) {
+            matchRepository.createMatched(
+                roomId = roomId,
+                movieId = movieId,
+                active = true,
+            )
+        } else {
+            matchRepository.updateMatchedActive(
+                roomId = roomId,
+                movieId = movieId,
+                active = true,
+            )
         }
     }
 

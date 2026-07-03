@@ -20,7 +20,10 @@ class GetMatchedListFlowUseCase(
         return getRoomFlowCaseCase().flatMapLatest { room ->
             matchRepository.getMatchedListFlow(roomId = room.id)
                 .map { matchedList ->
-                    movieRepository.getMoviesByIds(ids = matchedList)
+                    val activeMovieIds = matchedList
+                        .filter { matched -> matched.active }
+                        .map { matched -> matched.movie }
+                    movieRepository.getMoviesByIds(ids = activeMovieIds)
                 }
         }
     }

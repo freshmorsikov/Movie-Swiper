@@ -6,6 +6,7 @@ import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.Insert
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertReaction
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.MatchedEntity
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.ReactionEntity
+import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.UpdateMatchedActive
 import com.github.freshmorsikov.moviematcher.feature.user.data.model.IncrementCounterResponse
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseExperimental
@@ -184,9 +185,28 @@ class SupabaseApiService(
         return "$PUBLIC_SCHEMA:$MATCHED_TABLE:$roomId:${Random.nextLong()}"
     }
 
+    suspend fun getMatched(
+        roomId: String,
+        movieId: Long,
+    ): MatchedEntity? {
+        return safeCall {
+            supabaseClient.from(table = MATCHED_TABLE)
+                .select {
+                    filter {
+                        and {
+                            MatchedEntity::room eq roomId
+                            MatchedEntity::movie eq movieId
+                        }
+                    }
+                }.decodeList<MatchedEntity>()
+                .firstOrNull()
+        }
+    }
+
     suspend fun createMatched(
         roomId: String,
         movieId: Long,
+        active: Boolean,
     ) {
         safeCall {
             supabaseClient.from(table = MATCHED_TABLE)
@@ -194,18 +214,24 @@ class SupabaseApiService(
                     InsertMatched(
                         room = roomId,
                         movie = movieId,
+                        active = active,
                     )
                 )
         }
     }
 
-    suspend fun deleteMatched(
+    suspend fun updateMatchedActive(
         roomId: String,
         movieId: Long,
+        active: Boolean,
     ) {
         safeCall {
             supabaseClient.from(table = MATCHED_TABLE)
-                .delete {
+                .update(
+                    value = UpdateMatchedActive(
+                        active = active,
+                    )
+                ) {
                     filter {
                         and {
                             MatchedEntity::room eq roomId
