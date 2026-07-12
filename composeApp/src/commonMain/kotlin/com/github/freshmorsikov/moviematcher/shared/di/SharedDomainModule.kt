@@ -20,9 +20,7 @@ val sharedDomainModule = module {
     factory {
         UpdateMovieStatusUseCase(
             movieRepository = get(),
-            userRepository = get(),
             reactionRepository = get(),
-            matchRepository = get(),
         )
     }
 }

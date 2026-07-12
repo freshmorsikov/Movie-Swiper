@@ -20,15 +20,6 @@ class UserRemoteDataSource(
     private val supabaseClient: SupabaseClient
 ) {
 
-    suspend fun getUserById(userId: String): UserEntity? {
-        return safeCall {
-            supabaseClient.from(table = USER_TABLE)
-                .select {
-                    filter { UserEntity::id eq userId }
-                }.decodeSingleOrNull<UserEntity>()
-        }
-    }
-
     @OptIn(SupabaseExperimental::class)
     fun getUserFlowById(userId: String): Flow<UserEntity?> {
         return safeFlow {
@@ -95,18 +86,6 @@ class UserRemoteDataSource(
                     )
                 )
         }
-    }
-
-    @OptIn(SupabaseExperimental::class)
-    suspend fun getUsersByRoomId(roomId: String): List<UserEntity> {
-        return safeCall {
-            supabaseClient.from(table = USER_TABLE)
-                .select {
-                    filter {
-                        UserEntity::room eq roomId
-                    }
-                }.decodeList<UserEntity>()
-        }.orEmpty()
     }
 
 }

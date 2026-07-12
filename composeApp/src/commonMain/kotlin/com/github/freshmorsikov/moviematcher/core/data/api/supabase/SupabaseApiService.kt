@@ -2,11 +2,8 @@ package com.github.freshmorsikov.moviematcher.core.data.api.supabase
 
 import com.github.freshmorsikov.moviematcher.core.data.api.safeCall
 import com.github.freshmorsikov.moviematcher.core.data.api.safeFlow
-import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertMatched
-import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.InsertReaction
+import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.HandleReactionActionRequest
 import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.MatchedEntity
-import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.ReactionEntity
-import com.github.freshmorsikov.moviematcher.core.data.api.supabase.model.UpdateMatchedActive
 import com.github.freshmorsikov.moviematcher.feature.user.data.model.IncrementCounterResponse
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseExperimental
@@ -18,6 +15,9 @@ import io.github.jan.supabase.realtime.decodeRecordOrNull
 import io.github.jan.supabase.realtime.postgresChangeFlow
 import io.github.jan.supabase.realtime.realtime
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
@@ -26,8 +26,8 @@ import kotlinx.serialization.json.Json
 import kotlin.random.Random
 
 private const val MATCHED_TABLE = "matched"
-private const val REACTION_TABLE = "reaction"
 private const val INCREMENT_COUNTER_FUNCTION = "increment-counter"
+private const val HANDLE_REACTION_ACTION_FUNCTION = "handle-reaction-action"
 
 private const val PUBLIC_SCHEMA = "public"
 private const val ID_COLUMN = "id"
@@ -47,41 +47,23 @@ class SupabaseApiService(
         }
     }
 
-    // REACTION
-
-    suspend fun getReaction(
+    suspend fun handleReactionAction(
         userId: String,
         movieId: Long,
-        action: ReactionEntity.Action,
-    ): ReactionEntity? {
-        return safeCall {
-            supabaseClient.from(table = REACTION_TABLE)
-                .select {
-                    filter {
-                        and {
-                            ReactionEntity::user eq userId
-                            ReactionEntity::movie eq movieId
-                            ReactionEntity::action eq action
-                        }
-                    }
-                }.decodeSingleOrNull<ReactionEntity>()
-        }
-    }
-
-    suspend fun createReaction(
-        userId: String,
-        movieId: Long,
-        action: ReactionEntity.Action,
+        action: String,
     ) {
         safeCall {
-            supabaseClient.from(table = REACTION_TABLE)
-                .insert(
-                    InsertReaction(
-                        user = userId,
-                        movie = movieId,
-                        action = action,
-                    )
-                )
+            supabaseClient.functions.invoke(
+                function = HANDLE_REACTION_ACTION_FUNCTION,
+                body = HandleReactionActionRequest(
+                    userId = userId,
+                    movieId = movieId,
+                    action = action,
+                ),
+                headers = Headers.build {
+                    append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                },
+            )
         }
     }
 
@@ -183,63 +165,6 @@ class SupabaseApiService(
 
     private fun matchedChannelName(roomId: String): String {
         return "$PUBLIC_SCHEMA:$MATCHED_TABLE:$roomId:${Random.nextLong()}"
-    }
-
-    suspend fun getMatched(
-        roomId: String,
-        movieId: Long,
-    ): MatchedEntity? {
-        return safeCall {
-            supabaseClient.from(table = MATCHED_TABLE)
-                .select {
-                    filter {
-                        and {
-                            MatchedEntity::room eq roomId
-                            MatchedEntity::movie eq movieId
-                        }
-                    }
-                }.decodeList<MatchedEntity>()
-                .firstOrNull()
-        }
-    }
-
-    suspend fun createMatched(
-        roomId: String,
-        movieId: Long,
-        active: Boolean,
-    ) {
-        safeCall {
-            supabaseClient.from(table = MATCHED_TABLE)
-                .insert(
-                    InsertMatched(
-                        room = roomId,
-                        movie = movieId,
-                        active = active,
-                    )
-                )
-        }
-    }
-
-    suspend fun updateMatchedActive(
-        roomId: String,
-        movieId: Long,
-        active: Boolean,
-    ) {
-        safeCall {
-            supabaseClient.from(table = MATCHED_TABLE)
-                .update(
-                    value = UpdateMatchedActive(
-                        active = active,
-                    )
-                ) {
-                    filter {
-                        and {
-                            MatchedEntity::room eq roomId
-                            MatchedEntity::movie eq movieId
-                        }
-                    }
-                }
-        }
     }
 
 }

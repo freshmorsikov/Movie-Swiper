@@ -17,40 +17,6 @@ class MatchRepository(
             }
     }
 
-    suspend fun getMatched(
-        roomId: String,
-        movieId: Long,
-    ): Matched? {
-        return supabaseApiService.getMatched(
-            roomId = roomId,
-            movieId = movieId,
-        )?.toMatched()
-    }
-
-    suspend fun createMatched(
-        roomId: String,
-        movieId: Long,
-        active: Boolean,
-    ) {
-        supabaseApiService.createMatched(
-            roomId = roomId,
-            movieId = movieId,
-            active = active,
-        )
-    }
-
-    suspend fun updateMatchedActive(
-        roomId: String,
-        movieId: Long,
-        active: Boolean,
-    ) {
-        supabaseApiService.updateMatchedActive(
-            roomId = roomId,
-            movieId = movieId,
-            active = active,
-        )
-    }
-
     private fun MatchedEntity.toMatched(): Matched {
         return Matched(
             id = id,
