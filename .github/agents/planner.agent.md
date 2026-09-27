@@ -18,6 +18,9 @@ Follow this workflow in order:
    proposing new patterns. Then prepare an evidence-based plan using exactly
    these sections:
 
+   ```
+   # Plan
+   
    ## Understanding
 
    Briefly explain what needs to change.
@@ -52,7 +55,7 @@ Follow this workflow in order:
    Ask only questions whose answers materially affect the implementation. Do not
    ask questions that can be answered by inspecting the repository. If none
    remain, state: "None."
-
+   ```
 2. Post the complete plan to the assigned issue as a comment.
 3. After the comment is posted successfully, remove the `Planning` label and
    add the `Plan review` label. Preserve every other existing label.
