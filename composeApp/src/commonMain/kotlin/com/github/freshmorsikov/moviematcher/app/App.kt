@@ -29,14 +29,15 @@ import com.github.freshmorsikov.moviematcher.app.presentation.AppViewModel
 import com.github.freshmorsikov.moviematcher.app.snackbar.MatchSnackbarVisuals
 import com.github.freshmorsikov.moviematcher.app.snackbar.MovieSnackbarHost
 import com.github.freshmorsikov.moviematcher.feature.details.MovieDetailsScreen
-import com.github.freshmorsikov.moviematcher.feature.favorites.FavoriteScreen
 import com.github.freshmorsikov.moviematcher.feature.filter.FilterScreen
 import com.github.freshmorsikov.moviematcher.feature.matches.ui.MatchesScreen
+import com.github.freshmorsikov.moviematcher.feature.movielist.MovieListScreen
 import com.github.freshmorsikov.moviematcher.feature.name.NameScreen
 import com.github.freshmorsikov.moviematcher.feature.no_connection.NoConnectionScreen
 import com.github.freshmorsikov.moviematcher.feature.pairing.EntryScreen
 import com.github.freshmorsikov.moviematcher.feature.pairing.PairingScreen
 import com.github.freshmorsikov.moviematcher.feature.swipe.SwipeScreen
+import com.github.freshmorsikov.moviematcher.feature.watchlists.WatchlistsScreen
 import com.github.freshmorsikov.moviematcher.util.Constants.LINK_BASE_PATH
 import com.github.freshmorsikov.moviematcher.util.SubscribeOnEvents
 import kotlinx.coroutines.launch
@@ -145,8 +146,15 @@ fun NavigationContainer(
         composable<NavigationRoute.Swipe> {
             SwipeScreen(navController = navController)
         }
-        composable<NavigationRoute.Favorite> {
-            FavoriteScreen(navController = navController)
+        composable<NavigationRoute.Watchlists> {
+            WatchlistsScreen(navController = navController)
+        }
+        composable<NavigationRoute.MovieList> { backStackEntry ->
+            val route: NavigationRoute.MovieList = backStackEntry.toRoute()
+            MovieListScreen(
+                navController = navController,
+                watchlistType = route.watchlistType,
+            )
         }
         composable<NavigationRoute.Matches> {
             MatchesScreen(navController = navController)

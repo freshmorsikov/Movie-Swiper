@@ -2,7 +2,7 @@ package com.github.freshmorsikov.moviematcher.feature.matches.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
-import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetMatchedListFlowUseCase
+import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetActiveMatchedMovieListFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.matches.domain.GetPairedUserFlowUseCase
 import com.github.freshmorsikov.moviematcher.feature.name.domain.GetUserNameUseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.GetInviteLinkUseCase
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 
 class MatchesViewModel(
-    getMatchedListFlowUseCase: GetMatchedListFlowUseCase,
+    getActiveMatchedMovieListFlowUseCase: GetActiveMatchedMovieListFlowUseCase,
     getUserNameUseCase: GetUserNameUseCase,
     getPairedUserFlowUseCase: GetPairedUserFlowUseCase,
     private val getInviteLinkUseCase: GetInviteLinkUseCase,
@@ -26,7 +26,7 @@ class MatchesViewModel(
         viewModelScope.launch {
             val userName = getUserNameUseCase()
             combine(
-                getMatchedListFlowUseCase(),
+                getActiveMatchedMovieListFlowUseCase(),
                 getPairedUserFlowUseCase(),
             ) { movies, pairedUser ->
                 val userPair = if (pairedUser == null) {

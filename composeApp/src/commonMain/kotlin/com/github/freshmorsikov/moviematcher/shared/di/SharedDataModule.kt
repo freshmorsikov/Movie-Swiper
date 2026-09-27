@@ -11,6 +11,7 @@ val sharedDataModule = module {
     single {
         ReactionRepository(
             supabaseApiService = get(),
+            userRepository = get(),
         )
     }
 }

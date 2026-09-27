@@ -6,15 +6,16 @@ import com.github.freshmorsikov.moviematcher.core.data.di.dataModule
 import com.github.freshmorsikov.moviematcher.core.data.di.dataStoreModule
 import com.github.freshmorsikov.moviematcher.core.data.di.sqlDriverModule
 import com.github.freshmorsikov.moviematcher.feature.details.di.movieDetailsFeatureModule
-import com.github.freshmorsikov.moviematcher.feature.favorites.di.favoritesFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.filter.di.filterFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.matches.di.matchesFeatureModule
+import com.github.freshmorsikov.moviematcher.feature.movielist.di.movieListFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.name.di.nameFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.no_connection.di.noConnectionFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.pairing.di.pairingFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.room.di.roomFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.swipe.di.swipeFeatureModule
 import com.github.freshmorsikov.moviematcher.feature.user.di.userFeatureModule
+import com.github.freshmorsikov.moviematcher.feature.watchlists.di.watchlistsFeatureModule
 import com.github.freshmorsikov.moviematcher.shared.di.sharedDataModule
 import com.github.freshmorsikov.moviematcher.shared.di.sharedDomainModule
 import com.github.freshmorsikov.moviematcher.util.sharingModule
@@ -37,9 +38,10 @@ fun initKoin(platformModule: Module = module {}) {
             swipeFeatureModule,
             noConnectionFeatureModule,
             nameFeatureModule,
-            favoritesFeatureModule,
+            movieListFeatureModule,
             filterFeatureModule,
             matchesFeatureModule,
+            watchlistsFeatureModule,
             pairingFeatureModule,
             movieDetailsFeatureModule,
             roomFeatureModule,

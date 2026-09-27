@@ -1,9 +1,9 @@
-package com.github.freshmorsikov.moviematcher.feature.favorites.presentation
+package com.github.freshmorsikov.moviematcher.feature.movielist.presentation
 
 import com.github.freshmorsikov.moviematcher.core.presentation.Udf
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
 
-interface FavoritesUdf {
+interface MovieListUdf {
 
     sealed interface State : Udf.State {
 

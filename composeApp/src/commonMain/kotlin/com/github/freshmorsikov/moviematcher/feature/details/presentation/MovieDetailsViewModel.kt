@@ -6,6 +6,8 @@ import com.github.freshmorsikov.moviematcher.feature.details.domain.GetActorsByM
 import com.github.freshmorsikov.moviematcher.feature.details.domain.GetMovieFlowByIdUseCase
 import com.github.freshmorsikov.moviematcher.feature.details.domain.LoadMovieDetailsUseCase
 import com.github.freshmorsikov.moviematcher.feature.details.domain.model.Actor
+import com.github.freshmorsikov.moviematcher.shared.domain.UpdateMovieStatusUseCase
+import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -15,6 +17,7 @@ class MovieDetailsViewModel(
     getMovieFlowByIdUseCase: GetMovieFlowByIdUseCase,
     loadMovieDetailsUseCase: LoadMovieDetailsUseCase,
     getActorsByMovieIdUseCase: GetActorsByMovieIdUseCase,
+    private val updateMovieStatusUseCase: UpdateMovieStatusUseCase,
 ) : UdfViewModel<MovieDetailsUdf.State, MovieDetailsUdf.Action, MovieDetailsUdf.Event>(
     initState = {
         MovieDetailsUdf.State.Loading
@@ -58,7 +61,30 @@ class MovieDetailsViewModel(
                     ?.copy(actors = action.actors)
                     ?: currentState
             }
+
+            is MovieDetailsUdf.Action.UpdateMovieStatus -> currentState
         }
+    }
+
+    override suspend fun handleEffects(action: MovieDetailsUdf.Action) {
+        when (action) {
+            is MovieDetailsUdf.Action.UpdateMovieStatus -> updateMovieStatus(
+                movieStatus = action.movieStatus,
+            )
+
+            else -> {}
+        }
+    }
+
+    private suspend fun updateMovieStatus(movieStatus: MovieStatus) {
+        val movie = (currentState as? MovieDetailsUdf.State.Data)?.movie ?: return
+        if (movie.status == movieStatus) {
+            return
+        }
+        updateMovieStatusUseCase(
+            id = movie.id,
+            movieStatus = movieStatus,
+        )
     }
 
 }

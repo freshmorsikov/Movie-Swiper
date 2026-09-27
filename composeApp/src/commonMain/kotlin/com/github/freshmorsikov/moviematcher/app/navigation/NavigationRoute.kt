@@ -1,5 +1,6 @@
 package com.github.freshmorsikov.moviematcher.app.navigation
 
+import com.github.freshmorsikov.moviematcher.feature.watchlists.domain.WatchlistType
 import kotlinx.serialization.Serializable
 
 interface NavigationRoute {
@@ -24,7 +25,10 @@ interface NavigationRoute {
     data object Swipe : BottomNavigationRoute
 
     @Serializable
-    data object Favorite : BottomNavigationRoute
+    data object Watchlists : BottomNavigationRoute
+
+    @Serializable
+    data class MovieList(val watchlistType: WatchlistType) : NavigationRoute
 
     @Serializable
     data object Matches : BottomNavigationRoute

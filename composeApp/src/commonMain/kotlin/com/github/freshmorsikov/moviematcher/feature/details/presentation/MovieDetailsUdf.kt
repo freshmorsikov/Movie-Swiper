@@ -3,6 +3,7 @@ package com.github.freshmorsikov.moviematcher.feature.details.presentation
 import com.github.freshmorsikov.moviematcher.core.presentation.Udf
 import com.github.freshmorsikov.moviematcher.feature.details.domain.model.Actor
 import com.github.freshmorsikov.moviematcher.shared.domain.model.Movie
+import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 
 interface MovieDetailsUdf {
     sealed interface State : Udf.State {
@@ -20,6 +21,7 @@ interface MovieDetailsUdf {
             val actors: List<Actor>?,
         ): Action
         data class UpdateActors(val actors: List<Actor>): Action
+        data class UpdateMovieStatus(val movieStatus: MovieStatus): Action
     }
     data object Event : Udf.Event
 }

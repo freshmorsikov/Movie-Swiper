@@ -6,9 +6,9 @@ import com.github.freshmorsikov.moviematcher.core.presentation.UdfViewModel
 import com.github.freshmorsikov.moviematcher.feature.swipe.analytics.OpenSwipeScreenEvent
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetMovieListUseCase
 import com.github.freshmorsikov.moviematcher.feature.swipe.domain.GetPairedFlowUseCase
-import com.github.freshmorsikov.moviematcher.feature.swipe.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.GetInviteLinkUseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.GetRoomFlowCaseCase
+import com.github.freshmorsikov.moviematcher.shared.domain.UpdateMovieStatusUseCase
 import com.github.freshmorsikov.moviematcher.shared.domain.model.MovieStatus
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

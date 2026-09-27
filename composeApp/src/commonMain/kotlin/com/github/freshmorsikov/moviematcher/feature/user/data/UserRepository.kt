@@ -87,16 +87,6 @@ class UserRepository(
         return supabaseApiService.incrementCounter() ?: 0L
     }
 
-    suspend fun getPairedUser(): User? {
-        val userId = getUserId()
-        val user = userRemoteDataSource.getUserById(userId = userId) ?: return null
-        val users = userRemoteDataSource.getUsersByRoomId(roomId = user.room)
-
-        return users.find { user ->
-            user.id != userId
-        }?.toUser()
-    }
-
     suspend fun createUser(
         code: String,
         name: String,

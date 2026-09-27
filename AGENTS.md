@@ -5,6 +5,8 @@ You MUST follow these guidelines every time before answering questions or editin
 You MUST prioritize code quality, app stability, maintainability, and a smooth third-party developer experience.
 You MUST search existing implementations before creating new code.
 You MUST refactor duplicated logic into shared utilities.
+You MUST use `docs/ai/index.md` as the lightweight routing map for project knowledge.
+Do not load every knowledge file by default; load only the files relevant to the current request.
 
 ## Architecture
 - You SHOULD keep feature-first packages under `feature/<name>`.
@@ -31,7 +33,7 @@ You MUST refactor duplicated logic into shared utilities.
 - You MUST keep tests split: 1 domain class = 1 test class.
 
 ## Project structure
-The Kotlin Multiplatform source sets are split by responsibility: 
+The Kotlin Multiplatform source sets are split by responsibility:
 - `commonMain` contains shared code.
 - `androidMain` contains Android-specific implementations.
 - `iosMain` contains iOS-specific implementations.
