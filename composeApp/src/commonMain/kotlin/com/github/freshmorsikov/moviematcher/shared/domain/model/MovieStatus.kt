@@ -5,6 +5,14 @@ enum class MovieStatus {
     Liked,
     Disliked;
 
+    fun toggleSelection(currentStatus: MovieStatus): MovieStatus {
+        return if (this == currentStatus) {
+            Undefined
+        } else {
+            this
+        }
+    }
+
     companion object {
         fun fromName(status: String): MovieStatus {
             return entries.firstOrNull { movieStatus ->

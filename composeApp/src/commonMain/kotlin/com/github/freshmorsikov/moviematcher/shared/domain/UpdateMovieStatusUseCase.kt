@@ -18,19 +18,17 @@ class UpdateMovieStatusUseCase(
             id = id,
             status = movieStatus,
         )
-        movieStatus.toReactionAction()?.let { action ->
-            reactionRepository.handleReactionAction(
-                movieId = id,
-                action = action,
-            )
-        }
+        reactionRepository.handleReactionAction(
+            movieId = id,
+            action = movieStatus.toReactionAction(),
+        )
     }
 
-    private fun MovieStatus.toReactionAction(): ReactionAction? {
+    private fun MovieStatus.toReactionAction(): ReactionAction {
         return when (this) {
             MovieStatus.Liked -> ReactionAction.Liked
             MovieStatus.Disliked -> ReactionAction.Disliked
-            else -> null
+            MovieStatus.Undefined -> ReactionAction.Removed
         }
     }
 

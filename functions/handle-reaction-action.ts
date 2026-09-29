@@ -1,7 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-type ReactionAction = "Liked" | "Disliked";
+type ReactionAction = "Liked" | "Disliked" | "Removed";
 
 type HandleReactionActionRequest = {
   userId: string;
@@ -28,6 +28,11 @@ Deno.serve(async (req) => {
 
     const { userId, movieId, action } = await req.json() as HandleReactionActionRequest;
     validateRequest(userId, movieId, action);
+
+    if (action === "Removed") {
+      await removeReaction(supabase, userId, movieId);
+      return successResponse();
+    }
 
     await createReaction(supabase, userId, movieId, action);
 
@@ -72,8 +77,24 @@ function validateRequest(
   if (typeof movieId !== "number" || !Number.isFinite(movieId)) {
     throw new Error("Invalid movieId");
   }
-  if (action !== "Liked" && action !== "Disliked") {
+  if (action !== "Liked" && action !== "Disliked" && action !== "Removed") {
     throw new Error("Invalid reaction action");
+  }
+}
+
+async function removeReaction(
+  supabase: ReturnType<typeof createClient>,
+  userId: string,
+  movieId: number,
+) {
+  const { error } = await supabase
+    .from("reaction")
+    .delete()
+    .eq("user", userId)
+    .eq("movie", movieId);
+
+  if (error) {
+    throw error;
   }
 }
 

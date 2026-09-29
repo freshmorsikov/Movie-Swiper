@@ -78,12 +78,9 @@ class MovieDetailsViewModel(
 
     private suspend fun updateMovieStatus(movieStatus: MovieStatus) {
         val movie = (currentState as? MovieDetailsUdf.State.Data)?.movie ?: return
-        if (movie.status == movieStatus) {
-            return
-        }
         updateMovieStatusUseCase(
             id = movie.id,
-            movieStatus = movieStatus,
+            movieStatus = movieStatus.toggleSelection(currentStatus = movie.status),
         )
     }
 
