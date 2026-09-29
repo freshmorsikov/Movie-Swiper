@@ -1,6 +1,7 @@
 ---
 name: planner
 description: Investigates GitHub issues, posts implementation plans, and routes issues for review without modifying code
+model: gpt-5.6-sol
 tools: ["read", "search", "github/*"]
 ---
 
